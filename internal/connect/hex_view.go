@@ -4,71 +4,55 @@
 
 package connect
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+
+func isPrintableASCII(b byte) bool {
+	return 32 <= b && b <= 126
+}
 
 func HexAsciiViewFrom(data []byte) string {
-	bytesInRow := 16
-	result := ""
+	const bytesPerRow = 16
+	var sb strings.Builder
+	length := len(data)
+	sb.Grow(length * 5)
 
-	for i := 0; i < len(data); i += bytesInRow {
-		// Append the offset
-		result += fmt.Sprintf("%04x: ", i)
+	for i := 0; i < length; i += bytesPerRow {
+		hexPart := make([]byte, bytesPerRow*3)
+		asciiPart := make([]byte, bytesPerRow)
 
-		// Append hex values
-		for j := 0; j < bytesInRow; j++ {
-			if (i + j) < len(data) {
-				result += fmt.Sprintf("%02x ", data[i+j])
-			} else {
-				result += "   "
-			}
-		}
-
-		// Append ASCII representation
-		result += " "
-		for j := 0; j < bytesInRow; j++ {
-			if (i + j) < len(data) {
-				// Printable ASCII range
-				if data[i+j] >= 32 && data[i+j] <= 126 {
-					result += string(rune(data[i+j]))
+		for j := 0; j < bytesPerRow; j++ {
+			pos := j * 3
+			if i+j < length {
+				b := data[i+j]
+				hexPart[pos] = "0123456789abcdef"[b>>4]
+				hexPart[pos+1] = "0123456789abcdef"[b&0xF]
+				hexPart[pos+2] = ' '
+				if isPrintableASCII(b) {
+					asciiPart[j] = b
 				} else {
-					result += "."
+					asciiPart[j] = '.'
 				}
+			} else {
+				hexPart[pos] = ' '
+				hexPart[pos+1] = ' '
+				hexPart[pos+2] = ' '
+				asciiPart[j] = ' '
 			}
 		}
 
-		result += "\n"
+		sb.WriteString(fmt.Sprintf("%04x: ", i))
+		sb.Write(hexPart)
+		sb.WriteByte(' ')
+		sb.Write(asciiPart)
+		sb.WriteByte('\n')
 	}
 
-	return result
+	return sb.String()
 }
 
 func ShowAsHexAndAscii(data []byte) {
 	fmt.Println(HexAsciiViewFrom(data))
-}
-
-func HexViewFrom(data []byte) string {
-	bytesInRow := 16
-	result := ""
-
-	for i := 0; i < len(data); i += bytesInRow {
-		// Append the offset
-		result += fmt.Sprintf("%04x: ", i)
-
-		// Append hex values
-		for j := 0; j < bytesInRow; j++ {
-			if (i + j) < len(data) {
-				result += fmt.Sprintf("%02x ", data[i+j])
-			} else {
-				result += "   "
-			}
-		}
-
-		result += "\n"
-	}
-
-	return result
-}
-
-func ShowAsHex(data []byte) {
-	fmt.Println(HexViewFrom(data))
 }
