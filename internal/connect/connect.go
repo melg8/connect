@@ -24,10 +24,7 @@ func Connect(address string) {
 		return
 	}
 	defer conn.Close()
-
 	fmt.Println("Connected to server. Waiting for data")
-
-	// TODO(melg): Maybe wrong, and should do it in loop?
 
 	for {
 		buf := make([]byte, 1024)
