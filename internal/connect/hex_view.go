@@ -19,8 +19,6 @@ func HexAsciiViewFrom(data []byte) string {
 	length := len(data)
 	sb.Grow(length*5 + 20)
 
-	sb.WriteString(fmt.Sprintf("Size: %d bytes\n", length))
-
 	for i := 0; i < length; i += bytesPerRow {
 		hexPart := make([]byte, bytesPerRow*3)
 		asciiPart := make([]byte, bytesPerRow)
@@ -51,6 +49,7 @@ func HexAsciiViewFrom(data []byte) string {
 		sb.Write(asciiPart)
 		sb.WriteByte('\n')
 	}
+	sb.WriteString(fmt.Sprintf("Size: %d bytes\n", length))
 
 	return sb.String()
 }

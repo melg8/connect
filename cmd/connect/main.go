@@ -9,5 +9,5 @@ import (
 )
 
 func main() {
-	connect.Connect()
+	connect.Connect("127.0.0.1:2106")
 }

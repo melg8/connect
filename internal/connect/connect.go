@@ -16,9 +16,7 @@ type Connection struct {
 	net.Conn
 }
 
-func Connect() {
-	address := "127.0.0.1:2106"
-
+func Connect(address string) {
 	fmt.Println("Connecting to server: " + address)
 	conn, err := net.DialTimeout("tcp", address, time.Second)
 	if err != nil {
@@ -27,20 +25,23 @@ func Connect() {
 	}
 	defer conn.Close()
 
-	fmt.Println("Connected to server. Receiving data...")
+	fmt.Println("Connected to server. Waiting for data")
 
 	// TODO(melg): Maybe wrong, and should do it in loop?
-	buf := make([]byte, 1024)
+
 	for {
+		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)
 		if err == io.EOF {
-			fmt.Println("Server doesn't send any more data.")
+			fmt.Println("Server doesn't send any more data")
 			break
 		} else if err != nil {
 			fmt.Printf("Error reading from connection: %v\n", err)
 			return
 		}
+
+		fmt.Println("Received packet from login server:")
 		ShowAsHexAndAscii(buf[:n])
 	}
-	fmt.Println("Connection closed.")
+	fmt.Println("Connection closed")
 }
