@@ -11,58 +11,6 @@ import (
 	"time"
 )
 
-func ShowAsHex(data []byte) {
-	bytes_in_row := 16
-	fmt.Printf("Got data [%d]:\n", len(data))
-
-	for i := 0; i < len(data); i += bytes_in_row {
-		for j := 0; j < bytes_in_row; j++ {
-			if (i + j) < len(data) {
-				fmt.Printf("%02x ", data[i+j])
-			} else {
-				fmt.Printf("   ")
-			}
-		}
-		fmt.Println()
-	}
-	fmt.Println()
-}
-
-func ShowAsHexAndAscii(data []byte) {
-	bytesInRow := 16
-	fmt.Printf("Got data [%d]:\n", len(data))
-
-	for i := 0; i < len(data); i += bytesInRow {
-		// Print the offset
-		fmt.Printf("%04x: ", i)
-
-		// Print hex values
-		for j := 0; j < bytesInRow; j++ {
-			if (i + j) < len(data) {
-				fmt.Printf("%02x ", data[i+j])
-			} else {
-				fmt.Printf("   ")
-			}
-		}
-
-		// Print ASCII representation
-		fmt.Print(" ")
-		for j := 0; j < bytesInRow; j++ {
-			if (i + j) < len(data) {
-				// Printable ASCII range
-				if data[i+j] >= 32 && data[i+j] <= 126 {
-					fmt.Printf("%c", data[i+j])
-				} else {
-					fmt.Print(".")
-				}
-			}
-		}
-
-		fmt.Println()
-	}
-	fmt.Println()
-}
-
 // Define connection type data structure:
 type Connection struct {
 	net.Conn
