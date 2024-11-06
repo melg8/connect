@@ -15,6 +15,7 @@ func dataForBenchmark() []byte {
 func BenchmarkHexAsciiViewFrom(b *testing.B) {
 	data := dataForBenchmark()
 	b.ResetTimer()
+
 	for n := 0; n < b.N; n++ {
 		_ = HexAsciiViewFrom(data)
 	}

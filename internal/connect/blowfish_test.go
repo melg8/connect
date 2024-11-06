@@ -44,6 +44,19 @@ func TestBlowFishEmptyKey(t *testing.T) {
 	}
 }
 
+// Test BlowFish nil key
+func TestBlowFishNilKey(t *testing.T) {
+	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	_, err := NewBlowFishKey(nil).Decrypt(encryptedData)
+	if err == nil {
+		t.Fatal("Decryption should have failed on nil key")
+	}
+	if err.Error() != "BlowFishKey or key is nil" {
+		t.Fatal("Error message should be 'BlowFishKey or key is nil', got: ",
+			err.Error())
+	}
+}
+
 func TestBlowFish(t *testing.T) {
 	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
 	decryptedData, err := DefaultAuthKey().Decrypt(encryptedData)

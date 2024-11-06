@@ -27,11 +27,16 @@ func DefaultAuthKey() *BlowFishKey {
 }
 
 func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
-	if len(encrypted) == 0 {
+	if b == nil || b.key == nil {
+		return nil, errors.New("BlowFishKey or key is nil")
+	}
+
+	len := len(encrypted)
+	if len == 0 {
 		return nil, errors.New("encrypted data is empty")
 	}
 
-	if len(encrypted)%8 != 0 {
+	if len%8 != 0 {
 		return nil, errors.New("encrypted data is not a multiple of 8")
 	}
 
@@ -39,11 +44,13 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 	if err != nil {
 		return nil, errors.New("failed to initialize blowfish")
 	}
-	decrypted := make([]byte, len(encrypted))
-	count := len(encrypted) / 8
+
+	decrypted := make([]byte, len)
+	count := len / 8
 
 	for i := 0; i < count; i++ {
 		cipher.Decrypt(decrypted[i*8:], encrypted[i*8:])
 	}
+
 	return decrypted, nil
 }
