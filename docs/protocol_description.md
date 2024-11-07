@@ -15,8 +15,14 @@ Game servers have at least two differrent revisions of auth server protocol c621
     autonumber 0
     Client->>+Auth Server: Tcp/Ip connect
     activate Auth Server
-    
+
+    alt new ip
     Auth Server-->>Client: id:0 Init
+    else same ip flood
+    autonumber 2
+    Auth Server->>Client: Tcp/Ip disonnect
+    end
+
     deactivate Auth Server
 
     Client->>Auth Server: id:7 RequestGGAuth
