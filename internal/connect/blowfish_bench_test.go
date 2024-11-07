@@ -14,10 +14,11 @@ func dataForBlowfishBenchmark(size int) []byte {
 
 func BenchmarkBlowFish(b *testing.B) {
 	data := dataForBlowfishBenchmark(1000000)
+	authKey := DefaultAuthKey()
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		_, err := DefaultAuthKey().Decrypt(data)
+		_, err := authKey.Decrypt(data)
 		if err != nil {
 			b.Fatal(err)
 		}

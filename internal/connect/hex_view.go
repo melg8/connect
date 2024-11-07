@@ -6,6 +6,7 @@ package connect
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -13,6 +14,35 @@ func isPrintableASCII(b byte) bool {
 	return 32 <= b && b <= 126
 }
 
+func writeLineNumber(sb *strings.Builder, i int) {
+	sb.Grow(6)
+	sb.WriteByte(byte(i>>12) + '0')
+	sb.WriteByte(byte(i>>8&0xF) + '0')
+	sb.WriteByte(byte(i>>4&0xF) + '0')
+	sb.WriteByte(byte(i&0xF) + '0')
+	sb.WriteByte(':')
+	sb.WriteByte(' ')
+}
+
+func writeSizeOfData(sb *strings.Builder, length int) {
+	sb.Grow(20)
+	sb.WriteString("Size: ")
+	maxLog := math.Log10(float64(length))
+	maxPower := int(math.Ceil(maxLog))
+	for i := maxPower; i > 0; i-- {
+		power := int(math.Pow(10, float64(i)))
+		value := (length / power) % 10
+		if value != 0 {
+			sb.WriteByte(byte(value) + '0')
+		}
+	}
+	sb.WriteByte(byte(length%10) + '0')
+	sb.WriteString(" bytes\n")
+}
+
+// This is overly optimized function was just used as example for myself
+// benchmarking. Was no real point in making it more optimized cause it
+// is used just for console data display.
 func HexAsciiViewFrom(data []byte) string {
 	const bytesPerRow = 16
 	var sb strings.Builder
@@ -43,13 +73,13 @@ func HexAsciiViewFrom(data []byte) string {
 			}
 		}
 
-		sb.WriteString(fmt.Sprintf("%04x: ", i))
+		writeLineNumber(&sb, i)
 		sb.Write(hexPart)
 		sb.WriteByte(' ')
 		sb.Write(asciiPart)
 		sb.WriteByte('\n')
 	}
-	sb.WriteString(fmt.Sprintf("Size: %d bytes\n", length))
+	writeSizeOfData(&sb, length)
 
 	return sb.String()
 }

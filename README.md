@@ -19,3 +19,8 @@ Run unit tests of project:
 ```bash
 go test ./... --cover --count=1
 ```
+
+Build with compiler explanation of heap vs stack memory for variables:
+```bash
+go build -gcflags "-m=2"
+```
