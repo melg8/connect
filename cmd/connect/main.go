@@ -8,6 +8,12 @@ import (
 	"github.com/melg8/connect/internal/connect"
 )
 
+func dontExit() {
+	select {}
+}
+
 func main() {
-	connect.Connect("127.0.0.1:2106")
+	connect.StartBotsAt("127.0.0.1:2106", 10)
+
+	dontExit()
 }
