@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package connect
+package packets
 
 import (
 	"bytes"
@@ -31,6 +31,12 @@ func TestPacketWriterAndReader(t *testing.T) {
 
 	int8Value := int8(123)
 	err = writer.WriteInt8(int8Value)
+	if err != nil {
+		panic(err)
+	}
+
+	stringValue := "some string"
+	err = writer.WriteStringAsUtf16(stringValue)
 	if err != nil {
 		panic(err)
 	}
@@ -75,12 +81,42 @@ func TestPacketWriterAndReader(t *testing.T) {
 		t.Errorf("Got different int8 value: %d != %d", gotInt8Value, int8Value)
 	}
 
+	gotStringValue, err := reader.ReadStringFromUtf16Format()
+	if err != nil {
+		panic(err)
+	}
+	if gotStringValue != stringValue {
+		t.Errorf("Got different string value: %s != %s", gotStringValue, stringValue)
+	}
+
 	gotKeyData, err := reader.ReadBytes(len(keyData))
 	if err != nil {
 		panic(err)
 	}
 	if !bytes.Equal(gotKeyData, keyData) {
 		t.Errorf("Got different key data: %s != %s", gotKeyData, keyData)
+	}
+}
+
+func TestUtf16StringToHexAndAscii(t *testing.T) {
+	writer := NewPacketWriter()
+
+	stringValue := "some string"
+	err := writer.WriteStringAsUtf16(stringValue)
+	if err != nil {
+		panic(err)
+	}
+
+	data := writer.Bytes()
+
+	reader := NewPacketReader(data)
+
+	gotStringValue, err := reader.ReadStringFromUtf16Format()
+	if err != nil {
+		panic(err)
+	}
+	if gotStringValue != stringValue {
+		t.Errorf("Got different string value: %s != %s", gotStringValue, stringValue)
 	}
 }
 
@@ -127,6 +163,22 @@ func TestPacketReaderReadBytesError(t *testing.T) {
 func TestPacketReaderReadBytesNotEnoughBytesError(t *testing.T) {
 	reader := NewPacketReader([]byte{1, 2, 3})
 	_, err := reader.ReadBytes(4)
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
+func TestPacketReaderReadStringFromUtf16FormatError(t *testing.T) {
+	reader := NewPacketReader([]byte{})
+	_, err := reader.ReadStringFromUtf16Format()
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
+func TestPacketReaderReadStringFromUtf16FormatNotEnoughBytesError(t *testing.T) {
+	reader := NewPacketReader([]byte{0x22, 0x00, 0x33})
+	_, err := reader.ReadStringFromUtf16Format()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
 	}

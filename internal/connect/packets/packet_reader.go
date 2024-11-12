@@ -2,12 +2,14 @@
 //
 // SPDX-License-Identifier: MIT
 
-package connect
+package packets
 
 import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+
+	"golang.org/x/text/encoding/unicode"
 )
 
 type PacketReader struct {
@@ -66,8 +68,8 @@ func (r *PacketReader) ReadInt8() (int8, error) {
 	return result, nil
 }
 
-func (r *PacketReader) ReadString() (string, error) {
-	var result []byte
+func (r *PacketReader) ReadStringFromUtf16Format() (string, error) {
+	var data []byte
 	for {
 		first_byte, err := r.ReadByte()
 		if err != nil {
@@ -80,7 +82,12 @@ func (r *PacketReader) ReadString() (string, error) {
 		if first_byte == 0 && second_byte == 0 {
 			break
 		}
-		result = append(result, first_byte, second_byte)
+		data = append(data, first_byte, second_byte)
 	}
-	return string(result), nil
+	decoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
+	decodedString, err := decoder.String(string(data))
+	if err != nil {
+		return "", nil
+	}
+	return decodedString, nil
 }

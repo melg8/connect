@@ -9,6 +9,8 @@ import (
 	"io"
 	"net"
 	"time"
+
+	"github.com/melg8/connect/internal/connect/helpers"
 )
 
 // Define connection type data structure:
@@ -27,7 +29,7 @@ func NewAuthProtocol(dataChannel chan []byte, conn net.Conn) *AuthProtocol {
 
 func (p *AuthProtocol) Run() {
 	for data := range p.dataChannel {
-		ShowAsHexAndAscii(data)
+		helpers.ShowAsHexAndAscii(data)
 	}
 }
 

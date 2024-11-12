@@ -2,13 +2,14 @@
 //
 // SPDX-License-Identifier: MIT
 
-package connect
+package helpers
 
 import (
 	"encoding/hex"
 	"testing"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
+	"golang.org/x/text/encoding/unicode"
 )
 
 func textDiff(a, b string) string {
@@ -53,4 +54,16 @@ func TestHexAsciiView(t *testing.T) {
 
 func TestShowAsHexAndAscii(t *testing.T) {
 	ShowAsHexAndAscii(testData())
+}
+
+func TestStringToHexAndAscii(t *testing.T) {
+	helloWorldText := "Hello, world!"
+	ShowAsHexAndAscii([]byte(helloWorldText))
+}
+
+func TestUtf16StringToHexAndAscii(t *testing.T) {
+	helloWorldText := "Hello, world!"
+	encoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder()
+	utf16String, _ := encoder.String(helloWorldText)
+	ShowAsHexAndAscii([]byte(utf16String))
 }

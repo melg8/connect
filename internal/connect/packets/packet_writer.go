@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package connect
+package packets
 
 import (
 	"bytes"
@@ -36,4 +36,13 @@ func (b *PacketWriter) WriteInt8(value int8) error {
 func (b *PacketWriter) WriteBytes(bytes []byte) error {
 	_, err := b.Write(bytes)
 	return err
+}
+
+func (b *PacketWriter) WriteStringAsUtf16(value string) error {
+	bytes := make([]byte, 0, len(value)*2+2)
+	for _, r := range value {
+		bytes = append(bytes, byte(r), byte(0))
+	}
+	bytes = append(bytes, 0, 0)
+	return b.WriteBytes(bytes)
 }
