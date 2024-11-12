@@ -62,9 +62,7 @@ Game servers have at least two differrent revisions of auth server protocol c621
     Client->>Auth Server: Tcp/Ip disconnect
 ```
 
-    
-   
-    
+
      
     
 
@@ -73,13 +71,27 @@ Game servers have at least two differrent revisions of auth server protocol c621
 ## Auth server -> client packets
 
 
-### 0. Any packet
+### 0. Packets common structure
+Packets have similar structure to eachother. They consist of:
+   
 
 | Hex | Size | Description |
 |-----|------|-------------|
 |XX XX|2|Size of packet|
 |XX XX XX XX .. |N|Body of packet|
 |XX XX ? |?| Checksum (only auth server communications) |
+
+There are 6 different types of data that can be passed in packet
+
+| Hex | Size | Type description |
+|-----|------|-------------|
+|XX XX XX .. \0|N|string UTF8|
+|XX XX XX XX ..|8|float|
+|XX XX XX XX ..|8|int 64|
+|XX XX XX XX|4|int 32|
+|XX XX|2|int 16|
+|XX|1|int 8|
+
 
 
 Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki/Blowfish_(cipher)) algorithm with 21 bytes hardcoded key:

@@ -11,8 +11,8 @@ import (
 
 func TestPacketWriterAndReader(t *testing.T) {
 	writer := NewPacketWriter()
-	uInt64Value := uint64(1234567890123)
-	err := writer.WriteUInt64(uInt64Value)
+	int64Value := int64(1234567890123)
+	err := writer.WriteInt64(int64Value)
 	if err != nil {
 		panic(err)
 	}
@@ -24,12 +24,12 @@ func TestPacketWriterAndReader(t *testing.T) {
 
 	reader := NewPacketReader(writer.Bytes())
 
-	gotUInt64Value, err := reader.ReadUInt64()
+	gotInt64Value, err := reader.ReadInt64()
 	if err != nil {
 		panic(err)
 	}
-	if gotUInt64Value != uInt64Value {
-		t.Errorf("Got different UInt64 value: %d != %d", gotUInt64Value, uInt64Value)
+	if gotInt64Value != int64Value {
+		t.Errorf("Got different UInt64 value: %d != %d", gotInt64Value, int64Value)
 	}
 
 	gotKeyData, err := reader.ReadBytes(len(keyData))
@@ -38,5 +38,29 @@ func TestPacketWriterAndReader(t *testing.T) {
 	}
 	if !bytes.Equal(gotKeyData, keyData) {
 		t.Errorf("Got different key data: %s != %s", gotKeyData, keyData)
+	}
+}
+
+func TestPacketReaderReadUInt64Error(t *testing.T) {
+	reader := NewPacketReader([]byte{})
+	_, err := reader.ReadInt64()
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
+func TestPacketReaderReadBytesError(t *testing.T) {
+	reader := NewPacketReader([]byte{})
+	_, err := reader.ReadBytes(1)
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
+func TestPacketReaderReadBytesNotEnoughBytesError(t *testing.T) {
+	reader := NewPacketReader([]byte{1, 2, 3})
+	_, err := reader.ReadBytes(4)
+	if err == nil {
+		t.Errorf("Expected error, got nil")
 	}
 }

@@ -17,7 +17,7 @@ func NewPacketWriter() *PacketWriter {
 	return &PacketWriter{}
 }
 
-func (b *PacketWriter) WriteUInt64(value uint64) error {
+func (b *PacketWriter) WriteInt64(value int64) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
 
