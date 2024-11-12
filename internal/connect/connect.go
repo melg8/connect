@@ -114,7 +114,7 @@ func (p *AuthServerConnectionProvider) openConnection(requested_conn chan net.Co
 				fmt.Println("Connecting to server: " + p.serverAddress + " time: " + now.String())
 				conn, err := net.DialTimeout("tcp", p.serverAddress, time.Second)
 				if err != nil {
-					fmt.Println("Error connecting to server: %v", err)
+					fmt.Printf("Error connecting to server: %v\n", err)
 					time.Sleep(p.timeout)
 					continue
 				}

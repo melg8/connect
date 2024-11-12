@@ -1,13 +1,15 @@
 package connect
 
 import (
+	"fmt"
 	"net"
 	"testing"
 )
 
 func TestConnect(t *testing.T) {
 	t.Run("successful connection", func(t *testing.T) {
-		ln, err := net.Listen("tcp", "localhost:2111")
+		ln, err := net.Listen("tcp", "localhost:2112")
+		finishedChan := make(chan bool)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -23,18 +25,20 @@ func TestConnect(t *testing.T) {
 			if err != nil {
 				panic(err)
 			}
+			finishedChan <- true
 		}()
 
-		Connect(ln.Addr().String())
-
+		fmt.Println("Address: " + ln.Addr().String())
+		StartBotsAt(ln.Addr().String(), 1)
+		<-finishedChan
 	})
 
 	t.Run("failed connection", func(t *testing.T) {
-		Connect("localhost:2111")
+		StartBotsAt("localhost:2111", 1)
 	})
 
 	t.Run("invalid address", func(t *testing.T) {
-		Connect("invalid-address")
+		StartBotsAt("invalid-address", 1)
 	})
 }
 
