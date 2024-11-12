@@ -97,6 +97,6 @@ func ShowAsHexAndAscii(data []byte) {
 	fmt.Println(HexAsciiViewFrom(data))
 }
 
-func ShowHexView(data []byte) {
+func ShowAsHexView(data []byte) {
 	fmt.Println(HexViewFrom(data))
 }

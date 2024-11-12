@@ -18,11 +18,15 @@ func textDiff(a, b string) string {
 	return dmp.DiffPrettyText(diffs)
 }
 
-func testData() []byte {
+func testDataString() string {
 	line0 := "000102030405060708090a0b0c0d0e0f"
 	line1 := "101112131415161718191a1b1c1d1e1f"
 	line2 := "202122232425262728292a2b2c2d2e" // Intentionally one byte short
-	data, err := hex.DecodeString(line0 + line1 + line2)
+	return line0 + line1 + line2
+}
+
+func testData() []byte {
+	data, err := hex.DecodeString(testDataString())
 	if err != nil {
 		panic(err)
 	}
@@ -54,6 +58,20 @@ func TestHexAsciiView(t *testing.T) {
 
 func TestShowAsHexAndAscii(t *testing.T) {
 	ShowAsHexAndAscii(testData())
+}
+
+func TestHexView(t *testing.T) {
+	testData := testData()
+	result := HexViewFrom(testData)
+	expected := testDataString()
+
+	if result != expected {
+		t.Errorf("Got different output:\n%s", textDiff(result, expected))
+	}
+}
+
+func TestShowAsHex(t *testing.T) {
+	ShowAsHexView(testData())
 }
 
 func TestStringToHexAndAscii(t *testing.T) {
