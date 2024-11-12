@@ -29,6 +29,7 @@ func NewAuthProtocol(dataChannel chan []byte, conn net.Conn) *AuthProtocol {
 
 func (p *AuthProtocol) Run() {
 	for data := range p.dataChannel {
+		helpers.ShowHexView(data)
 		helpers.ShowAsHexAndAscii(data)
 	}
 }

@@ -84,6 +84,19 @@ func HexAsciiViewFrom(data []byte) string {
 	return sb.String()
 }
 
+func HexViewFrom(data []byte) string {
+	var sb strings.Builder
+	for _, b := range data {
+		sb.WriteByte("0123456789abcdef"[b>>4])
+		sb.WriteByte("0123456789abcdef"[b&0xF])
+	}
+	return sb.String()
+}
+
 func ShowAsHexAndAscii(data []byte) {
 	fmt.Println(HexAsciiViewFrom(data))
+}
+
+func ShowHexView(data []byte) {
+	fmt.Println(HexViewFrom(data))
 }

@@ -13,7 +13,7 @@ func dontExit() {
 }
 
 func main() {
-	connect.StartBotsAt("127.0.0.1:2106", 10)
+	connect.StartBotsAt("127.0.0.1:2106", 1)
 
 	dontExit()
 }
