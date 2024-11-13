@@ -2,9 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-package packets
+package from_auth_server
 
 import (
+	"encoding/json"
+
 	"github.com/melg8/connect/internal/connect/helpers"
 	"github.com/melg8/connect/internal/connect/packets"
 )
@@ -86,13 +88,13 @@ func (p *InitPacket) NewInitPacket() []byte {
 
 func (p *InitPacket) ToString() string {
 	result := "\nInitPacket:\n" +
-		"  sessionId: " + helpers.HexStringFromInt32(p.sessionId) + "\n" +
-		"  protocolVersion: " + helpers.HexStringFromInt32(p.protocolVersion) + "\n" +
-		"  rsaPublicKey: " + helpers.HexViewFrom(p.rsaPublicKey) + "\n" +
-		"  gameGuard1: " + helpers.HexStringFromInt32(p.gameGuard1) + "\n" +
-		"  gameGuard2: " + helpers.HexStringFromInt32(p.gameGuard2) + "\n" +
-		"  gameGuard3: " + helpers.HexStringFromInt32(p.gameGuard3) + "\n" +
-		"  gameGuard4: " + helpers.HexStringFromInt32(p.gameGuard4) + "\n"
+		"  sessionId: " + helpers.HexStringFromInt32(p.sessionId) +
+		"  protocolVersion: " + helpers.HexStringFromInt32(p.protocolVersion) +
+		"  rsaPublicKey: \n" + helpers.HexViewFrom(p.rsaPublicKey) +
+		"  gameGuard1: " + helpers.HexStringFromInt32(p.gameGuard1) +
+		"  gameGuard2: " + helpers.HexStringFromInt32(p.gameGuard2) +
+		"  gameGuard3: " + helpers.HexStringFromInt32(p.gameGuard3) +
+		"  gameGuard4: " + helpers.HexStringFromInt32(p.gameGuard4)
 
 	if p.blowfishKey != nil {
 		result += "  blowfishKey: " + helpers.HexViewFrom(*p.blowfishKey)
@@ -100,4 +102,12 @@ func (p *InitPacket) ToString() string {
 		result += "  blowfishKey: " + "nil"
 	}
 	return result
+}
+
+func (p *InitPacket) AsJson() (string, error) {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/melg8/connect/internal/connect/helpers"
+	"github.com/melg8/connect/internal/connect/packets/from_auth_server"
 )
 
 // Define connection type data structure:
@@ -29,8 +30,18 @@ func NewAuthProtocol(dataChannel chan []byte, conn net.Conn) *AuthProtocol {
 
 func (p *AuthProtocol) Run() {
 	for data := range p.dataChannel {
-		helpers.HexViewFrom(data)
+		helpers.ShowAsHexView(data)
 		helpers.ShowAsHexAndAscii(data)
+		initPacketData := data[3 : len(data)-4]
+		initPacket, err := from_auth_server.NewInitPacketFromBytes(initPacketData)
+		if err == nil {
+			fmt.Println(initPacket.ToString())
+		}
+
+		initPacketString, err := initPacket.AsJson()
+		if err == nil {
+			fmt.Println(initPacketString)
+		}
 	}
 }
 

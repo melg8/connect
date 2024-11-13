@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package packets
+package from_auth_server
 
 import (
 	"bytes"

@@ -85,10 +85,21 @@ func HexAsciiViewFrom(data []byte) string {
 }
 
 func HexViewFrom(data []byte) string {
+	return HexViewFromWithLineSplit(data, 16)
+}
+
+func HexViewFromWithLineSplit(data []byte, lineLength int) string {
 	var sb strings.Builder
-	for _, b := range data {
-		sb.WriteByte("0123456789abcdef"[b>>4])
-		sb.WriteByte("0123456789abcdef"[b&0xF])
+	for i := 0; i < len(data); i += lineLength {
+		for j := 0; j < lineLength; j++ {
+			if i+j < len(data) {
+				sb.WriteByte("0123456789abcdef"[data[i+j]>>4])
+				sb.WriteByte("0123456789abcdef"[data[i+j]&0xF])
+			} else {
+				sb.WriteString("  ")
+			}
+		}
+		sb.WriteByte('\n')
 	}
 	return sb.String()
 }
