@@ -85,3 +85,25 @@ func TestUtf16StringToHexAndAscii(t *testing.T) {
 	utf16String, _ := encoder.String(helloWorldText)
 	ShowAsHexAndAscii([]byte(utf16String))
 }
+
+func TestHexStringFromInt32(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    int32
+		expected string
+	}{
+		{"Zero", 0, "00000000"},
+		{"Positive small number", 255, "000000ff"},
+		{"Positive large number", 0x12345678, "12345678"},
+		{"Negative small number", -1, "ffffffff"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := HexStringFromInt32(tt.input)
+			if result != tt.expected {
+				t.Errorf("HexStringFromInt32(%d) = %s, want %s", tt.input, result, tt.expected)
+			}
+		})
+	}
+}

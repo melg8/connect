@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"strings"
 	"testing"
 )
 
@@ -98,6 +99,12 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 
 	blowFishKey := make([]byte, 21)
 	init_packet.blowfishKey = &blowFishKey
+
+	stringRepresentation := init_packet.ToString()
+	t.Log(stringRepresentation)
+	if !strings.Contains(stringRepresentation, "blowfishKey") {
+		t.Error("expected blowfish key in string representation")
+	}
 
 	encodedPacket1 := init_packet.NewInitPacket()
 	if len(encodedPacket)+21 != len(encodedPacket1) {

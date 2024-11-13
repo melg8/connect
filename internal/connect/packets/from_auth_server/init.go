@@ -5,6 +5,7 @@
 package packets
 
 import (
+	"github.com/melg8/connect/internal/connect/helpers"
 	"github.com/melg8/connect/internal/connect/packets"
 )
 
@@ -81,4 +82,22 @@ func (p *InitPacket) NewInitPacket() []byte {
 		buffer.WriteBytes(*p.blowfishKey)
 	}
 	return buffer.Bytes()
+}
+
+func (p *InitPacket) ToString() string {
+	result := "\nInitPacket:\n" +
+		"  sessionId: " + helpers.HexStringFromInt32(p.sessionId) + "\n" +
+		"  protocolVersion: " + helpers.HexStringFromInt32(p.protocolVersion) + "\n" +
+		"  rsaPublicKey: " + helpers.HexViewFrom(p.rsaPublicKey) + "\n" +
+		"  gameGuard1: " + helpers.HexStringFromInt32(p.gameGuard1) + "\n" +
+		"  gameGuard2: " + helpers.HexStringFromInt32(p.gameGuard2) + "\n" +
+		"  gameGuard3: " + helpers.HexStringFromInt32(p.gameGuard3) + "\n" +
+		"  gameGuard4: " + helpers.HexStringFromInt32(p.gameGuard4) + "\n"
+
+	if p.blowfishKey != nil {
+		result += "  blowfishKey: " + helpers.HexViewFrom(*p.blowfishKey)
+	} else {
+		result += "  blowfishKey: " + "nil"
+	}
+	return result
 }
