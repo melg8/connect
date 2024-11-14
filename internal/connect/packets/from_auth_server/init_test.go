@@ -36,8 +36,8 @@ func InitPacketData() []byte {
 }
 
 func ExpectedRsaPublicKey() []byte {
-	rsaPublicKey := "40dbaa8d4c6f4b4ab33a538ff2977f24b1a08a2799b8696b2834efb8dfdf75807dfd14ef3051489fedf04712ba576139898c0a5de47c431ce407f5450092d747ff1e2e8294c0f00365f1b6a5d005767f9bda4ec694d43c7cc956ed4b2edc982d657c42a8793f3b1a6c4be631b97fd791a8a5adc9f9f4e8660dcba865b679b012"
-	data, err := hex.DecodeString(rsaPublicKey)
+	RsaPublicKey := "40dbaa8d4c6f4b4ab33a538ff2977f24b1a08a2799b8696b2834efb8dfdf75807dfd14ef3051489fedf04712ba576139898c0a5de47c431ce407f5450092d747ff1e2e8294c0f00365f1b6a5d005767f9bda4ec694d43c7cc956ed4b2edc982d657c42a8793f3b1a6c4be631b97fd791a8a5adc9f9f4e8660dcba865b679b012"
+	data, err := hex.DecodeString(RsaPublicKey)
 	if err != nil {
 		panic(err)
 	}
@@ -58,36 +58,36 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	if init_packet.sessionId != int32(0x7c610eca) {
+	if init_packet.SessionId != int32(0x7c610eca) {
 		t.Error("wrong session id")
 	}
 
-	if init_packet.protocolVersion != int32(0x0000c621) {
+	if init_packet.ProtocolVersion != int32(0x0000c621) {
 		t.Error("wrong protocol version")
 	}
 
 	expectedRsaPublicKey := ExpectedRsaPublicKey()
-	if !bytes.Equal(init_packet.rsaPublicKey, expectedRsaPublicKey) {
+	if !bytes.Equal(init_packet.RsaPublicKey, expectedRsaPublicKey) {
 		t.Error("wrong rsa public key")
 	}
 
-	if init_packet.gameGuard1 != int32(0x29dd954e) {
+	if init_packet.GameGuard1 != int32(0x29dd954e) {
 		t.Error("wrong game guard part 1")
 	}
 
-	if init_packet.gameGuard2 != int32(0x77c39cfc) {
+	if init_packet.GameGuard2 != int32(0x77c39cfc) {
 		t.Error("wrong game guard part 2")
 	}
 
-	if init_packet.gameGuard3 != ExpectedGameGuard3() {
+	if init_packet.GameGuard3 != ExpectedGameGuard3() {
 		t.Error("wrong game guard part 3")
 	}
 
-	if init_packet.gameGuard4 != int32(0x07bde0f7) {
+	if init_packet.GameGuard4 != int32(0x07bde0f7) {
 		t.Error("wrong game guard part 4")
 	}
 
-	if init_packet.blowfishKey != nil {
+	if init_packet.BlowfishKey != nil {
 		t.Error("expected no blowfish key, but got one")
 	}
 
@@ -99,17 +99,17 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 
 	stringRepresentation := init_packet.ToString()
 	t.Log(stringRepresentation)
-	if !strings.Contains(stringRepresentation, "blowfishKey: nil") {
-		t.Error("expected blowfishKey: nil")
+	if !strings.Contains(stringRepresentation, "BlowfishKey: nil") {
+		t.Error("expected BlowfishKey: nil")
 	}
 
 	blowFishKey := make([]byte, 21)
-	init_packet.blowfishKey = &blowFishKey
+	init_packet.BlowfishKey = &blowFishKey
 
 	stringRepresentation = init_packet.ToString()
 	t.Log(stringRepresentation)
-	if strings.Contains(stringRepresentation, "blowfishKey: nil") {
-		t.Error("expected blowfishKey: not nil, but got nil")
+	if strings.Contains(stringRepresentation, "BlowfishKey: nil") {
+		t.Error("expected BlowfishKey: not nil, but got nil")
 	}
 
 	encodedPacket1 := init_packet.NewInitPacket()

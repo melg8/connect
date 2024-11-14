@@ -12,51 +12,51 @@ import (
 )
 
 type InitPacket struct {
-	sessionId       int32
-	protocolVersion int32
-	rsaPublicKey    []byte
-	gameGuard1      int32
-	gameGuard2      int32
-	gameGuard3      int32
-	gameGuard4      int32
-	blowfishKey     *[]byte
+	SessionId       int32
+	ProtocolVersion int32
+	RsaPublicKey    []byte
+	GameGuard1      int32
+	GameGuard2      int32
+	GameGuard3      int32
+	GameGuard4      int32
+	BlowfishKey     *[]byte
 }
 
 func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	var result InitPacket
 	var err error
 	reader := packets.NewPacketReader(data)
-	result.sessionId, err = reader.ReadInt32()
+	result.SessionId, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
 
-	result.protocolVersion, err = reader.ReadInt32()
+	result.ProtocolVersion, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
 
-	result.rsaPublicKey, err = reader.ReadBytes(128)
+	result.RsaPublicKey, err = reader.ReadBytes(128)
 	if err != nil {
 		return nil, err
 	}
 
-	result.gameGuard1, err = reader.ReadInt32()
+	result.GameGuard1, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
 
-	result.gameGuard2, err = reader.ReadInt32()
+	result.GameGuard2, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
 
-	result.gameGuard3, err = reader.ReadInt32()
+	result.GameGuard3, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
 
-	result.gameGuard4, err = reader.ReadInt32()
+	result.GameGuard4, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	var blowFishKey []byte
 	blowFishKey, err = reader.ReadBytes(21)
 	if err == nil {
-		result.blowfishKey = &blowFishKey
+		result.BlowfishKey = &blowFishKey
 	}
 
 	return &result, nil
@@ -73,33 +73,33 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 func (p *InitPacket) NewInitPacket() []byte {
 	buffer := new(packets.PacketWriter)
 
-	buffer.WriteInt32(p.sessionId)
-	buffer.WriteInt32(p.protocolVersion)
-	buffer.WriteBytes(p.rsaPublicKey)
-	buffer.WriteInt32(p.gameGuard1)
-	buffer.WriteInt32(p.gameGuard2)
-	buffer.WriteInt32(p.gameGuard3)
-	buffer.WriteInt32(p.gameGuard4)
-	if p.blowfishKey != nil {
-		buffer.WriteBytes(*p.blowfishKey)
+	buffer.WriteInt32(p.SessionId)
+	buffer.WriteInt32(p.ProtocolVersion)
+	buffer.WriteBytes(p.RsaPublicKey)
+	buffer.WriteInt32(p.GameGuard1)
+	buffer.WriteInt32(p.GameGuard2)
+	buffer.WriteInt32(p.GameGuard3)
+	buffer.WriteInt32(p.GameGuard4)
+	if p.BlowfishKey != nil {
+		buffer.WriteBytes(*p.BlowfishKey)
 	}
 	return buffer.Bytes()
 }
 
 func (p *InitPacket) ToString() string {
 	result := "\nInitPacket:\n" +
-		"  sessionId: " + helpers.HexStringFromInt32(p.sessionId) +
-		"  protocolVersion: " + helpers.HexStringFromInt32(p.protocolVersion) +
-		"  rsaPublicKey: \n" + helpers.HexViewFrom(p.rsaPublicKey) +
-		"  gameGuard1: " + helpers.HexStringFromInt32(p.gameGuard1) +
-		"  gameGuard2: " + helpers.HexStringFromInt32(p.gameGuard2) +
-		"  gameGuard3: " + helpers.HexStringFromInt32(p.gameGuard3) +
-		"  gameGuard4: " + helpers.HexStringFromInt32(p.gameGuard4)
+		"  SessionId: " + helpers.HexStringFromInt32(p.SessionId) +
+		"  ProtocolVersion: " + helpers.HexStringFromInt32(p.ProtocolVersion) +
+		"  RsaPublicKey: \n" + helpers.HexViewFrom(p.RsaPublicKey) +
+		"  GameGuard1: " + helpers.HexStringFromInt32(p.GameGuard1) +
+		"  GameGuard2: " + helpers.HexStringFromInt32(p.GameGuard2) +
+		"  GameGuard3: " + helpers.HexStringFromInt32(p.GameGuard3) +
+		"  GameGuard4: " + helpers.HexStringFromInt32(p.GameGuard4)
 
-	if p.blowfishKey != nil {
-		result += "  blowfishKey: " + helpers.HexViewFrom(*p.blowfishKey)
+	if p.BlowfishKey != nil {
+		result += "  BlowfishKey: " + helpers.HexViewFrom(*p.BlowfishKey)
 	} else {
-		result += "  blowfishKey: " + "nil"
+		result += "  BlowfishKey: " + "nil"
 	}
 	return result
 }
