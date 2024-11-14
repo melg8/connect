@@ -97,13 +97,19 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 		t.Error("encoded packet is not equal to initial packet bin form")
 	}
 
+	stringRepresentation := init_packet.ToString()
+	t.Log(stringRepresentation)
+	if !strings.Contains(stringRepresentation, "blowfishKey: nil") {
+		t.Error("expected blowfishKey: nil")
+	}
+
 	blowFishKey := make([]byte, 21)
 	init_packet.blowfishKey = &blowFishKey
 
-	stringRepresentation := init_packet.ToString()
+	stringRepresentation = init_packet.ToString()
 	t.Log(stringRepresentation)
-	if !strings.Contains(stringRepresentation, "blowfishKey") {
-		t.Error("expected blowfish key in string representation")
+	if strings.Contains(stringRepresentation, "blowfishKey: nil") {
+		t.Error("expected blowfishKey: not nil, but got nil")
 	}
 
 	encodedPacket1 := init_packet.NewInitPacket()

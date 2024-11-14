@@ -84,10 +84,6 @@ func HexAsciiViewFrom(data []byte) string {
 	return sb.String()
 }
 
-func HexViewFrom(data []byte) string {
-	return HexViewFromWithLineSplit(data, 16)
-}
-
 func HexViewFromWithLineSplit(data []byte, lineLength int) string {
 	var sb strings.Builder
 	for i := 0; i < len(data); i += lineLength {
@@ -104,6 +100,19 @@ func HexViewFromWithLineSplit(data []byte, lineLength int) string {
 	return sb.String()
 }
 
+func HexViewFromWithoutLineSplit(data []byte) string {
+	var sb strings.Builder
+	for i := 0; i < len(data); i++ {
+		sb.WriteByte("0123456789abcdef"[data[i]>>4])
+		sb.WriteByte("0123456789abcdef"[data[i]&0xF])
+	}
+	return sb.String()
+}
+
+func HexViewFrom(data []byte) string {
+	return HexViewFromWithoutLineSplit(data)
+}
+
 func HexStringFromInt32(i int32) string {
 	bytes := []byte{
 		byte(i >> 24),
@@ -111,7 +120,7 @@ func HexStringFromInt32(i int32) string {
 		byte(i >> 8),
 		byte(i),
 	}
-	return HexViewFrom(bytes)
+	return HexViewFromWithoutLineSplit(bytes)
 }
 
 func ShowAsHexAndAscii(data []byte) {
@@ -119,5 +128,5 @@ func ShowAsHexAndAscii(data []byte) {
 }
 
 func ShowAsHexView(data []byte) {
-	fmt.Println(HexViewFrom(data))
+	fmt.Println(HexViewFromWithoutLineSplit(data))
 }

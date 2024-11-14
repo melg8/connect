@@ -44,8 +44,11 @@ func (r *PacketReader) ReadInt64() (int64, error) {
 func (r *PacketReader) ReadInt32() (int32, error) {
 	var buf [4]byte
 	n, err := r.Read(buf[:])
-	if err != nil || n != 4 {
+	if err != nil {
 		return 0, err
+	}
+	if n != 4 {
+		return 0, errors.New("error: PacketReader.ReadInt32 not enough bytes to read")
 	}
 	result := int32(buf[3])<<24 |
 		(int32(buf[2]) << 16) |

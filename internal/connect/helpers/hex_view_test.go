@@ -18,15 +18,19 @@ func textDiff(a, b string) string {
 	return dmp.DiffPrettyText(diffs)
 }
 
-func testDataString() string {
+func testDataString(withSplits bool) string {
 	line0 := "000102030405060708090a0b0c0d0e0f"
 	line1 := "101112131415161718191a1b1c1d1e1f"
 	line2 := "202122232425262728292a2b2c2d2e" // Intentionally one byte short
+
+	if withSplits {
+		return line0 + "\n" + line1 + "\n" + line2 + "  \n"
+	}
 	return line0 + line1 + line2
 }
 
-func testData() []byte {
-	data, err := hex.DecodeString(testDataString())
+func testData(withSplits bool) []byte {
+	data, err := hex.DecodeString(testDataString(withSplits))
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +46,7 @@ func TestHexViewEmptyData(t *testing.T) {
 }
 
 func TestHexAsciiView(t *testing.T) {
-	testData := testData()
+	testData := testData(false)
 	result := HexAsciiViewFrom(testData)
 
 	line1 := "0000: 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f  ................\n"
@@ -57,13 +61,23 @@ func TestHexAsciiView(t *testing.T) {
 }
 
 func TestShowAsHexAndAscii(t *testing.T) {
-	ShowAsHexAndAscii(testData())
+	ShowAsHexAndAscii(testData(false))
 }
 
 func TestHexView(t *testing.T) {
-	testData := testData()
+	testData := testData(false)
 	result := HexViewFrom(testData)
-	expected := testDataString()
+	expected := testDataString(false)
+
+	if result != expected {
+		t.Errorf("Got different output:\n%s", textDiff(result, expected))
+	}
+}
+
+func TestHexViewWithSplits(t *testing.T) {
+	testData := testData(false)
+	result := HexViewFromWithLineSplit(testData, 16)
+	expected := testDataString(true)
 
 	if result != expected {
 		t.Errorf("Got different output:\n%s", textDiff(result, expected))
@@ -71,7 +85,7 @@ func TestHexView(t *testing.T) {
 }
 
 func TestShowAsHex(t *testing.T) {
-	ShowAsHexView(testData())
+	ShowAsHexView(testData(false))
 }
 
 func TestStringToHexAndAscii(t *testing.T) {
