@@ -42,11 +42,15 @@ func (r *PacketReader) ReadInt64() (int64, error) {
 }
 
 func (r *PacketReader) ReadInt32() (int32, error) {
-	var result int32
-	err := binary.Read(r, binary.LittleEndian, &result)
-	if err != nil {
+	var buf [4]byte
+	n, err := r.Read(buf[:])
+	if err != nil || n != 4 {
 		return 0, err
 	}
+	result := int32(buf[3])<<24 |
+		(int32(buf[2]) << 16) |
+		(int32(buf[1]) << 8) |
+		int32(buf[0])
 	return result, nil
 }
 
