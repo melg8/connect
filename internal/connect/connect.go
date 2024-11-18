@@ -40,6 +40,40 @@ func (p *AuthProtocol) Run() {
 	}
 }
 
+type AuthDataReciever struct {
+	conn        net.Conn
+	dataChannel chan []byte
+}
+
+func NewAuthDataReciever(conn net.Conn) *AuthDataReciever {
+	return &AuthDataReciever{conn: conn}
+}
+
+func (r *AuthDataReciever) Run() {
+	for {
+		for {
+			buf := make([]byte, 1024)
+			fmt.Println("Reading from connection")
+			n, err := r.conn.Read(buf)
+			fmt.Println("Read " + fmt.Sprint(n) + " bytes")
+			if err == io.EOF {
+				fmt.Println("Server doesn't send any more data")
+				break
+			} else if err != nil {
+				fmt.Printf("Error reading from connection: %v\n", err)
+				return
+			}
+			fmt.Println("Received packet from login server:")
+			r.dataChannel <- buf[:n]
+		}
+		fmt.Println("Connection closed")
+	}
+}
+
+func (r *AuthDataReciever) Stop() {
+	r.conn.Close()
+}
+
 func Authentificate(conn net.Conn) {
 	defer conn.Close()
 	fmt.Println("Connected to server. Waiting for data")
@@ -74,16 +108,16 @@ type ConnectionRequest struct {
 // https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/
 // core/java/net/sf/l2j/util/IPv4Filter.java#L88
 
-type AuthServerConnectionProvider struct {
+type RateLimitedConnector struct {
 	serverAddress string
 	requests      chan ConnectionRequest
-	done          <-chan struct{}
+	done          chan struct{}
 	lastConnTime  time.Time
 	timeout       time.Duration
 }
 
-func NewAuthServerConnectionProvider(serverAddress string) *AuthServerConnectionProvider {
-	return &AuthServerConnectionProvider{
+func NewRateLimitedConnector(serverAddress string) *RateLimitedConnector {
+	return &RateLimitedConnector{
 		serverAddress: serverAddress,
 		requests:      make(chan ConnectionRequest, 100),
 		lastConnTime:  time.Now().Add(time.Second * -2),
@@ -91,61 +125,67 @@ func NewAuthServerConnectionProvider(serverAddress string) *AuthServerConnection
 	}
 }
 
-func (p *AuthServerConnectionProvider) Start() {
+func (c *RateLimitedConnector) Start() {
 	go func() {
-		for request := range p.requests {
+		for request := range c.requests {
 			select {
-			case <-p.done:
+			case <-c.done:
 				return
 			default:
-				p.openConnection(request.conn)
+				c.openConnection(request.conn)
 			}
 		}
 	}()
 }
 
-func (p *AuthServerConnectionProvider) RequestConnection() chan net.Conn {
+func (c *RateLimitedConnector) Stop() {
+	go func() {
+		c.done <- struct{}{}
+	}()
+}
+
+func (c *RateLimitedConnector) RequestConnection() chan net.Conn {
 	requested := make(chan net.Conn)
-	p.requests <- ConnectionRequest{conn: requested}
+	c.requests <- ConnectionRequest{conn: requested}
 	return requested
 }
 
-func (p *AuthServerConnectionProvider) openConnection(requested_conn chan net.Conn) {
+func (c *RateLimitedConnector) openConnection(requested_conn chan net.Conn) {
 	for {
 		select {
-		case <-p.done:
+		case <-c.done:
 			return
 		default:
 			now := time.Now()
-			fmt.Println("Passed " + now.Sub(p.lastConnTime).String() +
+			fmt.Println("Passed " + now.Sub(c.lastConnTime).String() +
 				" from last attempt to connect to server")
-			if now.Sub(p.lastConnTime) >= p.timeout {
-				fmt.Println("Connecting to server: " + p.serverAddress + " time: " + now.String())
-				conn, err := net.DialTimeout("tcp", p.serverAddress, time.Second)
+			if now.Sub(c.lastConnTime) >= c.timeout {
+				fmt.Println("Connecting to server: " + c.serverAddress + " time: " + now.String())
+				conn, err := net.DialTimeout("tcp", c.serverAddress, time.Second)
 				if err != nil {
 					fmt.Printf("Error connecting to server: %v\n", err)
-					time.Sleep(p.timeout)
+					time.Sleep(c.timeout)
 					continue
 				}
-				p.lastConnTime = now
-				fmt.Println("Connected to server: " + p.serverAddress)
+				c.lastConnTime = now
+				fmt.Println("Connected to server: " + c.serverAddress)
 				requested_conn <- conn
 				fmt.Println("Connection to server send to requestor")
 				return
 			} else {
 				fmt.Println("Sleeping for 1 sec")
-				time.Sleep(p.timeout)
+				time.Sleep(c.timeout)
 			}
 		}
 	}
 }
 
 type GameServerConnector struct {
-	auth_provider *AuthServerConnectionProvider
+	auth_provider *RateLimitedConnector
 	conn_retries  int
 }
 
-func NewGameServerConnector(auth_provider *AuthServerConnectionProvider) *GameServerConnector {
+func NewGameServerConnector(auth_provider *RateLimitedConnector) *GameServerConnector {
 	return &GameServerConnector{auth_provider: auth_provider, conn_retries: 2}
 }
 
@@ -159,12 +199,40 @@ func (c *GameServerConnector) Start() {
 	}()
 }
 
-func StartBotsAt(address string, count int) {
-	provider := NewAuthServerConnectionProvider(address)
+func (c *GameServerConnector) Stop() {
+	c.auth_provider.done <- struct{}{}
+}
+
+type MultiAuth struct {
+	provider   *RateLimitedConnector
+	connectors []*GameServerConnector
+}
+
+func NewMultiAuth(address string, count int) *MultiAuth {
+	provider := NewRateLimitedConnector(address)
 	connectors := make([]*GameServerConnector, count)
 	for i := 0; i < count; i++ {
 		connectors[i] = NewGameServerConnector(provider)
-		connectors[i].Start()
 	}
-	provider.Start()
+	return &MultiAuth{provider: provider, connectors: connectors}
+}
+
+func (multiAuth *MultiAuth) Start() {
+	for _, connector := range multiAuth.connectors {
+		connector.Start()
+	}
+	multiAuth.provider.Start()
+}
+
+func (m *MultiAuth) Stop() {
+	m.provider.Stop()
+	for _, connector := range m.connectors {
+		connector.Stop()
+	}
+}
+
+func StartBotsAt(address string, count int) *MultiAuth {
+	multiAuth := NewMultiAuth(address, count)
+	multiAuth.Start()
+	return multiAuth
 }

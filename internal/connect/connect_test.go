@@ -50,6 +50,23 @@ func TestConnect(t *testing.T) {
 	t.Run("invalid address", func(t *testing.T) {
 		StartBotsAt("invalid-address", 1)
 	})
+
+	// t.Run("explicit shutdown", func(t *testing.T) {
+	// 	ln, err := net.Listen("tcp", "localhost:2112")
+	// 	if err != nil {
+	// 		t.Fatal(err)
+	// 	}
+	// 	defer ln.Close()
+	// 	go func() {
+	// 		conn, err := ln.Accept()
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 		defer conn.Close()
+	// 	}()
+	// 	multiAuth := StartBotsAt(ln.Addr().String(), 1)
+	// 	multiAuth.Stop()
+	// })
 }
 
 // 	// Test connection failure due to timeout
