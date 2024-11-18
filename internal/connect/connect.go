@@ -37,11 +37,6 @@ func (p *AuthProtocol) Run() {
 		if err == nil {
 			fmt.Println(initPacket.ToString())
 		}
-
-		initPacketString, err := initPacket.AsJson()
-		if err == nil {
-			fmt.Println(initPacketString)
-		}
 	}
 }
 

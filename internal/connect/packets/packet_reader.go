@@ -33,11 +33,22 @@ func (r *PacketReader) ReadBytes(number int) ([]byte, error) {
 }
 
 func (r *PacketReader) ReadInt64() (int64, error) {
-	var result int64
-	err := binary.Read(r, binary.LittleEndian, &result)
+	var buf [8]byte
+	n, err := r.Read(buf[:])
 	if err != nil {
 		return 0, err
 	}
+	if n != 8 {
+		return 0, errors.New("error: PacketReader.ReadInt64 not enough bytes to read")
+	}
+	result := int64(buf[7])<<56 |
+		(int64(buf[6]) << 48) |
+		(int64(buf[5]) << 40) |
+		(int64(buf[4]) << 32) |
+		(int64(buf[3]) << 24) |
+		(int64(buf[2]) << 16) |
+		(int64(buf[1]) << 8) |
+		int64(buf[0])
 	return result, nil
 }
 

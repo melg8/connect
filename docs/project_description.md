@@ -51,3 +51,28 @@ Scenario: siege with 100 concurrent bots. If bots are close to eachother (within
 - Program should not rely on any of its bots having non "user" type of right on server. So no "gm" mode bots.
 
 - Currently all bot logic supposed to be implemented in go language as well and statically linked into final application. So no support of bot scripts in different language. Probably no even hot reload of bots logic, but i will need to look into this more closely, maybe some support of hot reloading of go code or alternatively - behavior code as microservice with reloading it wihtout losing connection of bot to game might be possible.
+
+
+## Concrete examples of what should be possible
+1. Alot of separate characters farming on their own 1-21 lvl for example.
+2. Small groups of character farming together like 2-3 characters in same location.
+3. Full party farming together as synchronized unit of work.
+4. Several parties together (3 for example) farming minibosses.
+5. 8 or more parties participating together in epic boss or castle battle.
+
+Uknowns but assumed:
+1. thread should be able to hold and calculate up to 9 characters at time.
+
+
+Ideas:
+1. Most of time (from 21 till 78) leveling process is in party setting.
+
+Questions
+1. How detalized i want bot management be on larger scales?
+
+
+Fun epic movements:
+1. All 9 of characters emote attack and engage soulshots when their hand in top most position.
+
+Usefull synchronization:
+Burst damage - melee get close to target, ranges get into attack range. Casters begin to cast spells, in moment of spell hitting target - mele also hit target.
