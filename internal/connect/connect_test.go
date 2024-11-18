@@ -1,10 +1,20 @@
 package connect
 
 import (
+	"encoding/hex"
 	"fmt"
 	"net"
 	"testing"
 )
+
+func InitPacketData() []byte {
+	packet := "9f0000d1bbdc3821c600000311866bd523c9cadaca10db1bd8782447d22d7a6fbb5ba84e933b54fc6ecb1e8d32b5f2a7a582776052374c722bae5dd2ee0805da8dcb8328fd3ba4e2a57a52ca5f99fa9c1f5d21e2877a9d3266e27c9c34d6c75f556138bcb985f3019bb62644d6fc93d14d4c54091e5d1826f57db183ad3944ee2f04d4710cd8aabeb15df14e95dd29fc9cc37720b6ad97f7e0bd0700000000"
+	data, err := hex.DecodeString(packet)
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
 
 func TestConnect(t *testing.T) {
 	t.Run("successful connection", func(t *testing.T) {
@@ -21,7 +31,7 @@ func TestConnect(t *testing.T) {
 				panic(err)
 			}
 			defer conn.Close()
-			_, err = conn.Write([]byte("Hello, client!"))
+			_, err = conn.Write(InitPacketData())
 			if err != nil {
 				panic(err)
 			}

@@ -128,8 +128,24 @@ func TestPacketReaderReadInt64Error(t *testing.T) {
 	}
 }
 
+func TestPacketReaderReadInt64Error1(t *testing.T) {
+	reader := NewPacketReader([]byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07})
+	_, err := reader.ReadInt64()
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
 func TestPacketReaderReadInt32Error(t *testing.T) {
 	reader := NewPacketReader([]byte{})
+	_, err := reader.ReadInt32()
+	if err == nil {
+		t.Errorf("Expected error, got nil")
+	}
+}
+
+func TestPacketReaderReadInt32Error1(t *testing.T) {
+	reader := NewPacketReader([]byte{0x01, 0x02, 0x03})
 	_, err := reader.ReadInt32()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
