@@ -79,14 +79,14 @@ func (p *InitPacket) ToString() string {
 	result := "\nInitPacket:" +
 		"\n  SessionId: " + helpers.HexStringFromInt32(p.SessionId) +
 		"\n  ProtocolVersion: " + helpers.HexStringFromInt32(p.ProtocolVersion) +
-		"\n  RsaPublicKey: \n" + helpers.HexViewFromWithLineSplit(p.RsaPublicKey, 16) +
+		"\n  RsaPublicKey: \n" + helpers.HexViewFromWithLineSplit(p.RsaPublicKey, 16, "    ") +
 		"\n  GameGuard1: " + helpers.HexStringFromInt32(p.GameGuard1) +
 		"\n  GameGuard2: " + helpers.HexStringFromInt32(p.GameGuard2) +
 		"\n  GameGuard3: " + helpers.HexStringFromInt32(p.GameGuard3) +
 		"\n  GameGuard4: " + helpers.HexStringFromInt32(p.GameGuard4)
 
 	if p.BlowfishKey != nil {
-		result += "\n  BlowfishKey: \n" + helpers.HexViewFromWithLineSplit(*p.BlowfishKey, 16)
+		result += "\n  BlowfishKey: \n" + helpers.HexViewFromWithLineSplit(*p.BlowfishKey, 16, "    ")
 	} else {
 		result += "\n  BlowfishKey: " + "nil"
 	}

@@ -84,9 +84,10 @@ func HexAsciiViewFrom(data []byte) string {
 	return sb.String()
 }
 
-func HexViewFromWithLineSplit(data []byte, lineLength int) string {
+func HexViewFromWithLineSplit(data []byte, lineLength int, beforeLine string) string {
 	var sb strings.Builder
 	for i := 0; i < len(data); i += lineLength {
+		sb.WriteString(beforeLine)
 		for j := 0; j < lineLength; j++ {
 			if i+j < len(data) {
 				sb.WriteByte("0123456789abcdef"[data[i+j]>>4])
