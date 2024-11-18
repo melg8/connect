@@ -28,49 +28,40 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	result.ProtocolVersion, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
-
 	result.RsaPublicKey, err = reader.ReadBytes(128)
 	if err != nil {
 		return nil, err
 	}
-
 	result.GameGuard1, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
-
 	result.GameGuard2, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
-
 	result.GameGuard3, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
-
 	result.GameGuard4, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
-
 	var blowFishKey []byte
 	blowFishKey, err = reader.ReadBytes(21)
 	if err == nil {
 		result.BlowfishKey = &blowFishKey
 	}
-
 	return &result, nil
 }
 
 func (p *InitPacket) NewInitPacket() []byte {
 	buffer := new(packets.PacketWriter)
-
 	buffer.WriteInt32(p.SessionId)
 	buffer.WriteInt32(p.ProtocolVersion)
 	buffer.WriteBytes(p.RsaPublicKey)

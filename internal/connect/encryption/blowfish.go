@@ -50,7 +50,7 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 	}
 
 	decrypted := make([]byte, len)
-	count := len / 8
+	count := len / cipher.BlockSize()
 
 	for i := 0; i < count; i++ {
 		cipher.Decrypt(decrypted[i*8:], encrypted[i*8:])
