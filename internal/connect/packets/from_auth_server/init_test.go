@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
+// SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -137,5 +137,83 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 	stringRepresentation := init_packet.ToString()
 	if strings.Contains(stringRepresentation, "BlowfishKey: nil") {
 		t.Error("expected BlowfishKey to be non-nil")
+	}
+}
+
+func TestInitPacketToString(t *testing.T) {
+	packetBin := InitPacketData()
+	init_packet, err := NewInitPacketFromBytes(packetBin)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	str := init_packet.ToString()
+
+	// Check that key components are present in the string representation
+	expectedParts := []string{
+		"InitPacket:",
+		"SessionID:",
+		"ProtocolVersion:",
+		"RsaPublicKey:",
+		"GameGuard1:",
+		"GameGuard2:",
+		"GameGuard3:",
+		"GameGuard4:",
+	}
+
+	for _, part := range expectedParts {
+		if !strings.Contains(str, part) {
+			t.Errorf("ToString() output missing expected part: %s", part)
+		}
+	}
+}
+
+func TestInitPacketEncodingErrors(t *testing.T) {
+	// Create a packet with an invalid RSA key length
+	invalidPacket := &InitPacket{
+		SessionID:       0x7c610eca,
+		ProtocolVersion: 0x0000c621,
+		RsaPublicKey:    make([]byte, 64), // Invalid length, should be 128
+		GameGuard1:      0x29dd954e,
+		GameGuard2:      0x77c39cfc,
+		GameGuard3:      ExpectedGameGuard3(),
+		GameGuard4:      0x07bde0f7,
+	}
+
+	_, err := invalidPacket.NewInitPacket()
+	if err == nil {
+		t.Error("Expected error for invalid RSA key length, got nil")
+	}
+}
+
+func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
+	blowfishKey := []byte("test-blowfish-key-123")
+	packet := &InitPacket{
+		SessionID:       0x7c610eca,
+		ProtocolVersion: 0x0000c621,
+		RsaPublicKey:    ExpectedRsaPublicKey(),
+		GameGuard1:      0x29dd954e,
+		GameGuard2:      0x77c39cfc,
+		GameGuard3:      ExpectedGameGuard3(),
+		GameGuard4:      0x07bde0f7,
+		BlowfishKey:     &blowfishKey,
+	}
+
+	encoded, err := packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err := NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decoded.BlowfishKey == nil {
+		t.Error("Expected BlowfishKey to be present in decoded packet")
+	}
+
+	if !bytes.Equal(*decoded.BlowfishKey, blowfishKey) {
+		t.Error("Decoded BlowfishKey does not match original")
 	}
 }

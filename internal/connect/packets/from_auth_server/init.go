@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
 package from_auth_server
 
 import (
+	"fmt"
 	"github.com/melg8/connect/internal/connect/helpers"
 	"github.com/melg8/connect/internal/connect/packets"
 )
@@ -61,6 +62,10 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 }
 
 func (p *InitPacket) NewInitPacket() ([]byte, error) {
+	if len(p.RsaPublicKey) != 128 {
+		return nil, fmt.Errorf("invalid RSA public key length: expected 128 bytes, got %d bytes", len(p.RsaPublicKey))
+	}
+	
 	buffer := new(packets.PacketWriter)
 	if err := buffer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
