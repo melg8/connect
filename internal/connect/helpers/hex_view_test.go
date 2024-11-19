@@ -19,7 +19,6 @@ func textDiff(a, b string) string {
 }
 
 func testDataString(withSplits bool) string {
-
 	line0 := "000102030405060708090a0b0c0d0e0f"
 	line1 := "101112131415161718191a1b1c1d1e1f"
 	line2 := "202122232425262728292a2b2c2d2e" // Intentionally one byte short

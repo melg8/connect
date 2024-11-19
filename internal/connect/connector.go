@@ -93,6 +93,7 @@ func (c *RetryConnector) Connect() (net.Conn, error) {
 			if r > 1 {
 				log.Println("Retrying connection...")
 			}
+
 			continue
 		}
 		return conn, nil

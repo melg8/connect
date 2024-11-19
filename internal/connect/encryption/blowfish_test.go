@@ -45,7 +45,7 @@ func TestBlowFishEmptyKey(t *testing.T) {
 	}
 }
 
-// Test BlowFish nil key
+// Test BlowFish nil key.
 func TestBlowFishNilKey(t *testing.T) {
 	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
 	_, err := NewBlowFishKey(nil).Decrypt(encryptedData)
