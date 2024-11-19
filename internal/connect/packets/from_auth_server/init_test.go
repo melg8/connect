@@ -46,6 +46,7 @@ func ExpectedRsaPublicKey() []byte {
 }
 
 func convertBytesToInt32BigEndian(bytes []byte) int32 {
+	//nolint:gosec // G115: Intentionally converting uint32 to int32 for test purposes
 	return int32(binary.BigEndian.Uint32(bytes))
 }
 
