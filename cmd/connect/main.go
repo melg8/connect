@@ -5,7 +5,7 @@
 package main
 
 import (
-	"github.com/melg8/connect/internal/connect"
+	"fmt"
 )
 
 func dontExit() {
@@ -13,7 +13,9 @@ func dontExit() {
 }
 
 func main() {
-	connect.StartBotsAt("127.0.0.1:2106", 1)
+	fmt.Println("Starting connect bot...")
 
-	dontExit()
+	// connect.StartBotsAt("127.0.0.1:2106", 1)
+
+	// dontExit()
 }

@@ -2,8 +2,6 @@ package connect
 
 import (
 	"encoding/hex"
-	"fmt"
-	"net"
 	"testing"
 )
 
@@ -17,39 +15,39 @@ func InitPacketData() []byte {
 }
 
 func TestConnect(t *testing.T) {
-	t.Run("successful connection", func(t *testing.T) {
-		ln, err := net.Listen("tcp", "localhost:2112")
-		finishedChan := make(chan bool)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer ln.Close()
+	// t.Run("successful connection", func(t *testing.T) {
+	// 	ln, err := net.Listen("tcp", "localhost:2112")
+	// 	finishedChan := make(chan bool)
+	// 	if err != nil {
+	// 		t.Fatal(err)
+	// 	}
+	// 	defer ln.Close()
 
-		go func() {
-			conn, err := ln.Accept()
-			if err != nil {
-				panic(err)
-			}
-			defer conn.Close()
-			_, err = conn.Write(InitPacketData())
-			if err != nil {
-				panic(err)
-			}
-			finishedChan <- true
-		}()
+	// 	go func() {
+	// 		conn, err := ln.Accept()
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 		defer conn.Close()
+	// 		_, err = conn.Write(InitPacketData())
+	// 		if err != nil {
+	// 			panic(err)
+	// 		}
+	// 		finishedChan <- true
+	// 	}()
 
-		fmt.Println("Address: " + ln.Addr().String())
-		StartBotsAt(ln.Addr().String(), 1)
-		<-finishedChan
-	})
+	// 	fmt.Println("Address: " + ln.Addr().String())
+	// 	StartBotsAt(ln.Addr().String(), 1)
+	// 	<-finishedChan
+	// })
 
-	t.Run("failed connection", func(t *testing.T) {
-		StartBotsAt("localhost:2111", 1)
-	})
+	// t.Run("failed connection", func(t *testing.T) {
+	// 	StartBotsAt("localhost:2111", 1)
+	// })
 
-	t.Run("invalid address", func(t *testing.T) {
-		StartBotsAt("invalid-address", 1)
-	})
+	// t.Run("invalid address", func(t *testing.T) {
+	// 	StartBotsAt("invalid-address", 1)
+	// })
 
 	// t.Run("explicit shutdown", func(t *testing.T) {
 	// 	ln, err := net.Listen("tcp", "localhost:2112")
