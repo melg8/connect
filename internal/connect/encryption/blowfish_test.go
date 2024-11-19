@@ -5,6 +5,7 @@
 package encryption
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -26,9 +27,9 @@ func TestBlowFishDataNotMultipleOf8(t *testing.T) {
 	if err == nil {
 		t.Fatal("Decryption should have failed on data not multiple of 8")
 	}
-	if err.Error() != "encrypted data is not a multiple of 8" {
-		t.Fatal("Error message should be 'encrypted data is not a multiple of 8', got: ",
-			err.Error())
+	expectedPrefix := "encrypted data length must be a multiple of 8"
+	if !strings.HasPrefix(err.Error(), expectedPrefix) {
+		t.Fatalf("Error message should start with '%s', got: %s", expectedPrefix, err.Error())
 	}
 }
 
@@ -86,9 +87,9 @@ func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 	if err == nil {
 		t.Fatal("Encryption should have failed on data not multiple of 8")
 	}
-	if err.Error() != "data length must be a multiple of 8" {
-		t.Fatal("Error message should be 'data length must be a multiple of 8', got: ",
-			err.Error())
+	expectedPrefix := "data length must be a multiple of 8"
+	if !strings.HasPrefix(err.Error(), expectedPrefix) {
+		t.Fatalf("Error message should start with '%s', got: %s", expectedPrefix, err.Error())
 	}
 }
 

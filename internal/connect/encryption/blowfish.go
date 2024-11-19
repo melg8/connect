@@ -6,6 +6,7 @@ package encryption
 
 import (
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/blowfish"
 )
@@ -40,20 +41,21 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 		return nil, errors.New("encrypted data is empty")
 	}
 
-	if len%8 != 0 {
-		return nil, errors.New("encrypted data is not a multiple of 8")
-	}
-
 	cipher, err := blowfish.NewCipher(b.key)
 	if err != nil {
 		return nil, errors.New("failed to initialize blowfish")
 	}
 
+	blockSize := cipher.BlockSize()
+	if len%blockSize != 0 {
+		return nil, fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, len)
+	}
+
 	decrypted := make([]byte, len)
-	count := len / cipher.BlockSize()
+	count := len / blockSize
 
 	for i := 0; i < count; i++ {
-		cipher.Decrypt(decrypted[i*8:], encrypted[i*8:])
+		cipher.Decrypt(decrypted[i*blockSize:], encrypted[i*blockSize:])
 	}
 
 	return decrypted, nil
@@ -69,20 +71,21 @@ func (b *BlowFishKey) Encrypt(data []byte) ([]byte, error) {
 		return nil, errors.New("data is empty")
 	}
 
-	if len%8 != 0 {
-		return nil, errors.New("data length must be a multiple of 8")
-	}
-
 	cipher, err := blowfish.NewCipher(b.key)
 	if err != nil {
 		return nil, errors.New("failed to initialize blowfish")
 	}
 
+	blockSize := cipher.BlockSize()
+	if len%blockSize != 0 {
+		return nil, fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, len)
+	}
+
 	encrypted := make([]byte, len)
-	count := len / cipher.BlockSize()
+	count := len / blockSize
 
 	for i := 0; i < count; i++ {
-		cipher.Encrypt(encrypted[i*8:], data[i*8:])
+		cipher.Encrypt(encrypted[i*blockSize:], data[i*blockSize:])
 	}
 
 	return encrypted, nil
