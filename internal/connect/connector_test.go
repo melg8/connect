@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Mock connector for testing
+// Mock connector for testing.
 type mockConnector struct {
 	address     string
 	shouldFail  bool
