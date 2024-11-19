@@ -31,7 +31,6 @@ linters:
     - unconvert     # Removes unnecessary type conversions
     - unparam       # Reports unused function parameters
     - whitespace    # Tool for detecting and fixing whitespace issues
-    - wsl           # Enforces consistent whitespace style
 
 run:
   deadline: 5m

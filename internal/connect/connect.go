@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
 
 	"github.com/melg8/connect/internal/connect/helpers"
@@ -30,7 +31,7 @@ func (p *AuthProtocol) Run() {
 		initPacketData := data[3 : len(data)-4]
 		initPacket, err := from_auth_server.NewInitPacketFromBytes(initPacketData)
 		if err == nil {
-			fmt.Println(initPacket.ToString())
+			log.Println(initPacket.ToString())
 		}
 	}
 }
@@ -48,20 +49,20 @@ func (r *AuthDataReciever) Run() {
 	for {
 		for {
 			buf := make([]byte, 1024)
-			fmt.Println("Reading from connection")
+			log.Println("Reading from connection")
 			bytesRead, err := r.conn.Read(buf)
-			fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
+			log.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
 			if errors.Is(err, io.EOF) {
-				fmt.Println("Server doesn't send any more data")
+				log.Println("Server doesn't send any more data")
 				break
 			} else if err != nil {
-				fmt.Printf("Error reading from connection: %v\n", err)
+				log.Printf("Error reading from connection: %v\n", err)
 				return
 			}
-			fmt.Println("Received packet from login server:")
+			log.Println("Received packet from login server:")
 			r.dataChannel <- buf[:bytesRead]
 		}
-		fmt.Println("Connection closed")
+		log.Println("Connection closed")
 	}
 }
 
@@ -71,7 +72,7 @@ func (r *AuthDataReciever) Stop() {
 
 func Authentificate(conn net.Conn) {
 	defer conn.Close()
-	fmt.Println("Connected to server. Waiting for data")
+	log.Println("Connected to server. Waiting for data")
 	dataChannel := make(chan []byte)
 	protocol := NewAuthProtocol(dataChannel, conn)
 
@@ -79,18 +80,18 @@ func Authentificate(conn net.Conn) {
 
 	for {
 		buf := make([]byte, 1024)
-		fmt.Println("Reading from connection")
+		log.Println("Reading from connection")
 		bytesRead, err := conn.Read(buf)
-		fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
+		log.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
 		if errors.Is(err, io.EOF) {
-			fmt.Println("Server doesn't send any more data")
+			log.Println("Server doesn't send any more data")
 			break
 		} else if err != nil {
-			fmt.Printf("Error reading from connection: %v\n", err)
+			log.Printf("Error reading from connection: %v\n", err)
 			return
 		}
-		fmt.Println("Received packet from login server:")
+		log.Println("Received packet from login server:")
 		dataChannel <- buf[:bytesRead]
 	}
-	fmt.Println("Connection closed")
+	log.Println("Connection closed")
 }

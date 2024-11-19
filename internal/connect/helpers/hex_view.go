@@ -5,7 +5,7 @@
 package helpers
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"strings"
 )
@@ -125,9 +125,9 @@ func HexStringFromInt32(i int32) string {
 }
 
 func ShowAsHexAndASCII(data []byte) {
-	fmt.Println(HexASCIIViewFrom(data))
+	log.Println(HexASCIIViewFrom(data))
 }
 
 func ShowAsHexView(data []byte) {
-	fmt.Println(HexViewFromWithoutLineSplit(data))
+	log.Println(HexViewFromWithoutLineSplit(data))
 }

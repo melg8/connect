@@ -4,16 +4,14 @@
 
 package main
 
-import (
-	"fmt"
-)
+import "log"
 
 // func dontExit() {
 // 	select {}
 // }
 
 func main() {
-	fmt.Println("Starting connect bot...")
+	log.Println("Starting connect bot...")
 
 	// connect.StartBotsAt("127.0.0.1:2106", 1)
 
