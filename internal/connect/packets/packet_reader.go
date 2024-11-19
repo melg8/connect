@@ -88,6 +88,7 @@ func (r *PacketReader) ReadInt8() (int8, error) {
 
 func (r *PacketReader) ReadStringFromUtf16Format() (string, error) {
 	var data []byte
+
 	for {
 		firstByte, err := r.ReadByte()
 		if err != nil {
@@ -100,12 +101,13 @@ func (r *PacketReader) ReadStringFromUtf16Format() (string, error) {
 		if firstByte == 0 && secondByte == 0 {
 			break
 		}
+
 		data = append(data, firstByte, secondByte)
 	}
 	decoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
 	decodedString, err := decoder.String(string(data))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return decodedString, nil
 }

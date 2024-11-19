@@ -43,6 +43,7 @@ func (b *PacketWriter) WriteStringAsUtf16(value string) error {
 	for _, r := range value {
 		bytes = append(bytes, byte(r), byte(0))
 	}
+
 	bytes = append(bytes, 0, 0)
 	return b.WriteBytes(bytes)
 }

@@ -23,6 +23,7 @@ func dataForBenchmark() []byte {
 
 func BenchmarkInitPacketParsing(b *testing.B) {
 	data := dataForBenchmark()
+
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {

@@ -24,7 +24,9 @@ type InitPacket struct {
 
 func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	var result InitPacket
+
 	var err error
+
 	reader := packets.NewPacketReader(data)
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
@@ -54,6 +56,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	var blowFishKey []byte
 	blowFishKey, err = reader.ReadBytes(21)
 	if err == nil {

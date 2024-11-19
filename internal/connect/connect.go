@@ -5,6 +5,7 @@
 package connect
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -50,7 +51,7 @@ func (r *AuthDataReciever) Run() {
 			fmt.Println("Reading from connection")
 			bytesRead, err := r.conn.Read(buf)
 			fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				fmt.Println("Server doesn't send any more data")
 				break
 			} else if err != nil {
@@ -73,6 +74,7 @@ func Authentificate(conn net.Conn) {
 	fmt.Println("Connected to server. Waiting for data")
 	dataChannel := make(chan []byte)
 	protocol := NewAuthProtocol(dataChannel, conn)
+
 	go protocol.Run()
 
 	for {
@@ -80,7 +82,7 @@ func Authentificate(conn net.Conn) {
 		fmt.Println("Reading from connection")
 		bytesRead, err := conn.Read(buf)
 		fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			fmt.Println("Server doesn't send any more data")
 			break
 		} else if err != nil {

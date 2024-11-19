@@ -258,6 +258,7 @@ func TestNewInitPacketFromBytesFieldErrors(t *testing.T) {
 	}
 
 	fullPacket := InitPacketData()
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			partialData := fullPacket[:tc.size]
