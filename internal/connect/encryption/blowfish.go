@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -57,4 +57,33 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 	}
 
 	return decrypted, nil
+}
+
+func (b *BlowFishKey) Encrypt(data []byte) ([]byte, error) {
+	if b == nil || b.key == nil {
+		return nil, errors.New("BlowFishKey or key is nil")
+	}
+
+	len := len(data)
+	if len == 0 {
+		return nil, errors.New("data is empty")
+	}
+
+	if len%8 != 0 {
+		return nil, errors.New("data length must be a multiple of 8")
+	}
+
+	cipher, err := blowfish.NewCipher(b.key)
+	if err != nil {
+		return nil, errors.New("failed to initialize blowfish")
+	}
+
+	encrypted := make([]byte, len)
+	count := len / cipher.BlockSize()
+
+	for i := 0; i < count; i++ {
+		cipher.Encrypt(encrypted[i*8:], data[i*8:])
+	}
+
+	return encrypted, nil
 }
