@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 
+	//nolint:staticcheck // Required for compatibility with legacy game protocol
 	"golang.org/x/crypto/blowfish"
 )
 
@@ -36,8 +37,8 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 		return nil, errors.New("BlowFishKey or key is nil")
 	}
 
-	len := len(encrypted)
-	if len == 0 {
+	lenEncrypted := len(encrypted)
+	if lenEncrypted == 0 {
 		return nil, errors.New("encrypted data is empty")
 	}
 
@@ -47,12 +48,12 @@ func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
 	}
 
 	blockSize := cipher.BlockSize()
-	if len%blockSize != 0 {
-		return nil, fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, len)
+	if lenEncrypted%blockSize != 0 {
+		return nil, fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, lenEncrypted)
 	}
 
-	decrypted := make([]byte, len)
-	count := len / blockSize
+	decrypted := make([]byte, lenEncrypted)
+	count := lenEncrypted / blockSize
 
 	for i := 0; i < count; i++ {
 		cipher.Decrypt(decrypted[i*blockSize:], encrypted[i*blockSize:])
@@ -66,8 +67,8 @@ func (b *BlowFishKey) Encrypt(data []byte) ([]byte, error) {
 		return nil, errors.New("BlowFishKey or key is nil")
 	}
 
-	len := len(data)
-	if len == 0 {
+	lenData := len(data)
+	if lenData == 0 {
 		return nil, errors.New("data is empty")
 	}
 
@@ -77,12 +78,12 @@ func (b *BlowFishKey) Encrypt(data []byte) ([]byte, error) {
 	}
 
 	blockSize := cipher.BlockSize()
-	if len%blockSize != 0 {
-		return nil, fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, len)
+	if lenData%blockSize != 0 {
+		return nil, fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, lenData)
 	}
 
-	encrypted := make([]byte, len)
-	count := len / blockSize
+	encrypted := make([]byte, lenData)
+	count := lenData / blockSize
 
 	for i := 0; i < count; i++ {
 		cipher.Encrypt(encrypted[i*blockSize:], data[i*blockSize:])

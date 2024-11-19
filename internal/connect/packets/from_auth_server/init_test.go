@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
+	"math"
 	"strings"
 	"testing"
 )
@@ -349,5 +350,98 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 				t.Errorf("Unexpected error for RSA key size %d: %v", tc.rsaKeySize, err)
 			}
 		})
+	}
+}
+
+func TestNewInitPacketWithZeroValues(t *testing.T) {
+	packet := &InitPacket{
+		SessionID:       0,
+		ProtocolVersion: 0,
+		RsaPublicKey:    make([]byte, 128),
+		GameGuard1:      0,
+		GameGuard2:      0,
+		GameGuard3:      0,
+		GameGuard4:      0,
+	}
+
+	encoded, err := packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err := NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decoded.SessionID != 0 || decoded.ProtocolVersion != 0 ||
+		decoded.GameGuard1 != 0 || decoded.GameGuard2 != 0 ||
+		decoded.GameGuard3 != 0 || decoded.GameGuard4 != 0 {
+		t.Error("zero values were not preserved during encoding/decoding")
+	}
+}
+
+func TestNewInitPacketWithMaxValues(t *testing.T) {
+	packet := &InitPacket{
+		SessionID:       math.MaxInt32, // More readable than int32(^uint32(0) >> 1)
+		ProtocolVersion: math.MaxInt32,
+		RsaPublicKey:    make([]byte, 128),
+		GameGuard1:      math.MaxInt32,
+		GameGuard2:      math.MaxInt32,
+		GameGuard3:      math.MaxInt32,
+		GameGuard4:      math.MaxInt32,
+	}
+
+	// Fill RSA key with max values
+	for i := range packet.RsaPublicKey {
+		packet.RsaPublicKey[i] = 0xFF
+	}
+
+	encoded, err := packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err := NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decoded.SessionID != packet.SessionID ||
+		decoded.ProtocolVersion != packet.ProtocolVersion ||
+		decoded.GameGuard1 != packet.GameGuard1 ||
+		decoded.GameGuard2 != packet.GameGuard2 ||
+		decoded.GameGuard3 != packet.GameGuard3 ||
+		decoded.GameGuard4 != packet.GameGuard4 ||
+		!bytes.Equal(decoded.RsaPublicKey, packet.RsaPublicKey) {
+		t.Error("max values were not preserved during encoding/decoding")
+	}
+}
+
+func TestNewInitPacketWithNegativeValues(t *testing.T) {
+	packet := &InitPacket{
+		SessionID:       -1,
+		ProtocolVersion: -1,
+		RsaPublicKey:    make([]byte, 128),
+		GameGuard1:      -1,
+		GameGuard2:      -1,
+		GameGuard3:      -1,
+		GameGuard4:      -1,
+	}
+
+	encoded, err := packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err := NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decoded.SessionID != -1 || decoded.ProtocolVersion != -1 ||
+		decoded.GameGuard1 != -1 || decoded.GameGuard2 != -1 ||
+		decoded.GameGuard3 != -1 || decoded.GameGuard4 != -1 {
+		t.Error("negative values were not preserved during encoding/decoding")
 	}
 }
