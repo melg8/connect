@@ -217,3 +217,137 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 		t.Error("Decoded BlowfishKey does not match original")
 	}
 }
+
+func TestNewInitPacketFromBytesFieldErrors(t *testing.T) {
+	testCases := []struct {
+		name     string
+		size     int
+		expected string
+	}{
+		{
+			name:     "missing protocol version",
+			size:     4, // Only session ID
+			expected: "EOF",
+		},
+		{
+			name:     "missing RSA key",
+			size:     8, // Session ID + protocol version
+			expected: "EOF",
+		},
+		{
+			name:     "missing GameGuard1",
+			size:     136, // Up to RSA key
+			expected: "EOF",
+		},
+		{
+			name:     "missing GameGuard2",
+			size:     140, // Up to GameGuard1
+			expected: "EOF",
+		},
+		{
+			name:     "missing GameGuard3",
+			size:     144, // Up to GameGuard2
+			expected: "EOF",
+		},
+		{
+			name:     "missing GameGuard4",
+			size:     148, // Up to GameGuard3
+			expected: "EOF",
+		},
+	}
+
+	fullPacket := InitPacketData()
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			partialData := fullPacket[:tc.size]
+			_, err := NewInitPacketFromBytes(partialData)
+			if err == nil || err.Error() != tc.expected {
+				t.Errorf("Expected error %q, got %v", tc.expected, err)
+			}
+		})
+	}
+}
+
+func TestBlowfishKeyEdgeCases(t *testing.T) {
+	// Test with exactly 21 bytes
+	exactKey := make([]byte, 21)
+	for i := range exactKey {
+		exactKey[i] = byte(i)
+	}
+
+	packet := &InitPacket{
+		SessionID:       1,
+		ProtocolVersion: 1,
+		RsaPublicKey:    make([]byte, 128),
+		GameGuard1:      1,
+		GameGuard2:      2,
+		GameGuard3:      3,
+		GameGuard4:      4,
+		BlowfishKey:     &exactKey,
+	}
+
+	encoded, err := packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err := NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(*decoded.BlowfishKey, exactKey) {
+		t.Error("BlowfishKey not correctly encoded/decoded with exact size")
+	}
+
+	// Test with nil BlowfishKey
+	packet.BlowfishKey = nil
+	encoded, err = packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decoded, err = NewInitPacketFromBytes(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decoded.BlowfishKey != nil {
+		t.Error("Expected nil BlowfishKey in decoded packet")
+	}
+}
+
+func TestNewInitPacketWriteErrors(t *testing.T) {
+	// Test invalid RSA key sizes
+	testCases := []struct {
+		name        string
+		rsaKeySize  int
+		expectError bool
+	}{
+		{"empty key", 0, true},
+		{"small key", 64, true},
+		{"large key", 256, true},
+		{"correct key", 128, false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			packet := &InitPacket{
+				SessionID:       1,
+				ProtocolVersion: 1,
+				RsaPublicKey:    make([]byte, tc.rsaKeySize),
+				GameGuard1:      1,
+				GameGuard2:      2,
+				GameGuard3:      3,
+				GameGuard4:      4,
+			}
+
+			_, err := packet.NewInitPacket()
+			if tc.expectError && err == nil {
+				t.Errorf("Expected error for RSA key size %d, got nil", tc.rsaKeySize)
+			} else if !tc.expectError && err != nil {
+				t.Errorf("Unexpected error for RSA key size %d: %v", tc.rsaKeySize, err)
+			}
+		})
+	}
+}
