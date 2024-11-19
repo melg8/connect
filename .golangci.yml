@@ -1,0 +1,30 @@
+linters:
+  enable:
+    - gofmt
+    - revive
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - unconvert
+    - goconst
+    - misspell
+    - unparam
+    - prealloc
+
+run:
+  deadline: 5m
+  tests: true
+
+issues:
+  exclude-dirs:
+    - vendor
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+
+linters-settings:
+  goconst:
+    min-len: 3

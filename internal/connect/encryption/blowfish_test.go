@@ -120,7 +120,7 @@ func TestBlowFishEncryptNilKey(t *testing.T) {
 func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	originalData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
 	key := DefaultAuthKey()
-	
+
 	// Test encryption
 	encryptedData, err := key.Encrypt(originalData)
 	if err != nil {
