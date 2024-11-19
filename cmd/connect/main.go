@@ -8,9 +8,9 @@ import (
 	"fmt"
 )
 
-func dontExit() {
-	select {}
-}
+// func dontExit() {
+// 	select {}
+// }
 
 func main() {
 	fmt.Println("Starting connect bot...")

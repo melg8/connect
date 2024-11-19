@@ -33,8 +33,8 @@ func testDataString(withSplits bool) string {
 	return line0 + line1 + line2
 }
 
-func testData(withSplits bool) []byte {
-	data, err := hex.DecodeString(testDataString(withSplits))
+func testData() []byte {
+	data, err := hex.DecodeString(testDataString(false))
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +50,7 @@ func TestHexViewEmptyData(t *testing.T) {
 }
 
 func TestHexASCIIView(t *testing.T) {
-	testData := testData(false)
+	testData := testData()
 	result := HexASCIIViewFrom(testData)
 
 	line1 := "0000: 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f  ................\n"
@@ -64,12 +64,12 @@ func TestHexASCIIView(t *testing.T) {
 	}
 }
 
-func TestShowAsHexAndASCII(t *testing.T) {
-	ShowAsHexAndASCII(testData(false))
+func TestShowAsHexAndASCII(_ *testing.T) {
+	ShowAsHexAndASCII(testData())
 }
 
 func TestHexView(t *testing.T) {
-	testData := testData(false)
+	testData := testData()
 	result := HexViewFrom(testData)
 	expected := testDataString(false)
 
@@ -79,7 +79,7 @@ func TestHexView(t *testing.T) {
 }
 
 func TestHexViewWithSplits(t *testing.T) {
-	testData := testData(false)
+	testData := testData()
 	result := HexViewFromWithLineSplit(testData, 16, "    ")
 	expected := testDataString(true)
 
@@ -88,16 +88,16 @@ func TestHexViewWithSplits(t *testing.T) {
 	}
 }
 
-func TestShowAsHex(t *testing.T) {
-	ShowAsHexView(testData(false))
+func TestShowAsHex(_ *testing.T) {
+	ShowAsHexView(testData())
 }
 
-func TestStringToHexAndASCII(t *testing.T) {
+func TestStringToHexAndASCII(_ *testing.T) {
 	helloWorldText := "Hello, world!"
 	ShowAsHexAndASCII([]byte(helloWorldText))
 }
 
-func TestUtf16StringToHexAndASCII(t *testing.T) {
+func TestUtf16StringToHexAndASCII(_ *testing.T) {
 	helloWorldText := "Hello, world!"
 	encoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder()
 	utf16String, _ := encoder.String(helloWorldText)

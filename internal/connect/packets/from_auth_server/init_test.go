@@ -55,45 +55,45 @@ func ExpectedGameGuard3() int32 {
 
 func TestInitPacketEncodingAndDecoding(t *testing.T) {
 	packetBin := InitPacketData()
-	init_packet, err := NewInitPacketFromBytes(packetBin)
+	initPacket, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if init_packet.SessionID != int32(0x7c610eca) {
+	if initPacket.SessionID != int32(0x7c610eca) {
 		t.Error("wrong session id")
 	}
 
-	if init_packet.ProtocolVersion != int32(0x0000c621) {
+	if initPacket.ProtocolVersion != int32(0x0000c621) {
 		t.Error("wrong protocol version")
 	}
 
 	expectedRsaPublicKey := ExpectedRsaPublicKey()
-	if !bytes.Equal(init_packet.RsaPublicKey, expectedRsaPublicKey) {
+	if !bytes.Equal(initPacket.RsaPublicKey, expectedRsaPublicKey) {
 		t.Error("wrong rsa public key")
 	}
 
-	if init_packet.GameGuard1 != int32(0x29dd954e) {
+	if initPacket.GameGuard1 != int32(0x29dd954e) {
 		t.Error("wrong game guard part 1")
 	}
 
-	if init_packet.GameGuard2 != int32(0x77c39cfc) {
+	if initPacket.GameGuard2 != int32(0x77c39cfc) {
 		t.Error("wrong game guard part 2")
 	}
 
-	if init_packet.GameGuard3 != ExpectedGameGuard3() {
+	if initPacket.GameGuard3 != ExpectedGameGuard3() {
 		t.Error("wrong game guard part 3")
 	}
 
-	if init_packet.GameGuard4 != int32(0x07bde0f7) {
+	if initPacket.GameGuard4 != int32(0x07bde0f7) {
 		t.Error("wrong game guard part 4")
 	}
 
-	if init_packet.BlowfishKey != nil {
+	if initPacket.BlowfishKey != nil {
 		t.Error("blowfish key should be nil")
 	}
 
 	// Test encoding
-	encoded, err := init_packet.NewInitPacket()
+	encoded, err := initPacket.NewInitPacket()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -120,14 +120,14 @@ func TestInitPacketDecodingErrorOnOnlyPartialPacket(t *testing.T) {
 
 func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 	packetBin := InitPacketData()
-	init_packet, err := NewInitPacketFromBytes(packetBin)
+	initPacket, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
 	blowFishKey := make([]byte, 21)
-	init_packet.BlowfishKey = &blowFishKey
+	initPacket.BlowfishKey = &blowFishKey
 
-	encoded, err := init_packet.NewInitPacket()
+	encoded, err := initPacket.NewInitPacket()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,7 +135,7 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 		t.Error("incorrect length after blowfish key addition")
 	}
 
-	stringRepresentation := init_packet.ToString()
+	stringRepresentation := initPacket.ToString()
 	if strings.Contains(stringRepresentation, "BlowfishKey: nil") {
 		t.Error("expected BlowfishKey to be non-nil")
 	}
@@ -143,12 +143,12 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 
 func TestInitPacketToString(t *testing.T) {
 	packetBin := InitPacketData()
-	init_packet, err := NewInitPacketFromBytes(packetBin)
+	initPacket, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	str := init_packet.ToString()
+	str := initPacket.ToString()
 
 	// Check that key components are present in the string representation
 	expectedParts := []string{
