@@ -29,3 +29,8 @@ Run linters for project:
 ```bash
 golangci-lint run ./...
 ```
+
+Run specific linter for project with fixes:
+```bash
+golangci-lint run --fix --disable-all --enable=wsl ./...
+```
