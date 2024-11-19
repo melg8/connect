@@ -98,7 +98,7 @@ func TestPacketWriterAndReader(t *testing.T) {
 	}
 }
 
-func TestUtf16StringToHexAndAscii(t *testing.T) {
+func TestUtf16StringToHexAndASCII(t *testing.T) {
 	writer := NewPacketWriter()
 
 	stringValue := "some string"

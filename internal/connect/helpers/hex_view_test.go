@@ -42,16 +42,16 @@ func testData(withSplits bool) []byte {
 }
 
 func TestHexViewEmptyData(t *testing.T) {
-	result := HexAsciiViewFrom([]byte{})
+	result := HexASCIIViewFrom([]byte{})
 
 	if result != "Size: 0 bytes\n" {
 		t.Errorf("Got different output:\n%s", textDiff(result, ""))
 	}
 }
 
-func TestHexAsciiView(t *testing.T) {
+func TestHexASCIIView(t *testing.T) {
 	testData := testData(false)
-	result := HexAsciiViewFrom(testData)
+	result := HexASCIIViewFrom(testData)
 
 	line1 := "0000: 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f  ................\n"
 	line2 := "0010: 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f  ................\n"
@@ -64,8 +64,8 @@ func TestHexAsciiView(t *testing.T) {
 	}
 }
 
-func TestShowAsHexAndAscii(t *testing.T) {
-	ShowAsHexAndAscii(testData(false))
+func TestShowAsHexAndASCII(t *testing.T) {
+	ShowAsHexAndASCII(testData(false))
 }
 
 func TestHexView(t *testing.T) {
@@ -92,16 +92,16 @@ func TestShowAsHex(t *testing.T) {
 	ShowAsHexView(testData(false))
 }
 
-func TestStringToHexAndAscii(t *testing.T) {
+func TestStringToHexAndASCII(t *testing.T) {
 	helloWorldText := "Hello, world!"
-	ShowAsHexAndAscii([]byte(helloWorldText))
+	ShowAsHexAndASCII([]byte(helloWorldText))
 }
 
-func TestUtf16StringToHexAndAscii(t *testing.T) {
+func TestUtf16StringToHexAndASCII(t *testing.T) {
 	helloWorldText := "Hello, world!"
 	encoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder()
 	utf16String, _ := encoder.String(helloWorldText)
-	ShowAsHexAndAscii([]byte(utf16String))
+	ShowAsHexAndASCII([]byte(utf16String))
 }
 
 func TestHexStringFromInt32(t *testing.T) {

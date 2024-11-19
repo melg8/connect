@@ -108,7 +108,7 @@ func TestConnect(t *testing.T) {
 
 // 		// Check that the client received the data
 // 		var buf bytes.Buffer
-// 		ShowAsHexAndAscii = func(data []byte) {
+// 		ShowAsHexAndASCII = func(data []byte) {
 // 			buf.Write(data)
 // 		}
 // 		if buf.String() != "Hello, client!" {

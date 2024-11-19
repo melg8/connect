@@ -41,7 +41,7 @@ func TestTcpConnector(t *testing.T) {
 		}
 		defer listener.Close()
 
-		connector := NewTcpConnector(listener.Addr().String(), time.Second)
+		connector := NewTCPConnector(listener.Addr().String(), time.Second)
 		conn, err := connector.Connect()
 		if err != nil {
 			t.Errorf("Expected successful connection, got error: %v", err)
@@ -52,7 +52,7 @@ func TestTcpConnector(t *testing.T) {
 	})
 
 	t.Run("connection timeout", func(t *testing.T) {
-		connector := NewTcpConnector("127.0.0.1:1", time.Millisecond*100)
+		connector := NewTCPConnector("127.0.0.1:1", time.Millisecond*100)
 		_, err := connector.Connect()
 		if err == nil {
 			t.Error("Expected timeout error, got nil")

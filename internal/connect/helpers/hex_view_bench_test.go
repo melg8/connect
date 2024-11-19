@@ -21,12 +21,12 @@ func BenchmarkPlusPlus(b *testing.B) {
 	}
 }
 
-func BenchmarkHexAsciiViewFrom(b *testing.B) {
+func BenchmarkHexASCIIViewFrom(b *testing.B) {
 	data := dataForBenchmark()
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		result := HexAsciiViewFrom(data)
+		result := HexASCIIViewFrom(data)
 		if result == "" {
 			b.Fatal("result is empty")
 		}

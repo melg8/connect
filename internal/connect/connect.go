@@ -25,7 +25,7 @@ func NewAuthProtocol(dataChannel chan []byte, conn net.Conn) *AuthProtocol {
 func (p *AuthProtocol) Run() {
 	for data := range p.dataChannel {
 		helpers.ShowAsHexView(data)
-		helpers.ShowAsHexAndAscii(data)
+		helpers.ShowAsHexAndASCII(data)
 		initPacketData := data[3 : len(data)-4]
 		initPacket, err := from_auth_server.NewInitPacketFromBytes(initPacketData)
 		if err == nil {
@@ -48,8 +48,8 @@ func (r *AuthDataReciever) Run() {
 		for {
 			buf := make([]byte, 1024)
 			fmt.Println("Reading from connection")
-			n, err := r.conn.Read(buf)
-			fmt.Println("Read " + fmt.Sprint(n) + " bytes")
+			bytesRead, err := r.conn.Read(buf)
+			fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
 			if err == io.EOF {
 				fmt.Println("Server doesn't send any more data")
 				break
@@ -58,7 +58,7 @@ func (r *AuthDataReciever) Run() {
 				return
 			}
 			fmt.Println("Received packet from login server:")
-			r.dataChannel <- buf[:n]
+			r.dataChannel <- buf[:bytesRead]
 		}
 		fmt.Println("Connection closed")
 	}
@@ -78,8 +78,8 @@ func Authentificate(conn net.Conn) {
 	for {
 		buf := make([]byte, 1024)
 		fmt.Println("Reading from connection")
-		n, err := conn.Read(buf)
-		fmt.Println("Read " + fmt.Sprint(n) + " bytes")
+		bytesRead, err := conn.Read(buf)
+		fmt.Println("Read " + fmt.Sprint(bytesRead) + " bytes")
 		if err == io.EOF {
 			fmt.Println("Server doesn't send any more data")
 			break
@@ -88,7 +88,7 @@ func Authentificate(conn net.Conn) {
 			return
 		}
 		fmt.Println("Received packet from login server:")
-		dataChannel <- buf[:n]
+		dataChannel <- buf[:bytesRead]
 	}
 	fmt.Println("Connection closed")
 }

@@ -12,23 +12,23 @@ type Connector interface {
 	Address() string
 }
 
-type TcpConnector struct {
+type TCPConnector struct {
 	serverAddress string
 	timeout       time.Duration
 }
 
-func NewTcpConnector(serverAddress string, timeout time.Duration) *TcpConnector {
-	return &TcpConnector{
+func NewTCPConnector(serverAddress string, timeout time.Duration) *TCPConnector {
+	return &TCPConnector{
 		serverAddress: serverAddress,
 		timeout:       timeout,
 	}
 }
 
-func (c *TcpConnector) Connect() (net.Conn, error) {
+func (c *TCPConnector) Connect() (net.Conn, error) {
 	return net.DialTimeout("tcp", c.serverAddress, c.timeout)
 }
 
-func (c *TcpConnector) Address() string {
+func (c *TCPConnector) Address() string {
 	return c.serverAddress
 }
 
@@ -103,7 +103,7 @@ func (c *RetryConnector) Connect() (net.Conn, error) {
 func ServerConnector(address string) (Connector, error) {
 	tcpConnectorTimeout := time.Second * 10
 	betweenAttemptsTimeout := time.Second + time.Millisecond*10
-	tcpConnector := NewTcpConnector(address, tcpConnectorTimeout)
+	tcpConnector := NewTCPConnector(address, tcpConnectorTimeout)
 	connector := NewRateLimitedConnector(tcpConnector, betweenAttemptsTimeout)
 	return NewRetryConnector(connector, 5), nil
 }

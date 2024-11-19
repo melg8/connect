@@ -43,7 +43,7 @@ func writeSizeOfData(sb *strings.Builder, length int) {
 // This is overly optimized function was just used as example for myself
 // benchmarking. Was no real point in making it more optimized cause it
 // is used just for console data display.
-func HexAsciiViewFrom(data []byte) string {
+func HexASCIIViewFrom(data []byte) string {
 	const bytesPerRow = 16
 	var sb strings.Builder
 	length := len(data)
@@ -124,8 +124,8 @@ func HexStringFromInt32(i int32) string {
 	return HexViewFromWithoutLineSplit(bytes)
 }
 
-func ShowAsHexAndAscii(data []byte) {
-	fmt.Println(HexAsciiViewFrom(data))
+func ShowAsHexAndASCII(data []byte) {
+	fmt.Println(HexASCIIViewFrom(data))
 }
 
 func ShowAsHexView(data []byte) {
