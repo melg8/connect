@@ -24,3 +24,16 @@ func BenchmarkBlowFish(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkBlowFishEncrypt(b *testing.B) {
+	data := dataForBlowfishBenchmark(1000000)
+	authKey := DefaultAuthKey()
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		_, err := authKey.Encrypt(data)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
