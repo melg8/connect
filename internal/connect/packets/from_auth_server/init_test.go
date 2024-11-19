@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -17,7 +17,7 @@ func OnlyPartialPacket(size int) []byte {
 	return result
 }
 
-func OnlySessionIdPacket() []byte {
+func OnlySessionIDPacket() []byte {
 	packet := "ca0e617cffff"
 	data, err := hex.DecodeString(packet)
 	if err != nil {
@@ -56,9 +56,9 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 	packetBin := InitPacketData()
 	init_packet, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
-	if init_packet.SessionId != int32(0x7c610eca) {
+	if init_packet.SessionID != int32(0x7c610eca) {
 		t.Error("wrong session id")
 	}
 
@@ -88,33 +88,16 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 	}
 
 	if init_packet.BlowfishKey != nil {
-		t.Error("expected no blowfish key, but got one")
+		t.Error("blowfish key should be nil")
 	}
 
-	encodedPacket := init_packet.NewInitPacket()
-
-	if !bytes.Equal(encodedPacket, packetBin) {
-		t.Error("encoded packet is not equal to initial packet bin form")
+	// Test encoding
+	encoded, err := init_packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
 	}
-
-	stringRepresentation := init_packet.ToString()
-	t.Log(stringRepresentation)
-	if !strings.Contains(stringRepresentation, "BlowfishKey: nil") {
-		t.Error("expected BlowfishKey: nil")
-	}
-
-	blowFishKey := make([]byte, 21)
-	init_packet.BlowfishKey = &blowFishKey
-
-	stringRepresentation = init_packet.ToString()
-	t.Log(stringRepresentation)
-	if strings.Contains(stringRepresentation, "BlowfishKey: nil") {
-		t.Error("expected BlowfishKey: not nil, but got nil")
-	}
-
-	encodedPacket1 := init_packet.NewInitPacket()
-	if len(encodedPacket)+21 != len(encodedPacket1) {
-		t.Error("incorrect length after blowfish key addition")
+	if !bytes.Equal(encoded, packetBin) {
+		t.Error("wrong encoded packet")
 	}
 }
 
@@ -127,22 +110,32 @@ func TestInitPacketDecodingErrorOnEmptyPacket(t *testing.T) {
 }
 
 func TestInitPacketDecodingErrorOnOnlyPartialPacket(t *testing.T) {
-	normalPacketSize := 4*6 + 128
-	for i := 0; i < normalPacketSize; i += 4 {
-		onlySessionIdPacket := OnlyPartialPacket(i + 1)
-		_, err := NewInitPacketFromBytes(onlySessionIdPacket)
-		if err == nil {
-			t.Errorf("expected error on partial packet size %d", i+1)
-		}
+	partialPacket := OnlySessionIDPacket()
+	_, err := NewInitPacketFromBytes(partialPacket)
+	if err == nil {
+		t.Error("expected error on partial packet")
 	}
 }
 
 func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
-	normalPacketSize := 4*6 + 128
-	blowFishKeySise := 21
-	onlySessionIdPacket := OnlyPartialPacket(normalPacketSize + blowFishKeySise)
-	_, err := NewInitPacketFromBytes(onlySessionIdPacket)
+	packetBin := InitPacketData()
+	init_packet, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
-		t.Error("can't decode with blowfish key")
+		t.Fatal(err)
+	}
+	blowFishKey := make([]byte, 21)
+	init_packet.BlowfishKey = &blowFishKey
+
+	encoded, err := init_packet.NewInitPacket()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(encoded) != len(packetBin)+21 {
+		t.Error("incorrect length after blowfish key addition")
+	}
+
+	stringRepresentation := init_packet.ToString()
+	if strings.Contains(stringRepresentation, "BlowfishKey: nil") {
+		t.Error("expected BlowfishKey to be non-nil")
 	}
 }

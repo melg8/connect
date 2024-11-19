@@ -30,7 +30,7 @@ func BenchmarkInitPacketParsing(b *testing.B) {
 		if err != nil {
 			panic(err)
 		}
-		if packet.SessionId != 50462976 {
+		if packet.SessionID != 50462976 {
 			b.Fatal("wrong session id")
 		}
 	}

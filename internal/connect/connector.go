@@ -94,9 +94,8 @@ func (c *RetryConnector) Connect() (net.Conn, error) {
 				log.Println("Retrying connection...")
 			}
 			continue
-		} else {
-			return conn, nil
 		}
+		return conn, nil
 	}
 	return nil, fmt.Errorf("failed to connect to server after %d attempts", c.retries)
 }

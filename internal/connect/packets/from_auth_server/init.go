@@ -10,7 +10,7 @@ import (
 )
 
 type InitPacket struct {
-	SessionId       int32
+	SessionID       int32
 	ProtocolVersion int32
 	RsaPublicKey    []byte
 	GameGuard1      int32
@@ -24,7 +24,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	var result InitPacket
 	var err error
 	reader := packets.NewPacketReader(data)
-	result.SessionId, err = reader.ReadInt32()
+	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
 	}
@@ -60,24 +60,40 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	return &result, nil
 }
 
-func (p *InitPacket) NewInitPacket() []byte {
+func (p *InitPacket) NewInitPacket() ([]byte, error) {
 	buffer := new(packets.PacketWriter)
-	buffer.WriteInt32(p.SessionId)
-	buffer.WriteInt32(p.ProtocolVersion)
-	buffer.WriteBytes(p.RsaPublicKey)
-	buffer.WriteInt32(p.GameGuard1)
-	buffer.WriteInt32(p.GameGuard2)
-	buffer.WriteInt32(p.GameGuard3)
-	buffer.WriteInt32(p.GameGuard4)
-	if p.BlowfishKey != nil {
-		buffer.WriteBytes(*p.BlowfishKey)
+	if err := buffer.WriteInt32(p.SessionID); err != nil {
+		return nil, err
 	}
-	return buffer.Bytes()
+	if err := buffer.WriteInt32(p.ProtocolVersion); err != nil {
+		return nil, err
+	}
+	if err := buffer.WriteBytes(p.RsaPublicKey); err != nil {
+		return nil, err
+	}
+	if err := buffer.WriteInt32(p.GameGuard1); err != nil {
+		return nil, err
+	}
+	if err := buffer.WriteInt32(p.GameGuard2); err != nil {
+		return nil, err
+	}
+	if err := buffer.WriteInt32(p.GameGuard3); err != nil {
+		return nil, err
+	}
+	if err := buffer.WriteInt32(p.GameGuard4); err != nil {
+		return nil, err
+	}
+	if p.BlowfishKey != nil {
+		if err := buffer.WriteBytes(*p.BlowfishKey); err != nil {
+			return nil, err
+		}
+	}
+	return buffer.Bytes(), nil
 }
 
 func (p *InitPacket) ToString() string {
 	result := "\nInitPacket:" +
-		"\n  SessionId: " + helpers.HexStringFromInt32(p.SessionId) +
+		"\n  SessionID: " + helpers.HexStringFromInt32(p.SessionID) +
 		"\n  ProtocolVersion: " + helpers.HexStringFromInt32(p.ProtocolVersion) +
 		"\n  RsaPublicKey: \n" + helpers.HexViewFromWithLineSplit(p.RsaPublicKey, 16, "    ") +
 		"\n  GameGuard1: " + helpers.HexStringFromInt32(p.GameGuard1) +

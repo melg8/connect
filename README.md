@@ -24,3 +24,8 @@ Build with compiler explanation of heap vs stack memory for variables:
 ```bash
 go build -gcflags "-m=2"
 ```
+
+Run linters for project:
+```bash
+golangci-lint run ./...
+```
