@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/melg8/connect/internal/connect/helpers"
-	"github.com/melg8/connect/internal/connect/packets"
+	"github.com/melg8/connect/internal/connect/packets/packet"
 )
 
 type InitPacket struct {
@@ -27,7 +27,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 
 	var err error
 
-	reader := packets.NewPacketReader(data)
+	reader := packet.NewPacketReader(data)
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (p *InitPacket) ToBytes() ([]byte, error) {
 		return nil, fmt.Errorf("invalid RSA public key length: expected 128 bytes, got %d bytes", len(p.RsaPublicKey))
 	}
 
-	buffer := new(packets.PacketWriter)
+	buffer := new(packet.PacketWriter)
 	if err := buffer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
 	}

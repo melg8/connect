@@ -101,6 +101,8 @@ Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki
 ```
 
 
+## Auth server -> client packets
+
 
 ### 1. [Init](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L19)
 ----
@@ -118,6 +120,8 @@ Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki
 | XX XX XX XX ...| 20 | [Blowfish key (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L57) |
 | 00 | 1 | [End of key indicator (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L58) |
 
+
+## Client -> auth server packets
 
 ### 2. [RequestGGAuth](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/clientpackets/RequestAuthGG.java#L23)
 

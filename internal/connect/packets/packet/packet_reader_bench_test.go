@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package packets
+package packet
 
 import (
 	"testing"

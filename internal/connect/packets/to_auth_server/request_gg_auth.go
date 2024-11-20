@@ -6,7 +6,7 @@ package toauthserver
 
 import (
 	"github.com/melg8/connect/internal/connect/helpers"
-	"github.com/melg8/connect/internal/connect/packets"
+	"github.com/melg8/connect/internal/connect/packets/packet"
 )
 
 type RequestGGAuth struct {
@@ -20,7 +20,7 @@ type RequestGGAuth struct {
 func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
 	var result RequestGGAuth
 
-	reader := packets.NewPacketReader(data)
+	reader := packet.NewPacketReader(data)
 	var err error
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
@@ -47,7 +47,7 @@ func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
 }
 
 func (p *RequestGGAuth) ToBytes() ([]byte, error) {
-	writer := new(packets.PacketWriter)
+	writer := new(packet.PacketWriter)
 	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
 	}
