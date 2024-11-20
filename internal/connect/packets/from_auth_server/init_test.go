@@ -94,7 +94,7 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 	}
 
 	// Test encoding
-	encoded, err := initPacket.NewInitPacket()
+	encoded, err := initPacket.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,7 +128,7 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 	blowFishKey := make([]byte, 21)
 	initPacket.BlowfishKey = &blowFishKey
 
-	encoded, err := initPacket.NewInitPacket()
+	encoded, err := initPacket.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,7 +182,7 @@ func TestInitPacketEncodingErrors(t *testing.T) {
 		GameGuard4:      0x07bde0f7,
 	}
 
-	_, err := invalidPacket.NewInitPacket()
+	_, err := invalidPacket.ToBytes()
 	if err == nil {
 		t.Error("Expected error for invalid RSA key length, got nil")
 	}
@@ -201,7 +201,7 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 		BlowfishKey:     &blowfishKey,
 	}
 
-	encoded, err := packet.NewInitPacket()
+	encoded, err := packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -289,7 +289,7 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 		BlowfishKey:     &exactKey,
 	}
 
-	encoded, err := packet.NewInitPacket()
+	encoded, err := packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,7 +305,7 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 
 	// Test with nil BlowfishKey
 	packet.BlowfishKey = nil
-	encoded, err = packet.NewInitPacket()
+	encoded, err = packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -345,7 +345,7 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 				GameGuard4:      4,
 			}
 
-			_, err := packet.NewInitPacket()
+			_, err := packet.ToBytes()
 			if tc.expectError && err == nil {
 				t.Errorf("Expected error for RSA key size %d, got nil", tc.rsaKeySize)
 			} else if !tc.expectError && err != nil {
@@ -366,7 +366,7 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 		GameGuard4:      0,
 	}
 
-	encoded, err := packet.NewInitPacket()
+	encoded, err := packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -399,7 +399,7 @@ func TestNewInitPacketWithMaxValues(t *testing.T) {
 		packet.RsaPublicKey[i] = 0xFF
 	}
 
-	encoded, err := packet.NewInitPacket()
+	encoded, err := packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -431,7 +431,7 @@ func TestNewInitPacketWithNegativeValues(t *testing.T) {
 		GameGuard4:      -1,
 	}
 
-	encoded, err := packet.NewInitPacket()
+	encoded, err := packet.ToBytes()
 	if err != nil {
 		t.Fatal(err)
 	}

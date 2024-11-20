@@ -65,7 +65,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	return &result, nil
 }
 
-func (p *InitPacket) NewInitPacket() ([]byte, error) {
+func (p *InitPacket) ToBytes() ([]byte, error) {
 	if len(p.RsaPublicKey) != 128 {
 		return nil, fmt.Errorf("invalid RSA public key length: expected 128 bytes, got %d bytes", len(p.RsaPublicKey))
 	}
