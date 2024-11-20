@@ -40,19 +40,19 @@ func writeSizeOfData(sb *strings.Builder, length int) {
 	sb.WriteString(" bytes\n")
 }
 
-// This is overly optimized function was just used as example for myself
-// benchmarking. Was no real point in making it more optimized cause it
-// is used just for console data display.
+// This function is optimized for performance and is used to display hex data
+// in the console.
 func HexASCIIViewFrom(data []byte) string {
 	const bytesPerRow = 16
 	var sb strings.Builder
 	length := len(data)
 	sb.Grow(length*5 + 20)
 
-	for i := 0; i < length; i += bytesPerRow {
-		hexPart := make([]byte, bytesPerRow*3)
-		asciiPart := make([]byte, bytesPerRow)
+	// Reuse slices to avoid allocation in each loop iteration
+	hexPart := make([]byte, bytesPerRow*3)
+	asciiPart := make([]byte, bytesPerRow)
 
+	for i := 0; i < length; i += bytesPerRow {
 		for j := 0; j < bytesPerRow; j++ {
 			pos := j * 3
 			if i+j < length {
