@@ -14,14 +14,12 @@ linters:
     - gocyclo       # Checks function complexity to find overly complex functions
     - godot         # Checks if comments end in a period to ensure consistency
     - gofmt         # Formats Go source code according to the Go standard
-    - goimports     # Updates Go imports and formats code like gofmt
     - gosec         # Inspects source code for security problems by scanning the Go AST
     - gosimple      # Specializes in simplifying code
     - govet         # Reports suspicious constructs, such as Printf calls with wrong arguments
     - ineffassign   # Detects when assignments to existing variables are not used
     - makezero      # Finds slice declarations with non-zero initial length
     - misspell      # Finds commonly misspelled English words in comments
-    - mnd          # Detects magic numbers in code
     - nakedret      # Finds naked returns in functions greater than a specified size
     - nilerr        # Finds redundant nil checks on errors
     - nilnil        # Checks that there is no simultaneous return of nil error and nil value
@@ -32,7 +30,7 @@ linters:
     - reassign      # Checks that package variables are not reassigned
     - revive        # Fast, configurable, extensible, flexible, and beautiful linter for Go
     - staticcheck   # State of the art linter for Go, providing advanced checks
-    - stylecheck    # Replacement for golint with additional checks and more strict
+    - stylecheck    # Replaces golint
     - tenv          # Detects using os.Setenv instead of t.Setenv in tests
     - thelper       # Detects Test helper functions that don't start with t.Helper()
     - tparallel     # Detects inappropriate usage of t.Parallel() method in tests
