@@ -1,10 +1,13 @@
 linters:
   enable:
+    - asasalint     # Checks for pass []any as any in variadic position
     - bodyclose     # Checks whether HTTP response body is properly closed
+    - containedctx  # Detects struct contained context.Context field
     - dogsled       # Checks assignments with too many blank identifiers (e.g. x, _, _, _, := f())
     - dupl          # Tool for code clone detection
     - errcheck      # Checks for unchecked errors in go programs
     - errorlint     # Finds code that will cause problems with the error wrapping scheme
+    - exhaustive    # Checks exhaustiveness of enum switch statements
     - forbidigo     # Forbids identifiers (useful for restricting usage of some functions)
     - goconst       # Finds repeated strings that could be replaced by a constant
     - gocritic      # Provides extensive code analysis with many diagnostics
@@ -18,18 +21,24 @@ linters:
     - ineffassign   # Detects when assignments to existing variables are not used
     - makezero      # Finds slice declarations with non-zero initial length
     - misspell      # Finds commonly misspelled English words in comments
+    - mnd          # Detects magic numbers in code
     - nakedret      # Finds naked returns in functions greater than a specified size
     - nilerr        # Finds redundant nil checks on errors
+    - nilnil        # Checks that there is no simultaneous return of nil error and nil value
+    - noctx         # Finds sending HTTP requests without context.Context
     - nolintlint    # Reports ill-formed or insufficient nolint directives
     - prealloc      # Finds slice declarations that could potentially be preallocated
     - predeclared   # Finds code that shadows Go's predeclared identifiers
+    - reassign      # Checks that package variables are not reassigned
     - revive        # Fast, configurable, extensible, flexible, and beautiful linter for Go
     - staticcheck   # State of the art linter for Go, providing advanced checks
     - stylecheck    # Replacement for golint with additional checks and more strict
+    - tenv          # Detects using os.Setenv instead of t.Setenv in tests
     - thelper       # Detects Test helper functions that don't start with t.Helper()
     - tparallel     # Detects inappropriate usage of t.Parallel() method in tests
     - unconvert     # Removes unnecessary type conversions
     - unparam       # Reports unused function parameters
+    - wastedassign  # Finds wasted assignment statements
     - whitespace    # Tool for detecting and fixing whitespace issues
 
 run:
