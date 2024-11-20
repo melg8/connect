@@ -14,10 +14,13 @@ func BenchmarkRequestGGAuth_ToBytes(b *testing.B) {
 		Data3:     4,
 		Data4:     5,
 	}
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = req.ToBytes()
+		_, err := req.ToBytes()
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -29,9 +32,12 @@ func BenchmarkRequestGGAuth_ToBytesDirectWriter(b *testing.B) {
 		Data3:     4,
 		Data4:     5,
 	}
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = req.ToBytesDirectWriter()
+		_, err := req.ToBytesDirectWriter()
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }

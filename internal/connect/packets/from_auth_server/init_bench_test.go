@@ -36,3 +36,33 @@ func BenchmarkInitPacketParsing(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkInitPacket_ToBytes(b *testing.B) {
+	rsaKey := make([]byte, 128)
+	for i := range rsaKey {
+		rsaKey[i] = byte(i % 256)
+	}
+	blowfishKey := make([]byte, 21)
+	for i := range blowfishKey {
+		blowfishKey[i] = byte(i % 256)
+	}
+
+	packet := &InitPacket{
+		SessionID:       12345,
+		ProtocolVersion: 1,
+		RsaPublicKey:    rsaKey,
+		GameGuard1:      1,
+		GameGuard2:      2,
+		GameGuard3:      3,
+		GameGuard4:      4,
+		BlowfishKey:     &blowfishKey,
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := packet.ToBytes()
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
