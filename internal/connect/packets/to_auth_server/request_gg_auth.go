@@ -75,6 +75,26 @@ func (p *RequestGGAuth) ToBytes() ([]byte, error) {
 	return p.toBytesWithWriter(buffer)
 }
 
+func (p *RequestGGAuth) ToBytesDirectWriter() ([]byte, error) {
+	writer := new(packets.PacketWriter)
+	if err := writer.WriteInt32(p.SessionID); err != nil {
+		return nil, err
+	}
+	if err := writer.WriteInt32(p.Data1); err != nil {
+		return nil, err
+	}
+	if err := writer.WriteInt32(p.Data2); err != nil {
+		return nil, err
+	}
+	if err := writer.WriteInt32(p.Data3); err != nil {
+		return nil, err
+	}
+	if err := writer.WriteInt32(p.Data4); err != nil {
+		return nil, err
+	}
+	return writer.Bytes(), nil
+}
+
 func (p *RequestGGAuth) ToString() string {
 	return "\nRequestGGAuth:" +
 		"\n  SessionID: " + helpers.HexStringFromInt32(p.SessionID) +
