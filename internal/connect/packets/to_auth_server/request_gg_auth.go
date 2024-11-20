@@ -46,36 +46,7 @@ func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
 	return &result, nil
 }
 
-type packetWriter interface {
-	WriteInt32(value int32) error
-	Bytes() []byte
-}
-
-func (p *RequestGGAuth) toBytesWithWriter(writer packetWriter) ([]byte, error) {
-	if err := writer.WriteInt32(p.SessionID); err != nil {
-		return nil, err
-	}
-	if err := writer.WriteInt32(p.Data1); err != nil {
-		return nil, err
-	}
-	if err := writer.WriteInt32(p.Data2); err != nil {
-		return nil, err
-	}
-	if err := writer.WriteInt32(p.Data3); err != nil {
-		return nil, err
-	}
-	if err := writer.WriteInt32(p.Data4); err != nil {
-		return nil, err
-	}
-	return writer.Bytes(), nil
-}
-
 func (p *RequestGGAuth) ToBytes() ([]byte, error) {
-	buffer := new(packets.PacketWriter)
-	return p.toBytesWithWriter(buffer)
-}
-
-func (p *RequestGGAuth) ToBytesDirectWriter() ([]byte, error) {
 	writer := new(packets.PacketWriter)
 	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
