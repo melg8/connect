@@ -19,7 +19,7 @@ func BenchmarkPlusPlus(b *testing.B) {
 
 func BenchmarkReadInt32(b *testing.B) {
 	data := []byte{0x78, 0x56, 0x34, 0x12}
-	reader := NewPacketReader(data)
+	reader := NewReader(data)
 
 	for n := 0; n < b.N; n++ {
 		reader.Reset(data)
@@ -35,7 +35,7 @@ func BenchmarkReadInt32(b *testing.B) {
 
 func BenchmarkReadInt64(b *testing.B) {
 	data := []byte{0xf1, 0xef, 0xcd, 0xab, 0x78, 0x56, 0x34, 0x12}
-	reader := NewPacketReader(data)
+	reader := NewReader(data)
 
 	for n := 0; n < b.N; n++ {
 		reader.Reset(data)

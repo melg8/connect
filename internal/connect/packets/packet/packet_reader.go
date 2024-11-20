@@ -12,34 +12,34 @@ import (
 	"golang.org/x/text/encoding/unicode"
 )
 
-type PacketReader struct {
+type Reader struct {
 	*bytes.Reader
 }
 
-func NewPacketReader(buffer []byte) *PacketReader {
-	return &PacketReader{bytes.NewReader(buffer)}
+func NewReader(buffer []byte) *Reader {
+	return &Reader{bytes.NewReader(buffer)}
 }
 
-func (r *PacketReader) ReadBytes(number int) ([]byte, error) {
+func (r *Reader) ReadBytes(number int) ([]byte, error) {
 	buffer := make([]byte, number)
 	n, err := r.Read(buffer)
 	if err != nil {
 		return nil, err
 	}
 	if n < number {
-		return nil, errors.New("error: PacketReader.ReadBytes not enough bytes to read")
+		return nil, errors.New("error: Reader.ReadBytes not enough bytes to read")
 	}
 	return buffer, nil
 }
 
-func (r *PacketReader) ReadInt64() (int64, error) {
+func (r *Reader) ReadInt64() (int64, error) {
 	var buf [8]byte
 	n, err := r.Read(buf[:])
 	if err != nil {
 		return 0, err
 	}
 	if n != 8 {
-		return 0, errors.New("error: PacketReader.ReadInt64 not enough bytes to read")
+		return 0, errors.New("error: Reader.ReadInt64 not enough bytes to read")
 	}
 	result := int64(buf[7])<<56 |
 		(int64(buf[6]) << 48) |
@@ -52,14 +52,14 @@ func (r *PacketReader) ReadInt64() (int64, error) {
 	return result, nil
 }
 
-func (r *PacketReader) ReadInt32() (int32, error) {
+func (r *Reader) ReadInt32() (int32, error) {
 	var buf [4]byte
 	n, err := r.Read(buf[:])
 	if err != nil {
 		return 0, err
 	}
 	if n != 4 {
-		return 0, errors.New("error: PacketReader.ReadInt32 not enough bytes to read")
+		return 0, errors.New("error: Reader.ReadInt32 not enough bytes to read")
 	}
 	result := int32(buf[3])<<24 |
 		(int32(buf[2]) << 16) |
@@ -68,7 +68,7 @@ func (r *PacketReader) ReadInt32() (int32, error) {
 	return result, nil
 }
 
-func (r *PacketReader) ReadInt16() (int16, error) {
+func (r *Reader) ReadInt16() (int16, error) {
 	var result int16
 	err := binary.Read(r, binary.LittleEndian, &result)
 	if err != nil {
@@ -77,7 +77,7 @@ func (r *PacketReader) ReadInt16() (int16, error) {
 	return result, nil
 }
 
-func (r *PacketReader) ReadInt8() (int8, error) {
+func (r *Reader) ReadInt8() (int8, error) {
 	var result int8
 	err := binary.Read(r, binary.LittleEndian, &result)
 	if err != nil {
@@ -86,7 +86,7 @@ func (r *PacketReader) ReadInt8() (int8, error) {
 	return result, nil
 }
 
-func (r *PacketReader) ReadStringFromUtf16Format() (string, error) {
+func (r *Reader) ReadStringFromUtf16Format() (string, error) {
 	var data []byte
 
 	for {

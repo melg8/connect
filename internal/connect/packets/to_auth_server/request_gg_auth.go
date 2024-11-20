@@ -20,7 +20,7 @@ type RequestGGAuth struct {
 func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
 	var result RequestGGAuth
 
-	reader := packet.NewPacketReader(data)
+	reader := packet.NewReader(data)
 	var err error
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
@@ -47,7 +47,7 @@ func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
 }
 
 func (p *RequestGGAuth) ToBytes() ([]byte, error) {
-	writer := new(packet.PacketWriter)
+	writer := packet.NewWriter()
 	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 func TestPacketWriterAndReader(t *testing.T) {
-	writer := NewPacketWriter()
+	writer := NewWriter()
 	int64Value := int64(1234567890123)
 	err := writer.WriteInt64(int64Value)
 	if err != nil {
@@ -47,7 +47,7 @@ func TestPacketWriterAndReader(t *testing.T) {
 		panic(err)
 	}
 
-	reader := NewPacketReader(writer.Bytes())
+	reader := NewReader(writer.Bytes())
 
 	gotInt64Value, err := reader.ReadInt64()
 	if err != nil {
@@ -99,7 +99,7 @@ func TestPacketWriterAndReader(t *testing.T) {
 }
 
 func TestUtf16StringToHexAndASCII(t *testing.T) {
-	writer := NewPacketWriter()
+	writer := NewWriter()
 
 	stringValue := "some string"
 	err := writer.WriteStringAsUtf16(stringValue)
@@ -109,7 +109,7 @@ func TestUtf16StringToHexAndASCII(t *testing.T) {
 
 	data := writer.Bytes()
 
-	reader := NewPacketReader(data)
+	reader := NewReader(data)
 
 	gotStringValue, err := reader.ReadStringFromUtf16Format()
 	if err != nil {
@@ -121,7 +121,7 @@ func TestUtf16StringToHexAndASCII(t *testing.T) {
 }
 
 func TestPacketReaderReadInt64Error(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadInt64()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -129,7 +129,7 @@ func TestPacketReaderReadInt64Error(t *testing.T) {
 }
 
 func TestPacketReaderReadInt64Error1(t *testing.T) {
-	reader := NewPacketReader([]byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07})
+	reader := NewReader([]byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07})
 	_, err := reader.ReadInt64()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -137,7 +137,7 @@ func TestPacketReaderReadInt64Error1(t *testing.T) {
 }
 
 func TestPacketReaderReadInt32Error(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadInt32()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -145,7 +145,7 @@ func TestPacketReaderReadInt32Error(t *testing.T) {
 }
 
 func TestPacketReaderReadInt32Error1(t *testing.T) {
-	reader := NewPacketReader([]byte{0x01, 0x02, 0x03})
+	reader := NewReader([]byte{0x01, 0x02, 0x03})
 	_, err := reader.ReadInt32()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -153,7 +153,7 @@ func TestPacketReaderReadInt32Error1(t *testing.T) {
 }
 
 func TestPacketReaderReadInt16Error(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadInt16()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -161,7 +161,7 @@ func TestPacketReaderReadInt16Error(t *testing.T) {
 }
 
 func TestPacketReaderReadInt8Error(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadInt8()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -169,7 +169,7 @@ func TestPacketReaderReadInt8Error(t *testing.T) {
 }
 
 func TestPacketReaderReadBytesError(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadBytes(1)
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -177,7 +177,7 @@ func TestPacketReaderReadBytesError(t *testing.T) {
 }
 
 func TestPacketReaderReadBytesNotEnoughBytesError(t *testing.T) {
-	reader := NewPacketReader([]byte{1, 2, 3})
+	reader := NewReader([]byte{1, 2, 3})
 	_, err := reader.ReadBytes(4)
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -185,7 +185,7 @@ func TestPacketReaderReadBytesNotEnoughBytesError(t *testing.T) {
 }
 
 func TestPacketReaderReadStringFromUtf16FormatError(t *testing.T) {
-	reader := NewPacketReader([]byte{})
+	reader := NewReader([]byte{})
 	_, err := reader.ReadStringFromUtf16Format()
 	if err == nil {
 		t.Errorf("Expected error, got nil")
@@ -193,7 +193,7 @@ func TestPacketReaderReadStringFromUtf16FormatError(t *testing.T) {
 }
 
 func TestPacketReaderReadStringFromUtf16FormatNotEnoughBytesError(t *testing.T) {
-	reader := NewPacketReader([]byte{0x22, 0x00, 0x33})
+	reader := NewReader([]byte{0x22, 0x00, 0x33})
 	_, err := reader.ReadStringFromUtf16Format()
 	if err == nil {
 		t.Errorf("Expected error, got nil")

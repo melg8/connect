@@ -9,36 +9,36 @@ import (
 	"encoding/binary"
 )
 
-type PacketWriter struct {
+type Writer struct {
 	bytes.Buffer
 }
 
-func NewPacketWriter() *PacketWriter {
-	return &PacketWriter{}
+func NewWriter() *Writer {
+	return &Writer{}
 }
 
-func (b *PacketWriter) WriteInt64(value int64) error {
+func (b *Writer) WriteInt64(value int64) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
 
-func (b *PacketWriter) WriteInt32(value int32) error {
+func (b *Writer) WriteInt32(value int32) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
 
-func (b *PacketWriter) WriteInt16(value int16) error {
+func (b *Writer) WriteInt16(value int16) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
 
-func (b *PacketWriter) WriteInt8(value int8) error {
+func (b *Writer) WriteInt8(value int8) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
 
-func (b *PacketWriter) WriteBytes(bytes []byte) error {
+func (b *Writer) WriteBytes(bytes []byte) error {
 	_, err := b.Write(bytes)
 	return err
 }
 
-func (b *PacketWriter) WriteStringAsUtf16(value string) error {
+func (b *Writer) WriteStringAsUtf16(value string) error {
 	bytes := make([]byte, 0, len(value)*2+2)
 	for _, r := range value {
 		bytes = append(bytes, byte(r), byte(0))

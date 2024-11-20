@@ -27,7 +27,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 
 	var err error
 
-	reader := packet.NewPacketReader(data)
+	reader := packet.NewReader(data)
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
@@ -70,34 +70,34 @@ func (p *InitPacket) ToBytes() ([]byte, error) {
 		return nil, fmt.Errorf("invalid RSA public key length: expected 128 bytes, got %d bytes", len(p.RsaPublicKey))
 	}
 
-	buffer := new(packet.PacketWriter)
-	if err := buffer.WriteInt32(p.SessionID); err != nil {
+	writer := packet.NewWriter()
+	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteInt32(p.ProtocolVersion); err != nil {
+	if err := writer.WriteInt32(p.ProtocolVersion); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteBytes(p.RsaPublicKey); err != nil {
+	if err := writer.WriteBytes(p.RsaPublicKey); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteInt32(p.GameGuard1); err != nil {
+	if err := writer.WriteInt32(p.GameGuard1); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteInt32(p.GameGuard2); err != nil {
+	if err := writer.WriteInt32(p.GameGuard2); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteInt32(p.GameGuard3); err != nil {
+	if err := writer.WriteInt32(p.GameGuard3); err != nil {
 		return nil, err
 	}
-	if err := buffer.WriteInt32(p.GameGuard4); err != nil {
+	if err := writer.WriteInt32(p.GameGuard4); err != nil {
 		return nil, err
 	}
 	if p.BlowfishKey != nil {
-		if err := buffer.WriteBytes(*p.BlowfishKey); err != nil {
+		if err := writer.WriteBytes(*p.BlowfishKey); err != nil {
 			return nil, err
 		}
 	}
-	return buffer.Bytes(), nil
+	return writer.Bytes(), nil
 }
 
 func (p *InitPacket) ToString() string {
