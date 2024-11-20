@@ -1,4 +1,4 @@
-package from_auth_server
+package fromauthserver
 
 import (
 	"testing"

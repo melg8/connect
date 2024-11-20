@@ -12,7 +12,7 @@ import (
 	"net"
 
 	"github.com/melg8/connect/internal/connect/helpers"
-	"github.com/melg8/connect/internal/connect/packets/from_auth_server"
+	fromauthserver "github.com/melg8/connect/internal/connect/packets/from_auth_server"
 )
 
 type AuthProtocol struct {
@@ -29,7 +29,7 @@ func (p *AuthProtocol) Run() {
 		helpers.ShowAsHexView(data)
 		helpers.ShowAsHexAndASCII(data)
 		initPacketData := data[3 : len(data)-4]
-		initPacket, err := from_auth_server.NewInitPacketFromBytes(initPacketData)
+		initPacket, err := fromauthserver.NewInitPacketFromBytes(initPacketData)
 		if err == nil {
 			log.Println(initPacket.ToString())
 		}

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package from_auth_server
+package fromauthserver
 
 import (
 	"fmt"
