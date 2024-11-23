@@ -125,7 +125,7 @@ func HexStringFromInt32(i int32) string {
 }
 
 func ShowAsHexAndASCII(data []byte) {
-	log.Println(HexASCIIViewFrom(data))
+	log.Println("\n" + HexASCIIViewFrom(data))
 }
 
 func ShowAsHexView(data []byte) {
