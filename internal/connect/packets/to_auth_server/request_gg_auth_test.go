@@ -16,7 +16,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x05, 0x00, 0x00, 0x00, // Data4: 5
 		}
 
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.NoError(t, err)
 		assert.NotNil(t, req)
 		assert.Equal(t, int32(1), req.SessionID)
@@ -27,14 +27,14 @@ func TestNewRequestGGAuth(t *testing.T) {
 	})
 
 	t.Run("empty data", func(t *testing.T) {
-		req, err := NewRequestGGAuth([]byte{})
+		req, err := NewRequestGGAuthFrom([]byte{})
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
 
 	t.Run("error reading SessionID", func(t *testing.T) {
 		testData := []byte{0x01, 0x00, 0x00} // Incomplete SessionID
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
@@ -44,7 +44,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x01, 0x00, 0x00, 0x00, // Complete SessionID
 			0x02, 0x00, 0x00, // Incomplete Data1
 		}
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
@@ -55,7 +55,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x02, 0x00, 0x00, 0x00, // Complete Data1
 			0x03, 0x00, 0x00, // Incomplete Data2
 		}
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
@@ -67,7 +67,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x03, 0x00, 0x00, 0x00, // Complete Data2
 			0x04, 0x00, 0x00, // Incomplete Data3
 		}
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
@@ -80,7 +80,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x04, 0x00, 0x00, 0x00, // Complete Data3
 			0x05, 0x00, 0x00, // Incomplete Data4
 		}
-		req, err := NewRequestGGAuth(testData)
+		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
 	})
@@ -128,7 +128,7 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 		assert.Equal(t, expected, data)
 
 		// Verify that we can read it back
-		decoded, err := NewRequestGGAuth(data)
+		decoded, err := NewRequestGGAuthFrom(data)
 		assert.NoError(t, err)
 		assert.Equal(t, req.SessionID, decoded.SessionID)
 		assert.Equal(t, req.Data1, decoded.Data1)

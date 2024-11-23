@@ -17,7 +17,7 @@ type RequestGGAuth struct {
 	Data4     int32
 }
 
-func NewRequestGGAuth(data []byte) (*RequestGGAuth, error) {
+func NewRequestGGAuthFrom(data []byte) (*RequestGGAuth, error) {
 	var result RequestGGAuth
 
 	reader := packet.NewReader(data)
