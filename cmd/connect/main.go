@@ -21,14 +21,13 @@ func connectAndAuthenticate() error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to server: %v", err)
 	}
+	defer conn.Close()
 
 	if err := connect.AuthentificateConn(conn); err != nil {
-		conn.Close()
 		return fmt.Errorf("failed to authentificate connection: %v", err)
 	}
 
 	log.Println("Connection authentificated")
-	conn.Close()
 	return nil
 }
 
