@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package encryption
+package crypt
 
 import (
 	"strings"
