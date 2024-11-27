@@ -18,6 +18,11 @@ func LogRecievedData(data []byte) {
 	helpers.ShowAsHexAndASCII(data)
 }
 
+func LogSentData(data []byte) {
+	log.Println("Sent: " + fmt.Sprint(len(data)) + " bytes")
+	helpers.ShowAsHexAndASCII(data)
+}
+
 func LogInitPacket(initPacket *fromauthserver.InitPacket) {
 	log.Println(initPacket.ToString())
 }
@@ -46,6 +51,21 @@ func ReadPacket(conn net.Conn) ([]byte, error) {
 	return rawData[:n], nil
 }
 
+// Writes full packet to connection.
+func WritePacket(conn net.Conn, data []byte) error {
+	LogSentData(data)
+	for {
+		bytesWritten, err := conn.Write(data)
+		if err != nil {
+			return err
+		}
+		if bytesWritten == len(data) {
+			break
+		}
+	}
+	return nil
+}
+
 func RequestInit(rawData []byte) (*fromauthserver.InitPacket, error) {
 	packetID, packetData, err := ExtractPacketFromRawData(rawData)
 	if err != nil {
@@ -64,21 +84,26 @@ func RequestInit(rawData []byte) (*fromauthserver.InitPacket, error) {
 	return initPacket, nil
 }
 
+func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int, error) {
+
+	return 0, nil
+}
+
 func AuthentificateConn(conn net.Conn) error {
 	defer conn.Close()
 	rawData, err := ReadPacket(conn)
 	if err != nil {
 		return err
 	}
-	_, err = RequestInit(rawData)
+	initResponse, err := RequestInit(rawData)
 	if err != nil {
 		return err
 	}
 
-	// ggAuthResponse, err := RequestGGAuth(conn, initResponse)
-	// if err != nil {
-	// 	return err
-	// }
+	_, err = RequestGGAuth(conn, initResponse)
+	if err != nil {
+		return err
+	}
 
 	// responseLogin, err := RequestLogin(conn, ggAuthResponse)
 	// if err != nil {

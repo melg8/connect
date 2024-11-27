@@ -80,11 +80,15 @@ Process of handling recieved packets:
 Packets have similar structure to eachother. They consist of:
    
 
-| Hex | Size | Description |
-|-----|------|-------------|
-|XX XX|2|Size of packet|
-|XX XX XX XX .. |N|Body of packet|
-|XX XX ? |?| Checksum (only auth server communications) |
+| Hex | Size | Bytes | Enc | Description |
+|-----|------|-------|-----|-------------|
+|XX XX|2|[0-1]| |Size of packet|
+|XX |1|[2]| 🔓 |Id of packet|
+|XX XX XX XX .. |N|[3-(N+2)]| 🔓|Body of packet|
+|00 .. |0-4|[(N+3)-(N+6)]| 🔓|Padding with zeroes for 8 byte alignment of packet|
+|XX XX XX XX |4|[(N+7)-(N+10)]| 🔓| Checksum (only auth server communications) |
+
+
 
 There are 6 different types of data that can be passed in packet
 
@@ -124,6 +128,42 @@ Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki
 | 07 BD E0 F7 | 4 | [GG related](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L53) | [149 - 152] |
 | XX XX XX XX ...| 20 | [Blowfish key (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L57) | [153 - 172] |
 | 00 | 1 | [End of key indicator (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L58) | [173] |
+
+Example of raw Init packet:
+```
+0000: 9f 00 00 b8 cd 6b 8b 21 c6 00 00 2e ac d4 98 2c  .....k.!.......,
+0010: 71 bb 2f a7 6f 1d af 58 7c fd d3 c2 6d c4 f4 c4  q./.o..X|...m...
+0020: 2b 9f 3b 09 42 c7 8c 72 e9 7d 03 bf 24 4b df d2  +.;.B..r.}..$K..
+0030: 85 64 88 58 dc 8c f6 a6 ac 78 cc 75 5b ae 3d 7b  .d.X.....x.u[.={
+0040: 18 ec 5e e1 d5 48 13 1c 00 63 d2 02 1f 35 f5 34  ..^..H...c...5.4
+0050: 35 1d d6 90 8f 34 e3 3c d4 ed f9 83 55 b4 61 3b  5....4.<....U.a;
+0060: 73 1d a2 4f 1b 3e 71 c3 af 0c 14 b8 1c 2f bf 64  s..O.>q....../.d
+0070: 66 06 e5 77 4f 26 fe b8 da b3 2c c5 55 68 37 e5  f..wO&....,.Uh7.
+0080: 9f 65 84 c3 93 71 0e 35 f3 15 59 4e 95 dd 29 fc  .e...q.5..YN..).
+0090: 9c c3 77 20 b6 ad 97 f7 e0 bd 07 00 00 00 00     ..w ...........
+```
+
+Parsed Init packet:
+```
+InitPacket:
+  SessionID: 8b6bcdb8
+  ProtocolVersion: 0000c621
+  RsaPublicKey:
+    2eacd4982c71bb2fa76f1daf587cfdd3
+    c26dc4f4c42b9f3b0942c78c72e97d03
+    bf244bdfd285648858dc8cf6a6ac78cc
+    755bae3d7b18ec5ee1d548131c0063d2
+    021f35f534351dd6908f34e33cd4edf9
+    8355b4613b731da24f1b3e71c3af0c14
+    b81c2fbf646606e5774f26feb8dab32c
+    c5556837e59f6584c393710e35f31559
+
+  GameGuard1: 29dd954e
+  GameGuard2: 77c39cfc
+  GameGuard3: 97adb620
+  GameGuard4: 07bde0f7
+  BlowfishKey: nil
+```
 
 
 ### 2. [GGAuth](https://gitlab.com/TheDnR/l2j-lisvus/-/blob/main/core/java/net/sf/l2j/loginserver/serverpackets/GGAuth.java#L24)
