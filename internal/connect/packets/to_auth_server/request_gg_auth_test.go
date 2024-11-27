@@ -137,3 +137,22 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 		assert.Equal(t, req.Data4, decoded.Data4)
 	})
 }
+
+func TestNewDefaultRequestGGAuth_ToBytes(t *testing.T) {
+	req := NewDefaultRequestGGAuth(1)
+
+	data, err := req.ToBytes()
+	assert.NoError(t, err)
+	assert.NotNil(t, data)
+
+	// Expected byte sequence
+	expected := []byte{
+		0x01, 0x00, 0x00, 0x00, // SessionID: 1
+		// 23 92 90 4D 18 30 B5 7C 96 61 41 47 05 07 96 FB
+		0x23, 0x92, 0x90, 0x4D,
+		0x18, 0x30, 0xB5, 0x7C,
+		0x96, 0x61, 0x41, 0x47,
+		0x05, 0x07, 0x96, 0xFB,
+	}
+	assert.Equal(t, expected, data)
+}

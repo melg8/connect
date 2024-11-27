@@ -17,6 +17,24 @@ type RequestGGAuth struct {
 	Data4     int32
 }
 
+func Int32FromLEndian(s [4]byte) int32 {
+	return int32(s[0]) |
+		int32(s[1])<<8 |
+		int32(s[2])<<16 |
+		int32(s[3])<<24
+}
+
+func NewDefaultRequestGGAuth(sessionID int32) *RequestGGAuth {
+	return &RequestGGAuth{
+		SessionID: sessionID,
+		// 23 92 90 4D 18 30 B5 7C 96 61 41 47 05 07 96 FB
+		Data1: Int32FromLEndian([4]byte{0x23, 0x92, 0x90, 0x4D}),
+		Data2: Int32FromLEndian([4]byte{0x18, 0x30, 0xB5, 0x7C}),
+		Data3: Int32FromLEndian([4]byte{0x96, 0x61, 0x41, 0x47}),
+		Data4: Int32FromLEndian([4]byte{0x05, 0x07, 0x96, 0xFB}),
+	}
+}
+
 func NewRequestGGAuthFrom(data []byte) (*RequestGGAuth, error) {
 	var result RequestGGAuth
 
