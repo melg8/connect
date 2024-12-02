@@ -44,6 +44,7 @@ func writeSizeOfData(sb *strings.Builder, length int) {
 // in the console.
 func HexASCIIViewFrom(data []byte) string {
 	const bytesPerRow = 16
+	const hexValues = "0123456789abcdef"
 	var sb strings.Builder
 	length := len(data)
 	sb.Grow(length*5 + 20)
@@ -57,8 +58,8 @@ func HexASCIIViewFrom(data []byte) string {
 			pos := j * 3
 			if i+j < length {
 				b := data[i+j]
-				hexPart[pos] = "0123456789abcdef"[b>>4]
-				hexPart[pos+1] = "0123456789abcdef"[b&0xF]
+				hexPart[pos] = hexValues[b>>4]
+				hexPart[pos+1] = hexValues[b&0xF]
 				hexPart[pos+2] = ' '
 				if isPrintableASCII(b) {
 					asciiPart[j] = b
