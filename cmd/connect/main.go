@@ -14,17 +14,17 @@ import (
 func connectAndAuthenticate() error {
 	connector, err := connect.ServerConnector("127.0.0.1:2106")
 	if err != nil {
-		return fmt.Errorf("failed to create server connector: %v", err)
+		return fmt.Errorf("failed to create server connector: %w", err)
 	}
 
 	conn, err := connector.Connect()
 	if err != nil {
-		return fmt.Errorf("failed to connect to server: %v", err)
+		return fmt.Errorf("failed to connect to server: %w", err)
 	}
 	defer conn.Close()
 
 	if err := connect.AuthentificateConn(conn); err != nil {
-		return fmt.Errorf("failed to authentificate connection: %v", err)
+		return fmt.Errorf("failed to authentificate connection: %w", err)
 	}
 
 	log.Println("Connection authentificated")

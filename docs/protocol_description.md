@@ -204,3 +204,17 @@ InitPacket:
 | XX XX XX XX ... | 16 | [Password](https://gitlab.com/TheDnR/l2j-lisvus/-/blob/main/core/java/net/sf/l2j/loginserver/clientpackets/RequestAuthLogin.java#L83) | [108 - 124] |
 | 00 00 | 2 | [Padding]() | [125 - 127] |
 
+
+## Steps of packet assembly
+- RegisterNewPacket(packetID int32, packetSize int32)
+    - reserve 2 bytes for packet size
+    - set packet id to proper value for each packet
+- Write...(...)
+    - insert packet data
+- Assemble()
+    - reserve 0-7 bytes for padding depending on current size to be 8 byte aligned
+    - claculate checksum from packet id to end of packet - 4 bytes
+    - insert checksum to last 4 bytes
+    - encrypt from 2 to end
+    - calculate size of packet and insert to first 2 bytes
+- Packet()

@@ -56,7 +56,7 @@ func ReadPacket(conn net.Conn) ([]byte, error) {
 // Writes full packet to connection.
 func WritePacket(conn net.Conn, data []byte) error {
 	LogSentData(data)
-	needToWrite := data[:]
+	needToWrite := data
 	for {
 		n, err := conn.Write(needToWrite)
 		if err != nil {
@@ -98,7 +98,7 @@ func GGAuth(rawData []byte) (int, error) {
 		return 0, fmt.Errorf("unexpected packet type %v while waiting for init packet 0x11", packetID)
 	}
 
-	fmt.Println("got GGAuth packet with data:")
+	log.Printf("got GGAuth packet with data:")
 	helpers.ShowAsHexAndASCII(packetData)
 
 	// ggAuthPacket, err := fromauthserver.NewGGAuthPacketFromBytes(packetData)
