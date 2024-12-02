@@ -11,6 +11,8 @@ import (
 	"math"
 	"strings"
 	"testing"
+
+	"github.com/melg8/connect/internal/connect/packets/packet"
 )
 
 func OnlyPartialPacket(size int) []byte {
@@ -93,12 +95,16 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) {
 		t.Error("blowfish key should be nil")
 	}
 
-	// Test encoding
-	encoded, err := initPacket.ToBytes()
+	packetWriter := packet.NewWriter()
+	err = initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(encoded, packetBin) {
+	if packetWriter.Len() != len(packetBin) {
+		t.Error("wrong packet writer length")
+	}
+
+	if !bytes.Equal(packetWriter.Bytes(), packetBin) {
 		t.Error("wrong encoded packet")
 	}
 }
@@ -128,11 +134,12 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 	blowFishKey := make([]byte, 21)
 	initPacket.BlowfishKey = &blowFishKey
 
-	encoded, err := initPacket.ToBytes()
+	packetWriter := packet.NewWriter()
+	err = initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(encoded) != len(packetBin)+21 {
+	if packetWriter.Len() != len(packetBin)+21 {
 		t.Error("incorrect length after blowfish key addition")
 	}
 
@@ -182,7 +189,8 @@ func TestInitPacketEncodingErrors(t *testing.T) {
 		GameGuard4:      0x07bde0f7,
 	}
 
-	_, err := invalidPacket.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := invalidPacket.ToBytes(packetWriter)
 	if err == nil {
 		t.Error("Expected error for invalid RSA key length, got nil")
 	}
@@ -190,7 +198,7 @@ func TestInitPacketEncodingErrors(t *testing.T) {
 
 func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 	blowfishKey := []byte("test-blowfish-key-123")
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       0x7c610eca,
 		ProtocolVersion: 0x0000c621,
 		RsaPublicKey:    ExpectedRsaPublicKey(),
@@ -201,12 +209,12 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 		BlowfishKey:     &blowfishKey,
 	}
 
-	encoded, err := packet.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	decoded, err := NewInitPacketFromBytes(encoded)
+	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -278,7 +286,7 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 		exactKey[i] = byte(i)
 	}
 
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       1,
 		ProtocolVersion: 1,
 		RsaPublicKey:    make([]byte, 128),
@@ -289,12 +297,13 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 		BlowfishKey:     &exactKey,
 	}
 
-	encoded, err := packet.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	decoded, err := NewInitPacketFromBytes(encoded)
+	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -304,13 +313,14 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 	}
 
 	// Test with nil BlowfishKey
-	packet.BlowfishKey = nil
-	encoded, err = packet.ToBytes()
+	packetWriter = packet.NewWriter()
+	initPacket.BlowfishKey = nil
+	err = initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	decoded, err = NewInitPacketFromBytes(encoded)
+	decoded, err = NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,7 +345,7 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			packet := &InitPacket{
+			initPacket := &InitPacket{
 				SessionID:       1,
 				ProtocolVersion: 1,
 				RsaPublicKey:    make([]byte, tc.rsaKeySize),
@@ -345,7 +355,8 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 				GameGuard4:      4,
 			}
 
-			_, err := packet.ToBytes()
+			packetWriter := packet.NewWriter()
+			err := initPacket.ToBytes(packetWriter)
 			if tc.expectError && err == nil {
 				t.Errorf("Expected error for RSA key size %d, got nil", tc.rsaKeySize)
 			} else if !tc.expectError && err != nil {
@@ -356,7 +367,7 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 }
 
 func TestNewInitPacketWithZeroValues(t *testing.T) {
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       0,
 		ProtocolVersion: 0,
 		RsaPublicKey:    make([]byte, 128),
@@ -366,12 +377,13 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 		GameGuard4:      0,
 	}
 
-	encoded, err := packet.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	decoded, err := NewInitPacketFromBytes(encoded)
+	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -384,7 +396,7 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 }
 
 func TestNewInitPacketWithMaxValues(t *testing.T) {
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       math.MaxInt32, // More readable than int32(^uint32(0) >> 1)
 		ProtocolVersion: math.MaxInt32,
 		RsaPublicKey:    make([]byte, 128),
@@ -395,33 +407,34 @@ func TestNewInitPacketWithMaxValues(t *testing.T) {
 	}
 
 	// Fill RSA key with max values
-	for i := range packet.RsaPublicKey {
-		packet.RsaPublicKey[i] = 0xFF
+	for i := range initPacket.RsaPublicKey {
+		initPacket.RsaPublicKey[i] = 0xFF
 	}
 
-	encoded, err := packet.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	decoded, err := NewInitPacketFromBytes(encoded)
+	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if decoded.SessionID != packet.SessionID ||
-		decoded.ProtocolVersion != packet.ProtocolVersion ||
-		decoded.GameGuard1 != packet.GameGuard1 ||
-		decoded.GameGuard2 != packet.GameGuard2 ||
-		decoded.GameGuard3 != packet.GameGuard3 ||
-		decoded.GameGuard4 != packet.GameGuard4 ||
-		!bytes.Equal(decoded.RsaPublicKey, packet.RsaPublicKey) {
+	if decoded.SessionID != initPacket.SessionID ||
+		decoded.ProtocolVersion != initPacket.ProtocolVersion ||
+		decoded.GameGuard1 != initPacket.GameGuard1 ||
+		decoded.GameGuard2 != initPacket.GameGuard2 ||
+		decoded.GameGuard3 != initPacket.GameGuard3 ||
+		decoded.GameGuard4 != initPacket.GameGuard4 ||
+		!bytes.Equal(decoded.RsaPublicKey, initPacket.RsaPublicKey) {
 		t.Error("max values were not preserved during encoding/decoding")
 	}
 }
 
 func TestNewInitPacketWithNegativeValues(t *testing.T) {
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       -1,
 		ProtocolVersion: -1,
 		RsaPublicKey:    make([]byte, 128),
@@ -431,12 +444,13 @@ func TestNewInitPacketWithNegativeValues(t *testing.T) {
 		GameGuard4:      -1,
 	}
 
-	encoded, err := packet.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := initPacket.ToBytes(packetWriter)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	decoded, err := NewInitPacketFromBytes(encoded)
+	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}

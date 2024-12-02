@@ -2,6 +2,8 @@ package fromauthserver
 
 import (
 	"testing"
+
+	"github.com/melg8/connect/internal/connect/packets/packet"
 )
 
 func BenchmarkPlusPlus(b *testing.B) {
@@ -47,7 +49,7 @@ func BenchmarkInitPacket_ToBytes(b *testing.B) {
 		blowfishKey[i] = byte(i % 256)
 	}
 
-	packet := &InitPacket{
+	initPacket := &InitPacket{
 		SessionID:       12345,
 		ProtocolVersion: 1,
 		RsaPublicKey:    rsaKey,
@@ -60,7 +62,8 @@ func BenchmarkInitPacket_ToBytes(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err := packet.ToBytes()
+		packetWriter := packet.NewWriter()
+		err := initPacket.ToBytes(packetWriter)
 		if err != nil {
 			b.Fatal(err)
 		}
