@@ -130,8 +130,8 @@ Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki
 | 00 | 1 | [End of key indicator (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L58) | [173] |
 
 Example of raw Init packet:
-```
-0000: 9f 00 00 b8 cd 6b 8b 21 c6 00 00 2e ac d4 98 2c  .....k.!.......,
+```diff
+0000:|9f 00|00|b8 cd 6b 8b|21 c6 00 00|2e ac d4 98 2c  .....k.!.......,
 0010: 71 bb 2f a7 6f 1d af 58 7c fd d3 c2 6d c4 f4 c4  q./.o..X|...m...
 0020: 2b 9f 3b 09 42 c7 8c 72 e9 7d 03 bf 24 4b df d2  +.;.B..r.}..$K..
 0030: 85 64 88 58 dc 8c f6 a6 ac 78 cc 75 5b ae 3d 7b  .d.X.....x.u[.={
@@ -139,8 +139,9 @@ Example of raw Init packet:
 0050: 35 1d d6 90 8f 34 e3 3c d4 ed f9 83 55 b4 61 3b  5....4.<....U.a;
 0060: 73 1d a2 4f 1b 3e 71 c3 af 0c 14 b8 1c 2f bf 64  s..O.>q....../.d
 0070: 66 06 e5 77 4f 26 fe b8 da b3 2c c5 55 68 37 e5  f..wO&....,.Uh7.
-0080: 9f 65 84 c3 93 71 0e 35 f3 15 59 4e 95 dd 29 fc  .e...q.5..YN..).
-0090: 9c c3 77 20 b6 ad 97 f7 e0 bd 07 00 00 00 00     ..w ...........
+0080: 9f 65 84 c3 93 71 0e 35 f3 15 59|4e 95 dd 29|fc  .e...q.5..YN..).
+0090: 9c c3 77|20 b6 ad 97|f7 e0 bd 07|00 00 00 00     ..w ...........
+Size: 159 bytes
 ```
 
 Parsed Init packet:
