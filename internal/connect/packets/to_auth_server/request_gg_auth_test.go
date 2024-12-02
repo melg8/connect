@@ -3,6 +3,7 @@ package toauthserver
 import (
 	"testing"
 
+	"github.com/melg8/connect/internal/connect/packets/packet"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -112,8 +113,9 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 			Data3:     4,
 			Data4:     5,
 		}
-
-		data, err := req.ToBytes()
+		packetWriter := packet.NewWriter()
+		err := req.ToBytes(packetWriter)
+		data := packetWriter.Bytes()
 		assert.NoError(t, err)
 		assert.NotNil(t, data)
 
@@ -141,7 +143,9 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 func TestNewDefaultRequestGGAuth_ToBytes(t *testing.T) {
 	req := NewDefaultRequestGGAuth(1)
 
-	data, err := req.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := req.ToBytes(packetWriter)
+	data := packetWriter.Bytes()
 	assert.NoError(t, err)
 	assert.NotNil(t, data)
 

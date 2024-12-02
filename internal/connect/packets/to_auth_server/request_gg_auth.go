@@ -64,24 +64,23 @@ func NewRequestGGAuthFrom(data []byte) (*RequestGGAuth, error) {
 	return &result, nil
 }
 
-func (p *RequestGGAuth) ToBytes() ([]byte, error) {
-	writer := packet.NewWriter()
+func (p *RequestGGAuth) ToBytes(writer *packet.Writer) error {
 	if err := writer.WriteInt32(p.SessionID); err != nil {
-		return nil, err
+		return err
 	}
 	if err := writer.WriteInt32(p.Data1); err != nil {
-		return nil, err
+		return err
 	}
 	if err := writer.WriteInt32(p.Data2); err != nil {
-		return nil, err
+		return err
 	}
 	if err := writer.WriteInt32(p.Data3); err != nil {
-		return nil, err
+		return err
 	}
 	if err := writer.WriteInt32(p.Data4); err != nil {
-		return nil, err
+		return err
 	}
-	return writer.Bytes(), nil
+	return nil
 }
 
 func (p *RequestGGAuth) ToString() string {

@@ -4,7 +4,11 @@
 
 package toauthserver
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/melg8/connect/internal/connect/packets/packet"
+)
 
 func BenchmarkRequestGGAuth_ToBytes(b *testing.B) {
 	req := &RequestGGAuth{
@@ -17,7 +21,8 @@ func BenchmarkRequestGGAuth_ToBytes(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err := req.ToBytes()
+		packetWriter := packet.NewWriter()
+		err := req.ToBytes(packetWriter)
 		if err != nil {
 			b.Fatal(err)
 		}

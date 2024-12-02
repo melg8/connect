@@ -11,6 +11,7 @@ import (
 
 	"github.com/melg8/connect/internal/connect/helpers"
 	fromauthserver "github.com/melg8/connect/internal/connect/packets/from_auth_server"
+	"github.com/melg8/connect/internal/connect/packets/packet"
 	toauthserver "github.com/melg8/connect/internal/connect/packets/to_auth_server"
 )
 
@@ -113,7 +114,9 @@ func GGAuth(rawData []byte) (int, error) {
 func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int, error) {
 	requestGGAuth := toauthserver.NewDefaultRequestGGAuth(initResponse.SessionID)
 
-	packetData, err := requestGGAuth.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := requestGGAuth.ToBytes(packetWriter)
+	packetData := packetWriter.Bytes()
 
 	// assembler := toauthserver.NewAssembler()
 
