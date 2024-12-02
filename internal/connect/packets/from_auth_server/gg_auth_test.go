@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/melg8/connect/internal/connect/packets/packet"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,13 +77,15 @@ func TestGGAuthPacket_ToBytes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.packet.ToBytes()
+			packetWriter := packet.NewWriter()
+
+			err := tt.packet.ToBytes(packetWriter)
 			if tt.wantErr {
 				assert.Error(t, err, tt.description)
 				return
 			}
 			assert.NoError(t, err, tt.description)
-			assert.True(t, bytes.Equal(tt.want, got), tt.description)
+			assert.True(t, bytes.Equal(tt.want, packetWriter.Bytes()), tt.description)
 		})
 	}
 }
@@ -105,11 +108,12 @@ func TestGGAuthPacket_RoundTrip(t *testing.T) {
 	}
 
 	// Convert to bytes
-	bytes, err := original.ToBytes()
+	packetWriter := packet.NewWriter()
+	err := original.ToBytes(packetWriter)
 	assert.NoError(t, err, "Failed to convert to bytes")
 
 	// Convert back to packet
-	reconstructed, err := NewGGAuthPacketFromBytes(bytes)
+	reconstructed, err := NewGGAuthPacketFromBytes(packetWriter.Bytes())
 	assert.NoError(t, err, "Failed to parse bytes")
 
 	// Compare

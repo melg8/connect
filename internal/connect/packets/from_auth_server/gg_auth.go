@@ -26,15 +26,14 @@ func NewGGAuthPacketFromBytes(data []byte) (*GGAuthPacket, error) {
 	}, nil
 }
 
-func (p *GGAuthPacket) ToBytes() ([]byte, error) {
-	writer := packet.NewWriter()
+func (p *GGAuthPacket) ToBytes(writer *packet.Writer) error {
 	if err := writer.WriteInt32(p.SessionID); err != nil {
-		return nil, err
+		return err
 	}
 	if err := writer.WriteInt32(p.Unknown); err != nil {
-		return nil, err
+		return err
 	}
-	return writer.Bytes(), nil
+	return nil
 }
 
 func (p *GGAuthPacket) ToString() string {
