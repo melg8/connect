@@ -18,10 +18,10 @@ const (
 
 type Encryptor struct {
 	writer Writer
-	key    *crypt.BlowFishKey
+	key    *crypt.BlowFishCipher
 }
 
-func NewEncryptor(writer Writer, key *crypt.BlowFishKey) *Encryptor {
+func NewEncryptor(writer Writer, key *crypt.BlowFishCipher) *Encryptor {
 	return &Encryptor{
 		writer: writer,
 		key:    key,

@@ -34,26 +34,22 @@ func TestBlowFishDataNotMultipleOf8(t *testing.T) {
 }
 
 func TestBlowFishEmptyKey(t *testing.T) {
-	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	err := NewBlowFishKey([]byte{}).Decrypt(data)
+	cipher, err := NewBlowFishCipher([]byte{})
 	if err == nil {
-		t.Fatal("Decryption should have failed on empty key")
+		t.Fatal("Creating cipher should have failed with empty key")
 	}
-	if err.Error() != "failed to initialize blowfish" {
-		t.Fatal("Error message should be 'failed to initialize blowfish', got: ",
-			err.Error())
+	if cipher != nil {
+		t.Fatal("Cipher should be nil when creation fails")
 	}
 }
 
 func TestBlowFishNilKey(t *testing.T) {
-	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	err := NewBlowFishKey(nil).Decrypt(data)
+	cipher, err := NewBlowFishCipher(nil)
 	if err == nil {
-		t.Fatal("Decryption should have failed on nil key")
+		t.Fatal("Creating cipher should have failed with nil key")
 	}
-	if err.Error() != "BlowFishKey or key is nil" {
-		t.Fatal("Error message should be 'BlowFishKey or key is nil', got: ",
-			err.Error())
+	if cipher != nil {
+		t.Fatal("Cipher should be nil when creation fails")
 	}
 }
 
@@ -93,31 +89,27 @@ func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 }
 
 func TestBlowFishEncryptEmptyKey(t *testing.T) {
-	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	err := NewBlowFishKey([]byte{}).Encrypt(data)
+	cipher, err := NewBlowFishCipher([]byte{})
 	if err == nil {
-		t.Fatal("Encryption should have failed on empty key")
+		t.Fatal("Creating cipher should have failed with empty key")
 	}
-	if err.Error() != "failed to initialize blowfish" {
-		t.Fatal("Error message should be 'failed to initialize blowfish', got: ",
-			err.Error())
+	if cipher != nil {
+		t.Fatal("Cipher should be nil when creation fails")
 	}
 }
 
 func TestBlowFishEncryptNilKey(t *testing.T) {
-	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	err := NewBlowFishKey(nil).Encrypt(data)
+	cipher, err := NewBlowFishCipher(nil)
 	if err == nil {
-		t.Fatal("Encryption should have failed on nil key")
+		t.Fatal("Creating cipher should have failed with nil key")
 	}
-	if err.Error() != "BlowFishKey or key is nil" {
-		t.Fatal("Error message should be 'BlowFishKey or key is nil', got: ",
-			err.Error())
+	if cipher != nil {
+		t.Fatal("Cipher should be nil when creation fails")
 	}
 }
 
 func TestBlowFishEncryptDecryptCycle(t *testing.T) {
-	originalData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	originalData := []byte{1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8}
 	data := make([]byte, len(originalData))
 	copy(data, originalData)
 	key := DefaultAuthKey()
@@ -127,8 +119,8 @@ func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	if err != nil {
 		t.Fatal("Encryption failed: ", err)
 	}
-	if len(data) != 8 {
-		t.Fatal("Data should be 8 bytes, got: ", len(data))
+	if len(data) != 16 {
+		t.Fatal("Data should be 16 bytes, got: ", len(data))
 	}
 
 	// Verify data was actually changed by encryption
@@ -148,8 +140,8 @@ func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	if err != nil {
 		t.Fatal("Decryption failed: ", err)
 	}
-	if len(data) != 8 {
-		t.Fatal("Data should be 8 bytes, got: ", len(data))
+	if len(data) != 16 {
+		t.Fatal("Data should be 16 bytes, got: ", len(data))
 	}
 
 	// Verify the decrypted data matches the original
