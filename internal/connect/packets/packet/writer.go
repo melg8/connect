@@ -17,6 +17,10 @@ func NewWriter() *Writer {
 	return &Writer{}
 }
 
+func NewWriterTo(data []byte) *Writer {
+	return &Writer{Buffer: *bytes.NewBuffer(data)}
+}
+
 func (b *Writer) WriteInt64(value int64) error {
 	return binary.Write(b, binary.LittleEndian, value)
 }
