@@ -213,8 +213,10 @@ InitPacket:
     - insert packet data
 - Assemble()
     - reserve 0-7 bytes for padding depending on current size to be 8 byte aligned
+    - calculate size of packet and insert to first 2 bytes
     - claculate checksum from packet id to end of packet - 4 bytes
     - insert checksum to last 4 bytes
     - encrypt from 2 to end
-    - calculate size of packet and insert to first 2 bytes
 - Packet()
+
+
