@@ -10,8 +10,8 @@ import (
 )
 
 func TestBlowFishEmptyData(t *testing.T) {
-	encryptedData := []byte{}
-	_, err := DefaultAuthKey().Decrypt(encryptedData)
+	data := []byte{}
+	err := DefaultAuthKey().Decrypt(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on empty data")
 	}
@@ -22,8 +22,8 @@ func TestBlowFishEmptyData(t *testing.T) {
 }
 
 func TestBlowFishDataNotMultipleOf8(t *testing.T) {
-	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7}
-	_, err := DefaultAuthKey().Decrypt(encryptedData)
+	data := []byte{1, 2, 3, 4, 5, 6, 7}
+	err := DefaultAuthKey().Decrypt(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on data not multiple of 8")
 	}
@@ -34,8 +34,8 @@ func TestBlowFishDataNotMultipleOf8(t *testing.T) {
 }
 
 func TestBlowFishEmptyKey(t *testing.T) {
-	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	_, err := NewBlowFishKey([]byte{}).Decrypt(encryptedData)
+	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	err := NewBlowFishKey([]byte{}).Decrypt(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on empty key")
 	}
@@ -45,10 +45,9 @@ func TestBlowFishEmptyKey(t *testing.T) {
 	}
 }
 
-// Test BlowFish nil key.
 func TestBlowFishNilKey(t *testing.T) {
-	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	_, err := NewBlowFishKey(nil).Decrypt(encryptedData)
+	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	err := NewBlowFishKey(nil).Decrypt(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on nil key")
 	}
@@ -59,19 +58,19 @@ func TestBlowFishNilKey(t *testing.T) {
 }
 
 func TestBlowFish(t *testing.T) {
-	encryptedData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	decryptedData, err := DefaultAuthKey().Decrypt(encryptedData)
+	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	err := DefaultAuthKey().Decrypt(data)
 	if err != nil {
 		t.Fatal("Decryption failed: ", err)
 	}
-	if len(decryptedData) != 8 {
-		t.Fatal("Decrypted data should be 8 bytes, got: ", len(decryptedData))
+	if len(data) != 8 {
+		t.Fatal("Data should be 8 bytes, got: ", len(data))
 	}
 }
 
 func TestBlowFishEncryptEmptyData(t *testing.T) {
 	data := []byte{}
-	_, err := DefaultAuthKey().Encrypt(data)
+	err := DefaultAuthKey().Encrypt(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on empty data")
 	}
@@ -83,7 +82,7 @@ func TestBlowFishEncryptEmptyData(t *testing.T) {
 
 func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7}
-	_, err := DefaultAuthKey().Encrypt(data)
+	err := DefaultAuthKey().Encrypt(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on data not multiple of 8")
 	}
@@ -95,7 +94,7 @@ func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 
 func TestBlowFishEncryptEmptyKey(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	_, err := NewBlowFishKey([]byte{}).Encrypt(data)
+	err := NewBlowFishKey([]byte{}).Encrypt(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on empty key")
 	}
@@ -107,7 +106,7 @@ func TestBlowFishEncryptEmptyKey(t *testing.T) {
 
 func TestBlowFishEncryptNilKey(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	_, err := NewBlowFishKey(nil).Encrypt(data)
+	err := NewBlowFishKey(nil).Encrypt(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on nil key")
 	}
@@ -119,31 +118,45 @@ func TestBlowFishEncryptNilKey(t *testing.T) {
 
 func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	originalData := []byte{1, 2, 3, 4, 5, 6, 7, 8}
+	data := make([]byte, len(originalData))
+	copy(data, originalData)
 	key := DefaultAuthKey()
 
 	// Test encryption
-	encryptedData, err := key.Encrypt(originalData)
+	err := key.Encrypt(data)
 	if err != nil {
 		t.Fatal("Encryption failed: ", err)
 	}
-	if len(encryptedData) != 8 {
-		t.Fatal("Encrypted data should be 8 bytes, got: ", len(encryptedData))
+	if len(data) != 8 {
+		t.Fatal("Data should be 8 bytes, got: ", len(data))
+	}
+
+	// Verify data was actually changed by encryption
+	different := false
+	for i := 0; i < len(originalData); i++ {
+		if originalData[i] != data[i] {
+			different = true
+			break
+		}
+	}
+	if !different {
+		t.Fatal("Encrypted data is identical to original data")
 	}
 
 	// Test decryption of the encrypted data
-	decryptedData, err := key.Decrypt(encryptedData)
+	err = key.Decrypt(data)
 	if err != nil {
 		t.Fatal("Decryption failed: ", err)
 	}
-	if len(decryptedData) != 8 {
-		t.Fatal("Decrypted data should be 8 bytes, got: ", len(decryptedData))
+	if len(data) != 8 {
+		t.Fatal("Data should be 8 bytes, got: ", len(data))
 	}
 
 	// Verify the decrypted data matches the original
 	for i := 0; i < len(originalData); i++ {
-		if originalData[i] != decryptedData[i] {
+		if originalData[i] != data[i] {
 			t.Fatalf("Decrypted data differs from original at position %d: expected %d, got %d",
-				i, originalData[i], decryptedData[i])
+				i, originalData[i], data[i])
 		}
 	}
 }

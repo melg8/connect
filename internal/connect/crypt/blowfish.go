@@ -32,62 +32,67 @@ func DefaultAuthKey() *BlowFishKey {
 		0x00})
 }
 
-func (b *BlowFishKey) Decrypt(encrypted []byte) ([]byte, error) {
+func (b *BlowFishKey) Decrypt(data []byte) error {
 	if b == nil || b.key == nil {
-		return nil, errors.New("BlowFishKey or key is nil")
-	}
-
-	lenEncrypted := len(encrypted)
-	if lenEncrypted == 0 {
-		return nil, errors.New("encrypted data is empty")
-	}
-
-	cipher, err := blowfish.NewCipher(b.key)
-	if err != nil {
-		return nil, errors.New("failed to initialize blowfish")
-	}
-
-	blockSize := cipher.BlockSize()
-	if lenEncrypted%blockSize != 0 {
-		return nil, fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, lenEncrypted)
-	}
-
-	decrypted := make([]byte, lenEncrypted)
-	count := lenEncrypted / blockSize
-
-	for i := 0; i < count; i++ {
-		cipher.Decrypt(decrypted[i*blockSize:], encrypted[i*blockSize:])
-	}
-
-	return decrypted, nil
-}
-
-func (b *BlowFishKey) Encrypt(data []byte) ([]byte, error) {
-	if b == nil || b.key == nil {
-		return nil, errors.New("BlowFishKey or key is nil")
+		return errors.New("BlowFishKey or key is nil")
 	}
 
 	lenData := len(data)
 	if lenData == 0 {
-		return nil, errors.New("data is empty")
+		return errors.New("encrypted data is empty")
 	}
 
 	cipher, err := blowfish.NewCipher(b.key)
 	if err != nil {
-		return nil, errors.New("failed to initialize blowfish")
+		return errors.New("failed to initialize blowfish")
 	}
 
 	blockSize := cipher.BlockSize()
 	if lenData%blockSize != 0 {
-		return nil, fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, lenData)
+		return fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, lenData)
 	}
 
-	encrypted := make([]byte, lenData)
+	count := lenData / blockSize
+	tmp := make([]byte, blockSize)
+
+	for i := 0; i < count; i++ {
+		start := i * blockSize
+		end := start + blockSize
+		copy(tmp, data[start:end])
+		cipher.Decrypt(data[start:end], tmp)
+	}
+
+	return nil
+}
+
+func (b *BlowFishKey) Encrypt(data []byte) error {
+	if b == nil || b.key == nil {
+		return errors.New("BlowFishKey or key is nil")
+	}
+
+	lenData := len(data)
+	if lenData == 0 {
+		return errors.New("data is empty")
+	}
+
+	cipher, err := blowfish.NewCipher(b.key)
+	if err != nil {
+		return errors.New("failed to initialize blowfish")
+	}
+
+	blockSize := cipher.BlockSize()
+	if lenData%blockSize != 0 {
+		return fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, lenData)
+	}
+
 	count := lenData / blockSize
 
 	for i := 0; i < count; i++ {
-		cipher.Encrypt(encrypted[i*blockSize:], data[i*blockSize:])
+		start := i * blockSize
+		end := start + blockSize
+		blockSlice := data[start:end]
+		cipher.Encrypt(blockSlice, blockSlice)
 	}
 
-	return encrypted, nil
+	return nil
 }

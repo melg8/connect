@@ -19,7 +19,7 @@ func BenchmarkBlowFish(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		_, err := authKey.Decrypt(data)
+		err := authKey.Decrypt(data)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -33,7 +33,7 @@ func BenchmarkBlowFishEncrypt(b *testing.B) {
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		_, err := authKey.Encrypt(data)
+		err := authKey.Encrypt(data)
 		if err != nil {
 			b.Fatal(err)
 		}
