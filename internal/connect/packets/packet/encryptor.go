@@ -18,13 +18,13 @@ const (
 
 type Encryptor struct {
 	writer Writer
-	key    *crypt.BlowFishCipher
+	cipher *crypt.BlowFishCipher
 }
 
-func NewEncryptor(writer Writer, key *crypt.BlowFishCipher) *Encryptor {
+func NewEncryptor(writer Writer, cipher *crypt.BlowFishCipher) *Encryptor {
 	return &Encryptor{
 		writer: writer,
-		key:    key,
+		cipher: cipher,
 	}
 }
 
@@ -74,14 +74,9 @@ func (e *Encryptor) Write(data Serializable) error {
 		return err
 	}
 
-	// if err := e.key.Encrypt(e.writer.Bytes()[2:]); err != nil {
-	// 	return err
-	// }
-
-	// // Calculate size of packet and insert to first 2 bytes
-	// packetSize := e.writer.Len()
-	// e.writer.Reset()
-	// e.writer.WriteInt16(int16(packetSize))
+	if err := e.cipher.EncryptInplace(e.writer.Bytes()[2:]); err != nil {
+		return err
+	}
 
 	return nil
 }
