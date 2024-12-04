@@ -40,7 +40,7 @@ func (e *Encryptor) writePadding(count int) error {
 func (e *Encryptor) writePaddingAndChecksum() error {
 	currentMessageSize := e.writer.Len() - messagePrefixSize
 	sizeWithCrc := currentMessageSize + crcSize
-	paddingNeeded := alignBy - (sizeWithCrc % alignBy)
+	paddingNeeded := (alignBy - (sizeWithCrc % alignBy)) % alignBy
 
 	if err := e.writePadding(paddingNeeded); err != nil {
 		return err
