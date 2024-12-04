@@ -5,9 +5,13 @@
 package toauthserver
 
 import (
+	"errors"
+
 	"github.com/melg8/connect/internal/connect/helpers"
 	"github.com/melg8/connect/internal/connect/packets/packet"
 )
+
+const packetID = 0x07
 
 type RequestGGAuth struct {
 	SessionID int32
@@ -39,7 +43,15 @@ func NewRequestGGAuthFrom(data []byte) (*RequestGGAuth, error) {
 	var result RequestGGAuth
 
 	reader := packet.NewReader(data)
-	var err error
+
+	id, err := reader.ReadInt8()
+	if err != nil {
+		return nil, err
+	}
+	if id != packetID {
+		return nil, errors.New("invalid packet id")
+	}
+
 	result.SessionID, err = reader.ReadInt32()
 	if err != nil {
 		return nil, err
@@ -65,6 +77,9 @@ func NewRequestGGAuthFrom(data []byte) (*RequestGGAuth, error) {
 }
 
 func (p *RequestGGAuth) ToBytes(writer *packet.Writer) error {
+	if err := writer.WriteInt8(packetID); err != nil {
+		return err
+	}
 	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return err
 	}

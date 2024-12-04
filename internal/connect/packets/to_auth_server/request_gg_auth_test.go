@@ -10,6 +10,7 @@ import (
 func TestNewRequestGGAuth(t *testing.T) {
 	t.Run("valid data", func(t *testing.T) {
 		testData := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // SessionID: 1
 			0x02, 0x00, 0x00, 0x00, // Data1: 2
 			0x03, 0x00, 0x00, 0x00, // Data2: 3
@@ -34,7 +35,8 @@ func TestNewRequestGGAuth(t *testing.T) {
 	})
 
 	t.Run("error reading SessionID", func(t *testing.T) {
-		testData := []byte{0x01, 0x00, 0x00} // Incomplete SessionID
+		testData := []byte{0x07, // PacketID
+			0x01, 0x00, 0x00} // Incomplete SessionID
 		req, err := NewRequestGGAuthFrom(testData)
 		assert.Error(t, err)
 		assert.Nil(t, req)
@@ -42,6 +44,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 
 	t.Run("error reading Data1", func(t *testing.T) {
 		testData := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // Complete SessionID
 			0x02, 0x00, 0x00, // Incomplete Data1
 		}
@@ -52,6 +55,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 
 	t.Run("error reading Data2", func(t *testing.T) {
 		testData := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // Complete SessionID
 			0x02, 0x00, 0x00, 0x00, // Complete Data1
 			0x03, 0x00, 0x00, // Incomplete Data2
@@ -63,6 +67,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 
 	t.Run("error reading Data3", func(t *testing.T) {
 		testData := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // Complete SessionID
 			0x02, 0x00, 0x00, 0x00, // Complete Data1
 			0x03, 0x00, 0x00, 0x00, // Complete Data2
@@ -75,6 +80,7 @@ func TestNewRequestGGAuth(t *testing.T) {
 
 	t.Run("error reading Data4", func(t *testing.T) {
 		testData := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // Complete SessionID
 			0x02, 0x00, 0x00, 0x00, // Complete Data1
 			0x03, 0x00, 0x00, 0x00, // Complete Data2
@@ -121,6 +127,7 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 
 		// Expected byte sequence
 		expected := []byte{
+			0x07,                   // PacketID
 			0x01, 0x00, 0x00, 0x00, // SessionID: 1
 			0x02, 0x00, 0x00, 0x00, // Data1: 2
 			0x03, 0x00, 0x00, 0x00, // Data2: 3
@@ -151,6 +158,7 @@ func TestNewDefaultRequestGGAuth_ToBytes(t *testing.T) {
 
 	// Expected byte sequence
 	expected := []byte{
+		0x07,                   // PacketID
 		0x01, 0x00, 0x00, 0x00, // SessionID: 1
 		// 23 92 90 4D 18 30 B5 7C 96 61 41 47 05 07 96 FB
 		0x23, 0x92, 0x90, 0x4D,
