@@ -40,7 +40,7 @@ func DefaultAuthKey() *BlowFishCipher {
 	return cipher
 }
 
-func (b *BlowFishCipher) Decrypt(data []byte) error {
+func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
 		return errors.New("encrypted data is empty")
@@ -52,19 +52,21 @@ func (b *BlowFishCipher) Decrypt(data []byte) error {
 	}
 
 	count := lenData / blockSize
-	tmp := make([]byte, blockSize)
 
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
-		copy(tmp, data[start:end])
-		b.cipher.Decrypt(data[start:end], tmp)
+		b.cipher.Decrypt(dst[start:end], data[start:end])
 	}
 
 	return nil
 }
 
-func (b *BlowFishCipher) Encrypt(data []byte) error {
+func (b *BlowFishCipher) DecryptInplace(data []byte) error {
+	return b.Decrypt(data, data)
+}
+
+func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
 		return errors.New("data is empty")
@@ -80,9 +82,12 @@ func (b *BlowFishCipher) Encrypt(data []byte) error {
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
-		blockSlice := data[start:end]
-		b.cipher.Encrypt(blockSlice, blockSlice)
+		b.cipher.Encrypt(dst[start:end], data[start:end])
 	}
 
 	return nil
+}
+
+func (b *BlowFishCipher) EncryptInplace(data []byte) error {
+	return b.Encrypt(data, data)
 }

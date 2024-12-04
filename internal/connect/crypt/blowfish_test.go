@@ -11,7 +11,7 @@ import (
 
 func TestBlowFishEmptyData(t *testing.T) {
 	data := []byte{}
-	err := DefaultAuthKey().Decrypt(data)
+	err := DefaultAuthKey().DecryptInplace(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on empty data")
 	}
@@ -23,7 +23,7 @@ func TestBlowFishEmptyData(t *testing.T) {
 
 func TestBlowFishDataNotMultipleOf8(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7}
-	err := DefaultAuthKey().Decrypt(data)
+	err := DefaultAuthKey().DecryptInplace(data)
 	if err == nil {
 		t.Fatal("Decryption should have failed on data not multiple of 8")
 	}
@@ -55,7 +55,7 @@ func TestBlowFishNilKey(t *testing.T) {
 
 func TestBlowFish(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
-	err := DefaultAuthKey().Decrypt(data)
+	err := DefaultAuthKey().DecryptInplace(data)
 	if err != nil {
 		t.Fatal("Decryption failed: ", err)
 	}
@@ -66,7 +66,7 @@ func TestBlowFish(t *testing.T) {
 
 func TestBlowFishEncryptEmptyData(t *testing.T) {
 	data := []byte{}
-	err := DefaultAuthKey().Encrypt(data)
+	err := DefaultAuthKey().EncryptInplace(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on empty data")
 	}
@@ -78,7 +78,7 @@ func TestBlowFishEncryptEmptyData(t *testing.T) {
 
 func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7}
-	err := DefaultAuthKey().Encrypt(data)
+	err := DefaultAuthKey().EncryptInplace(data)
 	if err == nil {
 		t.Fatal("Encryption should have failed on data not multiple of 8")
 	}
@@ -115,7 +115,7 @@ func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	key := DefaultAuthKey()
 
 	// Test encryption
-	err := key.Encrypt(data)
+	err := key.EncryptInplace(data)
 	if err != nil {
 		t.Fatal("Encryption failed: ", err)
 	}
@@ -136,7 +136,7 @@ func TestBlowFishEncryptDecryptCycle(t *testing.T) {
 	}
 
 	// Test decryption of the encrypted data
-	err = key.Decrypt(data)
+	err = key.DecryptInplace(data)
 	if err != nil {
 		t.Fatal("Decryption failed: ", err)
 	}
