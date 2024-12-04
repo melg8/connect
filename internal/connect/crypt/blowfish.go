@@ -54,10 +54,16 @@ func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 
 	count := lenData / blockSize
 
+	fixEndiannessInplace(data)
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Decrypt(dst[start:end], data[start:end])
+	}
+	fixEndiannessInplace(dst)
+
+	if &dst[0] != &data[0] {
+		fixEndiannessInplace(data)
 	}
 
 	return nil
