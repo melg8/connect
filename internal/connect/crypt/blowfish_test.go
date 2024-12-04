@@ -180,6 +180,8 @@ func TestBlowfishEncryption(t *testing.T) {
 // So each 4 bytes are reversed compared to the original data.
 // Same issue was observed here:
 // https://stackoverflow.com/questions/44274221/blowfish-results-are-different-between-openssl-and-golang.
+// Other reference implementations can be found here:
+// https://www.schneier.com/academic/blowfish/download/
 
 // 01:05:42 :[Send encrypted auth gg data: 2A-00-45-97-F9-4E-78-DD-98-61-45-97-F9-4E-78-DD-98-61-45-97-F9-4E-78-DD-98-61-45-97-F9-4E-78-DD-98-61-45-97-F9-4E-78-DD-98-61
 // 01:05:42 :[key for encrypting auth gg data: 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
