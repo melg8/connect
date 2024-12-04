@@ -31,11 +31,11 @@ func Int32FromLEndian(s [4]byte) int32 {
 func NewDefaultRequestGGAuth(sessionID int32) *RequestGGAuth {
 	return &RequestGGAuth{
 		SessionID: sessionID,
-		// 23 92 90 4D 18 30 B5 7C 96 61 41 47 05 07 96 FB
-		Data1: Int32FromLEndian([4]byte{0x23, 0x92, 0x90, 0x4D}),
-		Data2: Int32FromLEndian([4]byte{0x18, 0x30, 0xB5, 0x7C}),
-		Data3: Int32FromLEndian([4]byte{0x96, 0x61, 0x41, 0x47}),
-		Data4: Int32FromLEndian([4]byte{0x05, 0x07, 0x96, 0xFB}),
+		// 23 01 00 00 67 45 00 00 AB 89 00 00 EF CD 00 00
+		Data1: Int32FromLEndian([4]byte{0x23, 0x01, 0x00, 0x00}),
+		Data2: Int32FromLEndian([4]byte{0x67, 0x45, 0x00, 0x00}),
+		Data3: Int32FromLEndian([4]byte{0xAB, 0x89, 0x00, 0x00}),
+		Data4: Int32FromLEndian([4]byte{0xEF, 0xCD, 0x00, 0x00}),
 	}
 }
 
@@ -80,6 +80,7 @@ func (p *RequestGGAuth) ToBytes(writer *packet.Writer) error {
 	if err := writer.WriteInt8(packetID); err != nil {
 		return err
 	}
+
 	if err := writer.WriteInt32(p.SessionID); err != nil {
 		return err
 	}

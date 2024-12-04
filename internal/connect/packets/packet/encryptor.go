@@ -4,7 +4,12 @@
 
 package packet
 
-import "github.com/melg8/connect/internal/connect/crypt"
+import (
+	"errors"
+	"log"
+
+	"github.com/melg8/connect/internal/connect/crypt"
+)
 
 type Serializable interface {
 	ToBytes(*Writer) error
@@ -12,8 +17,9 @@ type Serializable interface {
 
 const (
 	messagePrefixSize = 2
-	alignBy           = 8
+	crcAllignBy       = 4
 	crcSize           = 4
+	cipherAllignBy    = 8
 )
 
 type Encryptor struct {
@@ -39,8 +45,13 @@ func (e *Encryptor) writePadding(count int) error {
 
 func (e *Encryptor) writePaddingAndChecksum() error {
 	currentMessageSize := e.writer.Len() - messagePrefixSize
+
+	log.Printf("Current message size: %d", currentMessageSize)
+
 	sizeWithCrc := currentMessageSize + crcSize
-	paddingNeeded := (alignBy - (sizeWithCrc % alignBy)) % alignBy
+	paddingNeeded := (crcAllignBy - (sizeWithCrc % crcAllignBy)) % crcAllignBy
+
+	log.Printf("Size with padding: %d", sizeWithCrc+paddingNeeded)
 
 	if err := e.writePadding(paddingNeeded); err != nil {
 		return err
@@ -50,15 +61,37 @@ func (e *Encryptor) writePaddingAndChecksum() error {
 	if err != nil {
 		return err
 	}
-	return e.writer.WriteInt32(int32(crc))
+	crcBytes := make([]byte, 4)
+	crcBytes[3] = byte(crc)
+	crcBytes[2] = byte(crc >> 8)
+	crcBytes[1] = byte(crc >> 16)
+	crcBytes[0] = byte(crc >> 24)
+	return e.writer.WriteBytes(crcBytes)
+}
+
+func (e *Encryptor) allignAndEncrypt() error {
+	if e.writer.Len() < 2 {
+		return errors.New("not enough data to encrypt")
+	}
+
+	paddingSize := (cipherAllignBy - (e.writer.Len()-2)%cipherAllignBy) % cipherAllignBy
+
+	if err := e.writePadding(paddingSize); err != nil {
+		return err
+	}
+
+	if err := e.cipher.EncryptInplace(e.writer.Bytes()[2:]); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (e *Encryptor) writePacketSize() error {
 	packetSizeBytes := e.writer.Bytes()[0:2]
-	packetSize := int16(e.writer.Len() - 2)
+	packetSize := int16(e.writer.Len())
 	packetSizeBytes[0] = byte(packetSize)
 	packetSizeBytes[1] = byte(packetSize >> 8)
-	return e.writer.WriteInt16(packetSize)
+	return nil
 }
 
 func (e *Encryptor) Write(data Serializable) error {
@@ -73,11 +106,11 @@ func (e *Encryptor) Write(data Serializable) error {
 		return err
 	}
 
-	if err := e.writePacketSize(); err != nil {
+	if err := e.allignAndEncrypt(); err != nil {
 		return err
 	}
 
-	if err := e.cipher.EncryptInplace(e.writer.Bytes()[2:]); err != nil {
+	if err := e.writePacketSize(); err != nil {
 		return err
 	}
 

@@ -24,6 +24,7 @@ func NewBlowFishCipher(key []byte) (*BlowFishCipher, error) {
 	return &BlowFishCipher{cipher: cipher}, nil
 }
 
+// 5F-3B-35-2E-5D-39-34-2D-33-31-3D-3D-2D-25-78-54-21-5E-5B-24-00
 func DefaultAuthKey() *BlowFishCipher {
 	key := []byte{
 		0x5F, 0x3B, 0x35, 0x2E,
@@ -66,6 +67,12 @@ func (b *BlowFishCipher) DecryptInplace(data []byte) error {
 	return b.Decrypt(data, data)
 }
 
+func fixEndiannessInplace(data []byte) {
+	for i := 0; i < len(data); i += 4 {
+		data[i], data[i+1], data[i+2], data[i+3] = data[i+3], data[i+2], data[i+1], data[i]
+	}
+}
+
 func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
@@ -78,11 +85,17 @@ func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	}
 
 	count := lenData / blockSize
+	fixEndiannessInplace(data)
 
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Encrypt(dst[start:end], data[start:end])
+	}
+	fixEndiannessInplace(dst)
+
+	if &dst[0] != &data[0] {
+		fixEndiannessInplace(data)
 	}
 
 	return nil
