@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/melg8/connect/internal/connect/crypt"
 	"github.com/melg8/connect/internal/connect/helpers"
 	fromauthserver "github.com/melg8/connect/internal/connect/packets/from_auth_server"
 	"github.com/melg8/connect/internal/connect/packets/packet"
@@ -116,27 +117,14 @@ func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int,
 
 	packetWriter := packet.NewWriter()
 	err := requestGGAuth.ToBytes(packetWriter)
-	packetData := packetWriter.Bytes()
 
-	// assembler := toauthserver.NewAssembler()
-
-	// requestGGAuth.ToWriter(assembler.Writer)
-
-	// packetData, err = assembler.Assemble(0x11)
-
-	// reserve 2 bytes for packet size
-	// set packet id to proper value for each packet
-	// insert packet data
-	// reserve 0-7 bytes for padding depending on current size to be 8 byte aligned
-	// claculate checksum from packet id to end of packet - 4 bytes
-	// insert checksum to last 4 bytes
-	// encrypt from 2 to end
-	// calculate size of packet and insert to first 2 bytes
+	encryptor := packet.NewEncryptor(*packet.NewWriter(), crypt.DefaultAuthKey())
+	encryptor.Write(requestGGAuth)
 
 	if err != nil {
 		return 0, err
 	}
-	err = WritePacket(conn, packetData)
+	err = WritePacket(conn, encryptor.Bytes())
 	if err != nil {
 		return 0, err
 	}

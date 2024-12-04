@@ -10,15 +10,15 @@ import (
 )
 
 type Writer struct {
-	bytes.Buffer
+	*bytes.Buffer
 }
 
 func NewWriter() *Writer {
-	return &Writer{}
+	return &Writer{Buffer: bytes.NewBuffer([]byte{})}
 }
 
 func NewWriterTo(data []byte) *Writer {
-	return &Writer{Buffer: *bytes.NewBuffer(data)}
+	return &Writer{Buffer: bytes.NewBuffer(data)}
 }
 
 func (b *Writer) WriteInt64(value int64) error {

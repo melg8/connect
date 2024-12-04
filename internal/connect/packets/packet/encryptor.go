@@ -55,7 +55,10 @@ func (e *Encryptor) writePaddingAndChecksum() error {
 
 func (e *Encryptor) writePacketSize() error {
 	packetSizeBytes := e.writer.Bytes()[0:2]
-	return NewWriterTo(packetSizeBytes).WriteInt16(int16(e.writer.Len() - 2))
+	packetSize := int16(e.writer.Len() - 2)
+	packetSizeBytes[0] = byte(packetSize)
+	packetSizeBytes[1] = byte(packetSize >> 8)
+	return e.writer.WriteInt16(packetSize)
 }
 
 func (e *Encryptor) Write(data Serializable) error {
@@ -79,4 +82,8 @@ func (e *Encryptor) Write(data Serializable) error {
 	}
 
 	return nil
+}
+
+func (e *Encryptor) Bytes() []byte {
+	return e.writer.Bytes()
 }
