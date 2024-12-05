@@ -2,17 +2,17 @@
 //
 // SPDX-License-Identifier: MIT
 
-package packet
+package crypt
 
 import (
 	"errors"
 	"log"
 
-	"github.com/melg8/connect/internal/connect/crypt"
+	"github.com/melg8/connect/internal/connect/packets/packet"
 )
 
 type Serializable interface {
-	ToBytes(*Writer) error
+	ToBytes(*packet.Writer) error
 }
 
 const (
@@ -23,11 +23,11 @@ const (
 )
 
 type Encryptor struct {
-	writer Writer
-	cipher *crypt.BlowFishCipher
+	writer packet.Writer
+	cipher *BlowFishCipher
 }
 
-func NewEncryptor(writer Writer, cipher *crypt.BlowFishCipher) *Encryptor {
+func NewEncryptor(writer packet.Writer, cipher *BlowFishCipher) *Encryptor {
 	return &Encryptor{
 		writer: writer,
 		cipher: cipher,
@@ -57,7 +57,7 @@ func (e *Encryptor) writePaddingAndChecksum() error {
 		return err
 	}
 
-	crc, err := crypt.Checksum(e.writer.Bytes()[messagePrefixSize:])
+	crc, err := Checksum(e.writer.Bytes()[messagePrefixSize:])
 	if err != nil {
 		return err
 	}

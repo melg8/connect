@@ -118,7 +118,7 @@ func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int,
 	packetWriter := packet.NewWriter()
 	err := requestGGAuth.ToBytes(packetWriter)
 
-	encryptor := packet.NewEncryptor(*packet.NewWriter(), crypt.DefaultAuthKey())
+	encryptor := crypt.NewEncryptor(*packet.NewWriter(), crypt.DefaultAuthKey())
 	encryptor.Write(requestGGAuth)
 
 	if err != nil {
