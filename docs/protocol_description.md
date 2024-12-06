@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+
+SPDX-License-Identifier: MIT
+-->
+
 # Description of client-server protocol
 
 Description client-server communication protocol based on [L2JLisvus](https://gitlab.com/TheDnR/l2j-lisvus/) server emulator.

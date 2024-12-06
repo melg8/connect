@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+
+SPDX-License-Identifier: MIT
+-->
+
 # Documentation for connect project
 
 [Protocol description](./protocol_description.md) shows message types and their sequence in process of connection to server.

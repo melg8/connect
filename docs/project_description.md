@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: © 2024 Melg Eight <public.melg8@gmail.com>
+
+SPDX-License-Identifier: MIT
+-->
+
 # Goal
 Main goal of this project is to give me motivation to learn and apply programming languages while having in mind development of concrete application with special requirements from botting l2 subject area.
 
