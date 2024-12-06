@@ -34,3 +34,18 @@ Run specific linter for project with fixes:
 ```bash
 golangci-lint run --fix --disable-all --enable=wsl ./...
 ```
+
+Run concrete benchmark with profiling:
+```bash
+E:\Go\bin\go.exe test -benchmem -cpuprofile=cpu_out -memprofile=mem_out  -run=^$ -bench ^BenchmarkEncryptor_Write$ github.com/melg8/connect/internal/connect/crypt
+```
+
+Run pprof tool for profiling:
+```bash
+go tool pprof -http=localhost:8080 mem_out
+```
+
+Run pprof tool for profiling:
+```bash
+go tool pprof -http=localhost:8080 cpu_out
+```

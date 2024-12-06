@@ -1,0 +1,34 @@
+// SPDX-FileCopyrightText: 2024 Melg Eight <public.melg8@gmail.com>
+//
+// SPDX-License-Identifier: MIT
+
+package crypt
+
+import (
+	"testing"
+
+	"github.com/melg8/connect/internal/connect/packets/packet"
+	toauthserver "github.com/melg8/connect/internal/connect/packets/to_auth_server"
+)
+
+func BenchmarkEncryptor_Write(b *testing.B) {
+	writer := packet.NewWriter()
+	writer.Buffer.Grow(100)
+	cipher := DefaultAuthKey()
+	encryptor := NewEncryptor(*writer, cipher)
+	packet := toauthserver.NewDefaultRequestGGAuth(1)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		writer.Reset()
+		err := encryptor.Write(packet)
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		if len(encryptor.Bytes()) != 34 {
+			b.Fatal("Encrypted data should be 34 bytes, got: ", len(encryptor.Bytes()))
+		}
+	}
+}

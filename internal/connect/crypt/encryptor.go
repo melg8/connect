@@ -6,7 +6,6 @@ package crypt
 
 import (
 	"errors"
-	"log"
 
 	"github.com/melg8/connect/internal/connect/packets/packet"
 )
@@ -46,12 +45,8 @@ func (e *Encryptor) writePadding(count int) error {
 func (e *Encryptor) writePaddingAndChecksum() error {
 	currentMessageSize := e.writer.Len() - messagePrefixSize
 
-	log.Printf("Current message size: %d", currentMessageSize)
-
 	sizeWithCrc := currentMessageSize + crcSize
 	paddingNeeded := (crcAllignBy - (sizeWithCrc % crcAllignBy)) % crcAllignBy
-
-	log.Printf("Size with padding: %d", sizeWithCrc+paddingNeeded)
 
 	if err := e.writePadding(paddingNeeded); err != nil {
 		return err

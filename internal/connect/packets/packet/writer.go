@@ -6,7 +6,7 @@ package packet
 
 import (
 	"bytes"
-	"encoding/binary"
+	"unsafe"
 )
 
 type Writer struct {
@@ -22,19 +22,25 @@ func NewWriterTo(data []byte) *Writer {
 }
 
 func (b *Writer) WriteInt64(value int64) error {
-	return binary.Write(b, binary.LittleEndian, value)
+	buf := (*[8]byte)(unsafe.Pointer(&value))
+	_, err := b.Write(buf[:])
+	return err
 }
 
 func (b *Writer) WriteInt32(value int32) error {
-	return binary.Write(b, binary.LittleEndian, value)
+	buf := (*[4]byte)(unsafe.Pointer(&value))
+	_, err := b.Write(buf[:])
+	return err
 }
 
 func (b *Writer) WriteInt16(value int16) error {
-	return binary.Write(b, binary.LittleEndian, value)
+	buf := (*[2]byte)(unsafe.Pointer(&value))
+	_, err := b.Write(buf[:])
+	return err
 }
 
 func (b *Writer) WriteInt8(value int8) error {
-	return binary.Write(b, binary.LittleEndian, value)
+	return b.WriteByte(byte(value))
 }
 
 func (b *Writer) WriteBytes(bytes []byte) error {
