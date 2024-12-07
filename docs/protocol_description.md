@@ -135,7 +135,8 @@ Auth server packets are encrypted using [Blowfish](https://en.wikipedia.org/wiki
 | XX XX XX XX ...| 20 | [Blowfish key (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L57) | [153 - 172] |
 | 00 | 1 | [End of key indicator (Only if compatibility mode enabled)](https://gitlab.com/TheDnR/l2j-lisvus/-/blame/main/core/java/net/sf/l2j/loginserver/serverpackets/Init.java#L58) | [173] |
 
-Example of raw Init packet:
+Example of raw full Init packet, notice total length of packet is 159 bytes caused by 2 bytes with size of packet at beginning of packet and 4 bytes with padding at the end of packet. Server sends this packet unencrypted and without
+checksum:
 ```diff
 0000:|9f 00|00|b8 cd 6b 8b|21 c6 00 00|2e ac d4 98 2c  .....k.!.......,
 0010: 71 bb 2f a7 6f 1d af 58 7c fd d3 c2 6d c4 f4 c4  q./.o..X|...m...
