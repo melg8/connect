@@ -95,10 +95,9 @@ func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 		return fmt.Errorf("data length must be a multiple of %d, got %d", blockSize, lenData)
 	}
 
-	count := lenData / blockSize
 	flip4BytesEndianInplace(data)
-
-	for i := 0; i < count; i++ {
+	blocksCount := lenData / blockSize
+	for i := 0; i < blocksCount; i++ {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Encrypt(dst[start:end], data[start:end])
@@ -108,7 +107,6 @@ func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	if &dst[0] != &data[0] {
 		flip4BytesEndianInplace(data)
 	}
-
 	return nil
 }
 
