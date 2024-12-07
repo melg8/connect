@@ -41,6 +41,17 @@ func DefaultAuthKey() *BlowFishCipher {
 	return cipher
 }
 
+// flip4BytesEndianInplace swaps the endianness of 4-byte blocks in place.
+// This is required because the game's blowfish implementation uses a different
+// endianness than the golang.org/x/crypto/blowfish package. Open data should be
+// flipped before encryption and encrypted data should be flipped again after
+// decryption for results to match.
+func flip4BytesEndianInplace(data []byte) {
+	for i := 0; i < len(data); i += 4 {
+		data[i], data[i+1], data[i+2], data[i+3] = data[i+3], data[i+2], data[i+1], data[i]
+	}
+}
+
 func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
@@ -54,16 +65,16 @@ func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 
 	count := lenData / blockSize
 
-	fixEndiannessInplace(data)
+	flip4BytesEndianInplace(data)
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Decrypt(dst[start:end], data[start:end])
 	}
-	fixEndiannessInplace(dst)
+	flip4BytesEndianInplace(dst)
 
 	if &dst[0] != &data[0] {
-		fixEndiannessInplace(data)
+		flip4BytesEndianInplace(data)
 	}
 
 	return nil
@@ -71,12 +82,6 @@ func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 
 func (b *BlowFishCipher) DecryptInplace(data []byte) error {
 	return b.Decrypt(data, data)
-}
-
-func fixEndiannessInplace(data []byte) {
-	for i := 0; i < len(data); i += 4 {
-		data[i], data[i+1], data[i+2], data[i+3] = data[i+3], data[i+2], data[i+1], data[i]
-	}
 }
 
 func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
@@ -91,17 +96,17 @@ func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	}
 
 	count := lenData / blockSize
-	fixEndiannessInplace(data)
+	flip4BytesEndianInplace(data)
 
 	for i := 0; i < count; i++ {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Encrypt(dst[start:end], data[start:end])
 	}
-	fixEndiannessInplace(dst)
+	flip4BytesEndianInplace(dst)
 
 	if &dst[0] != &data[0] {
-		fixEndiannessInplace(data)
+		flip4BytesEndianInplace(data)
 	}
 
 	return nil
