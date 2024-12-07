@@ -33,8 +33,8 @@ func NewEncryptor(writer packet.Writer, cipher *BlowFishCipher) *Encryptor {
 	}
 }
 
-func (e *Encryptor) writePadding(count int) error {
-	for i := 0; i < count; i++ {
+func (e *Encryptor) writePadding(size int) error {
+	for i := 0; i < size; i++ {
 		if err := e.writer.WriteInt8(0); err != nil {
 			return err
 		}
@@ -42,13 +42,17 @@ func (e *Encryptor) writePadding(count int) error {
 	return nil
 }
 
+func paddingSizeFor(size, align int) int {
+	return (align - (size % align)) % align
+}
+
 func (e *Encryptor) writePaddingAndChecksum() error {
 	currentMessageSize := e.writer.Len() - messagePrefixSize
 
 	sizeWithCrc := currentMessageSize + crcSize
-	paddingNeeded := (crcAllignBy - (sizeWithCrc % crcAllignBy)) % crcAllignBy
+	paddingSize := paddingSizeFor(sizeWithCrc, crcAllignBy)
 
-	if err := e.writePadding(paddingNeeded); err != nil {
+	if err := e.writePadding(paddingSize); err != nil {
 		return err
 	}
 
@@ -69,8 +73,7 @@ func (e *Encryptor) allignAndEncrypt() error {
 		return errors.New("not enough data to encrypt")
 	}
 
-	paddingSize := (cipherAllignBy - (e.writer.Len()-2)%cipherAllignBy) % cipherAllignBy
-
+	paddingSize := paddingSizeFor(e.writer.Len()-2, cipherAllignBy)
 	if err := e.writePadding(paddingSize); err != nil {
 		return err
 	}
