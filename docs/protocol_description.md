@@ -71,12 +71,11 @@ Game servers have at least two differrent revisions of auth server protocol c621
 Process of handling recieved packets:
 1. Check recieved raw data length and compare it with expected packet length from data[2] field.
 2. If raw data is smaller then expected length, read tcp/ip again and concatenate data
-3. Check packet checksum
-4. Decrypt packet if there is current decryption key is set, or use packet as is if no decription key is set.
-5. Check packet type
-6. If current state of authentification expecting packet of specific type, proceed deserialization of packet into data structure.
-7. Use data structure in next state of authentification.
-
+3. Decrypt packet if packet expected to be encrypted
+4. Check packet checksum, discard packet if checksum is invalid
+5. Check packet type, discard packet if type is not expected in current state of authentification
+6. Deserialize body of packet into concrete data structure
+7. Use data structure in next state of authentification
     
 
 ## Auth server -> client packets
