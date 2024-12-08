@@ -1,7 +1,7 @@
 MIT License
 SPDX-License-Identifier: MIT
 
-Copyright © 2024, Melg Eight ([melg8](https://github.com/melg8))
+Copyright 2024, Melg Eight ([melg8](https://github.com/melg8))
 <mailto:public.melg8@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
