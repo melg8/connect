@@ -5,7 +5,9 @@
 package connect
 
 import (
+	"encoding/binary"
 	"fmt"
+	"io"
 	"log"
 	"net"
 
@@ -45,12 +47,17 @@ func ExtractPacketFromRawData(data []byte) (int32, []byte, error) {
 // Reads full packet from connection.
 func ReadPacket(conn net.Conn) ([]byte, error) {
 	rawData := make([]byte, 1024)
-	n, err := conn.Read(rawData)
+	_, err := io.ReadFull(conn, rawData[:2])
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read packet size: %w", err)
 	}
-	LogRecievedData(rawData[:n])
+	n := int(binary.LittleEndian.Uint16(rawData[:2]))
+	_, err = io.ReadFull(conn, rawData[2:n])
+	if err != nil {
+		return nil, fmt.Errorf("failed to read packet data: %w", err)
+	}
 
+	LogRecievedData(rawData[:n])
 	return rawData[:n], nil
 }
 
