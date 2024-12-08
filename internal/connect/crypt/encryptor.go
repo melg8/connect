@@ -23,10 +23,10 @@ const (
 
 type Encryptor struct {
 	writer packet.Writer
-	cipher *BlowFishCipher
+	cipher *BlowfishCipher
 }
 
-func NewEncryptor(writer packet.Writer, cipher *BlowFishCipher) *Encryptor {
+func NewEncryptor(writer packet.Writer, cipher *BlowfishCipher) *Encryptor {
 	return &Encryptor{
 		writer: writer,
 		cipher: cipher,

@@ -16,7 +16,7 @@ func dataForBlowfishBenchmark(size int) []byte {
 	return data
 }
 
-func BenchmarkBlowFish(b *testing.B) {
+func BenchmarkBlowfish(b *testing.B) {
 	data := dataForBlowfishBenchmark(1000000)
 	authKey := DefaultAuthKey()
 
@@ -30,7 +30,7 @@ func BenchmarkBlowFish(b *testing.B) {
 	}
 }
 
-func BenchmarkBlowFishEncrypt(b *testing.B) {
+func BenchmarkBlowfishEncrypt(b *testing.B) {
 	data := dataForBlowfishBenchmark(1000000)
 	authKey := DefaultAuthKey()
 

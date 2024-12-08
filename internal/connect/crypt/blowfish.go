@@ -12,20 +12,20 @@ import (
 	"golang.org/x/crypto/blowfish"
 )
 
-type BlowFishCipher struct {
+type BlowfishCipher struct {
 	cipher *blowfish.Cipher
 }
 
-func NewBlowFishCipher(key []byte) (*BlowFishCipher, error) {
+func NewBlowfishCipher(key []byte) (*BlowfishCipher, error) {
 	cipher, err := blowfish.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
-	return &BlowFishCipher{cipher: cipher}, nil
+	return &BlowfishCipher{cipher: cipher}, nil
 }
 
 // 5F-3B-35-2E-5D-39-34-2D-33-31-3D-3D-2D-25-78-54-21-5E-5B-24-00
-func DefaultAuthKey() *BlowFishCipher {
+func DefaultAuthKey() *BlowfishCipher {
 	key := []byte{
 		0x5F, 0x3B, 0x35, 0x2E,
 		0x5D, 0x39, 0x34, 0x2D,
@@ -34,7 +34,7 @@ func DefaultAuthKey() *BlowFishCipher {
 		0x21, 0x5E, 0x5B, 0x24,
 		0x00}
 
-	cipher, err := NewBlowFishCipher(key)
+	cipher, err := NewBlowfishCipher(key)
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +52,7 @@ func flip4BytesEndianInplace(data []byte) {
 	}
 }
 
-func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
+func (b *BlowfishCipher) Decrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
 		return errors.New("encrypted data is empty")
@@ -80,11 +80,11 @@ func (b *BlowFishCipher) Decrypt(dst, data []byte) error {
 	return nil
 }
 
-func (b *BlowFishCipher) DecryptInplace(data []byte) error {
+func (b *BlowfishCipher) DecryptInplace(data []byte) error {
 	return b.Decrypt(data, data)
 }
 
-func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
+func (b *BlowfishCipher) Encrypt(dst, data []byte) error {
 	lenData := len(data)
 	if lenData == 0 {
 		return errors.New("data is empty")
@@ -110,6 +110,6 @@ func (b *BlowFishCipher) Encrypt(dst, data []byte) error {
 	return nil
 }
 
-func (b *BlowFishCipher) EncryptInplace(data []byte) error {
+func (b *BlowfishCipher) EncryptInplace(data []byte) error {
 	return b.Encrypt(data, data)
 }

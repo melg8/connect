@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestBlowFishEmptyData(t *testing.T) {
+func TestBlowfishEmptyData(t *testing.T) {
 	data := []byte{}
 	err := DefaultAuthKey().DecryptInplace(data)
 	if err == nil {
@@ -23,7 +23,7 @@ func TestBlowFishEmptyData(t *testing.T) {
 	}
 }
 
-func TestBlowFishDataNotMultipleOf8(t *testing.T) {
+func TestBlowfishDataNotMultipleOf8(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7}
 	err := DefaultAuthKey().DecryptInplace(data)
 	if err == nil {
@@ -35,8 +35,8 @@ func TestBlowFishDataNotMultipleOf8(t *testing.T) {
 	}
 }
 
-func TestBlowFishEmptyKey(t *testing.T) {
-	cipher, err := NewBlowFishCipher([]byte{})
+func TestBlowfishEmptyKey(t *testing.T) {
+	cipher, err := NewBlowfishCipher([]byte{})
 	if err == nil {
 		t.Fatal("Creating cipher should have failed with empty key")
 	}
@@ -45,8 +45,8 @@ func TestBlowFishEmptyKey(t *testing.T) {
 	}
 }
 
-func TestBlowFishNilKey(t *testing.T) {
-	cipher, err := NewBlowFishCipher(nil)
+func TestBlowfishNilKey(t *testing.T) {
+	cipher, err := NewBlowfishCipher(nil)
 	if err == nil {
 		t.Fatal("Creating cipher should have failed with nil key")
 	}
@@ -55,7 +55,7 @@ func TestBlowFishNilKey(t *testing.T) {
 	}
 }
 
-func TestBlowFish(t *testing.T) {
+func TestBlowfish(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7, 8}
 	err := DefaultAuthKey().DecryptInplace(data)
 	if err != nil {
@@ -66,7 +66,7 @@ func TestBlowFish(t *testing.T) {
 	}
 }
 
-func TestBlowFishEncryptEmptyData(t *testing.T) {
+func TestBlowfishEncryptEmptyData(t *testing.T) {
 	data := []byte{}
 	err := DefaultAuthKey().EncryptInplace(data)
 	if err == nil {
@@ -78,7 +78,7 @@ func TestBlowFishEncryptEmptyData(t *testing.T) {
 	}
 }
 
-func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
+func TestBlowfishEncryptDataNotMultipleOf8(t *testing.T) {
 	data := []byte{1, 2, 3, 4, 5, 6, 7}
 	err := DefaultAuthKey().EncryptInplace(data)
 	if err == nil {
@@ -90,8 +90,8 @@ func TestBlowFishEncryptDataNotMultipleOf8(t *testing.T) {
 	}
 }
 
-func TestBlowFishEncryptEmptyKey(t *testing.T) {
-	cipher, err := NewBlowFishCipher([]byte{})
+func TestBlowfishEncryptEmptyKey(t *testing.T) {
+	cipher, err := NewBlowfishCipher([]byte{})
 	if err == nil {
 		t.Fatal("Creating cipher should have failed with empty key")
 	}
@@ -100,8 +100,8 @@ func TestBlowFishEncryptEmptyKey(t *testing.T) {
 	}
 }
 
-func TestBlowFishEncryptNilKey(t *testing.T) {
-	cipher, err := NewBlowFishCipher(nil)
+func TestBlowfishEncryptNilKey(t *testing.T) {
+	cipher, err := NewBlowfishCipher(nil)
 	if err == nil {
 		t.Fatal("Creating cipher should have failed with nil key")
 	}
@@ -110,7 +110,7 @@ func TestBlowFishEncryptNilKey(t *testing.T) {
 	}
 }
 
-func TestBlowFishEncryptDecryptCycle(t *testing.T) {
+func TestBlowfishEncryptDecryptCycle(t *testing.T) {
 	originalData := []byte{1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8}
 	data := make([]byte, len(originalData))
 	copy(data, originalData)
@@ -191,7 +191,7 @@ func TestBlowfishEncryptionWithZeroKey(t *testing.T) {
 	key := make([]byte, 21)
 	expected, _ := hex.DecodeString("4597F94E78DD98614597F94E78DD98614597F94E78DD98614597F94E78DD98614597F94E78DD9861")
 
-	cipher, err := NewBlowFishCipher(key)
+	cipher, err := NewBlowfishCipher(key)
 	if err != nil {
 		t.Fatalf("Failed to create cipher: %v", err)
 	}
@@ -216,7 +216,7 @@ func TestBlowfishEncryptionWithCustomKey(t *testing.T) {
 	key, _ := hex.DecodeString("5F3B352E5D39342D33313D3D2D257854215E5B2400")
 	expected, _ := hex.DecodeString("1173831BFFE887DCEE76D958CAE9CA6456A54D5F59EADF4FC117A5E92C9F34CD41616F5C4BBD6FA5")
 
-	cipher, err := NewBlowFishCipher(key)
+	cipher, err := NewBlowfishCipher(key)
 	if err != nil {
 		t.Fatalf("Failed to create cipher: %v", err)
 	}
