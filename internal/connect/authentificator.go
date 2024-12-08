@@ -114,13 +114,8 @@ func GGAuth(rawData []byte) (int, error) {
 
 func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int, error) {
 	requestGGAuth := toauthserver.NewDefaultRequestGGAuth(initResponse.SessionID)
-
-	packetWriter := packet.NewWriter()
-	err := requestGGAuth.ToBytes(packetWriter)
-
 	encryptor := crypt.NewEncryptor(*packet.NewWriter(), crypt.DefaultAuthKey())
-	encryptor.Write(requestGGAuth)
-
+	err := encryptor.Write(requestGGAuth)
 	if err != nil {
 		return 0, err
 	}
