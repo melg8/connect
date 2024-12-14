@@ -72,6 +72,8 @@ Uknowns but assumed:
 
 Ideas:
 1. Most of time (from 21 till 78) leveling process is in party setting.
+2. Which of data can be shared between different clients
+3. Which of computations can be eliminated while preserving bots behavior.
 
 Questions
 1. How detalized i want bot management be on larger scales?
