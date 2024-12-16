@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package connect
+package connection
 
 import (
 	"net"
