@@ -4,12 +4,6 @@
 
 package main
 
-import (
-	"maps"
-	"math/rand"
-	"slices"
-)
-
 // func connectAndAuthenticate() error {
 // 	connector, err := connect.ServerConnector("127.0.0.1:2106")
 // 	if err != nil {
@@ -38,20 +32,6 @@ func (e MyError) Error() string {
 
 func Test() error {
 	return MyError("Retruning error without any packages used")
-}
-
-func uniqRandn(n int) []int {
-	unqiued := make(map[int]bool)
-	for i := 0; i < n; i++ {
-		for {
-			value := rand.Int()
-			if !unqiued[value] {
-				unqiued[value] = true
-				break
-			}
-		}
-	}
-	return slices.Collect(maps.Keys(unqiued))
 }
 
 func main() {
