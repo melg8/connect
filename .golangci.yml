@@ -15,6 +15,7 @@ linters:
     - godot         # Checks if comments end in a period to ensure consistency
     - gofmt         # Formats Go source code according to the Go standard
     - gosec         # Inspects source code for security problems by scanning the Go AST
+    - goimports     # Tool for automatically importing packages
     - gosimple      # Specializes in simplifying code
     - govet         # Reports suspicious constructs, such as Printf calls with wrong arguments
     - ineffassign   # Detects when assignments to existing variables are not used
@@ -34,8 +35,10 @@ linters:
     - tenv          # Detects using os.Setenv instead of t.Setenv in tests
     - thelper       # Detects Test helper functions that don't start with t.Helper()
     - tparallel     # Detects inappropriate usage of t.Parallel() method in tests
+    - typecheck     # Checks that types are correct
     - unconvert     # Removes unnecessary type conversions
     - unparam       # Reports unused function parameters
+    - unused        # Finds unused packages, functions, variables, and constants
     - wastedassign  # Finds wasted assignment statements
     - whitespace    # Tool for detecting and fixing whitespace issues
 
