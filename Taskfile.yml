@@ -53,6 +53,12 @@ tasks:
     cmds:
       - golangci-lint run --fix
 
+  lint:show:
+    desc: Shows enabled and disabled linters
+    aliases: [ls]
+    cmds:
+      - golangci-lint linters
+
   packages:
     desc: Shows list of packages
     aliases: [p]
