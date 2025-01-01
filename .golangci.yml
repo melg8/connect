@@ -11,7 +11,6 @@ linters:
     # planned to fix:
     - err113
     - funlen
-    - gci
     - lll
     - testifylint
     - testpackage
@@ -28,6 +27,7 @@ linters:
     - exhaustive    # Checks exhaustiveness of enum switch statements
     - exhaustruct
     - forbidigo     # Forbids identifiers (useful for restricting usage of some functions)
+    - gci
     - goconst       # Finds repeated strings that could be replaced by a constant
     - gocritic      # Provides extensive code analysis with many diagnostics
     - gocyclo       # Checks function complexity to find overly complex functions

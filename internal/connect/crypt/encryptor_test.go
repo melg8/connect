@@ -7,10 +7,9 @@ package crypt
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/melg8/connect/internal/connect/packets/packet"
 	toauthserver "github.com/melg8/connect/internal/connect/packets/to_auth_server"
+	"github.com/stretchr/testify/assert"
 )
 
 // EmptyPacket implements Serializable but writes no data.
