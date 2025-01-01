@@ -14,7 +14,6 @@ linters:
     - gci
     - intrange
     - lll
-    - perfsprint
     - testifylint
     - testpackage
     - cyclop
@@ -51,6 +50,7 @@ linters:
     - nlreturn
     - noctx         # Finds sending HTTP requests without context.Context
     - nolintlint    # Reports ill-formed or insufficient nolint directives
+    - perfsprint
     - prealloc      # Finds slice declarations that could potentially be preallocated
     - predeclared   # Finds code that shadows Go's predeclared identifiers
     - reassign      # Checks that package variables are not reassigned

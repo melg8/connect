@@ -6,15 +6,15 @@ package crypt
 
 import (
 	"encoding/binary"
-	"fmt"
+	"errors"
 )
 
 func Checksum(data []byte) (uint32, error) {
 	if len(data) < 4 {
-		return 0, fmt.Errorf("data is too small")
+		return 0, errors.New("data is too small")
 	}
 	if len(data)%4 != 0 {
-		return 0, fmt.Errorf("data is not multiple of 4")
+		return 0, errors.New("data is not multiple of 4")
 	}
 
 	checksum := uint32(0)

@@ -6,10 +6,12 @@ package connection
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net"
+	"strconv"
 
 	"github.com/melg8/connect/internal/connect/crypt"
 	"github.com/melg8/connect/internal/connect/helpers"
@@ -19,12 +21,12 @@ import (
 )
 
 func LogRecievedData(data []byte) {
-	log.Println("Received: " + fmt.Sprint(len(data)) + " bytes")
+	log.Println("Received: " + strconv.Itoa(len(data)) + " bytes")
 	helpers.ShowAsHexAndASCII(data)
 }
 
 func LogSentData(data []byte) {
-	log.Println("Sent: " + fmt.Sprint(len(data)) + " bytes")
+	log.Println("Sent: " + strconv.Itoa(len(data)) + " bytes")
 	helpers.ShowAsHexAndASCII(data)
 }
 
@@ -35,14 +37,14 @@ func LogInitPacket(initPacket *fromauthserver.InitPacket) {
 // Extracts packet data from raw data. Decrypts if needed, returns packet id and packet data.
 func ExtractPacketFromRawData(data []byte) (int32, []byte, error) {
 	if len(data) < 3 {
-		return 0, nil, fmt.Errorf("data is too small")
+		return 0, nil, errors.New("data is too small")
 	}
 	packetID := int32(data[2])
 	if packetID == 0x00 {
 		return packetID, data[3 : len(data)-4], nil
 	}
 
-	return 0, nil, fmt.Errorf("unexpected packet type")
+	return 0, nil, errors.New("unexpected packet type")
 }
 
 // Reads full packet from connection.
