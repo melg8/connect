@@ -10,7 +10,9 @@ tasks:
     cmds:
       - task --list --sort=alphanumeric
 
-  check_all:
+  check:all:
+    desc: Lint and test
+    aliases: [all]
     cmds:
       - task: lint
       - task: test
