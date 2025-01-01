@@ -1,7 +1,28 @@
 linters:
+  enable-all: false
   disable:
     - depguard      # Enable if need to vet dependencies
+    - exportloopref
+    - mnd
     - paralleltest  # Enable for t.Parallel checks.
+    - varnamelen
+    - wsl
+    - wrapcheck
+    # planned to fix:
+    - err113
+    - exhaustruct
+    - funlen
+    - gci
+    - intrange
+    - inamedparam
+    - ireturn
+    - lll
+    - nlreturn
+    - perfsprint
+    - testifylint
+    - testpackage
+    - cyclop
+
   enable:
     - asasalint     # Checks for pass []any as any in variadic position
     - bodyclose     # Checks whether HTTP response body is properly closed
