@@ -12,7 +12,7 @@ import (
 )
 
 type Serializable interface {
-	ToBytes(*packet.Writer) error
+	ToBytes(w *packet.Writer) error
 }
 
 const (

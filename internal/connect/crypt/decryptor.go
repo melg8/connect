@@ -11,7 +11,7 @@ import (
 )
 
 type Deserializable interface {
-	FromBytes(*packet.Reader) error
+	FromBytes(r *packet.Reader) error
 }
 
 type Decryptor struct {
