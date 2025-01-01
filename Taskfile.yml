@@ -15,6 +15,11 @@ tasks:
     aliases: [all]
     deps: [lint, test]
 
+  fmt:
+    desc: Runs go fmt
+    cmds:
+      - go fmt ./...
+
   git:discard:
     desc: Discards unstaged changes
     aliases: [discard]
