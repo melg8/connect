@@ -101,6 +101,7 @@ func TestEncryptor_Write_PaddingAndChecksum(t *testing.T) {
 	for i := len(decryptedData) - 4; i >= 0; i-- {
 		if decryptedData[i] != 0 {
 			checksumPresent = true
+
 			break
 		}
 	}

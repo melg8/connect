@@ -24,6 +24,7 @@ func NewGGAuthPacketFromBytes(data []byte) (*GGAuthPacket, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &GGAuthPacket{
 		SessionID: sessionID,
 		Unknown:   unknown,
@@ -37,6 +38,7 @@ func (p *GGAuthPacket) ToBytes(writer *packet.Writer) error {
 	if err := writer.WriteInt32(p.Unknown); err != nil {
 		return err
 	}
+
 	return nil
 }
 

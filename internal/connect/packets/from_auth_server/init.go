@@ -62,6 +62,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	if err == nil {
 		result.BlowfishKey = &blowFishKey
 	}
+
 	return &result, nil
 }
 
@@ -95,6 +96,7 @@ func (p *InitPacket) ToBytes(writer *packet.Writer) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -113,5 +115,6 @@ func (p *InitPacket) ToString() string {
 	} else {
 		result += "\n  BlowfishKey: " + "nil"
 	}
+
 	return result
 }

@@ -40,6 +40,7 @@ func (e *Encryptor) writePadding(size int) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -66,6 +67,7 @@ func (e *Encryptor) writePaddingAndChecksum() error {
 	crcBytes[2] = byte(crc >> 8)
 	crcBytes[1] = byte(crc >> 16)
 	crcBytes[0] = byte(crc >> 24)
+
 	return e.writer.WriteBytes(crcBytes)
 }
 
@@ -82,6 +84,7 @@ func (e *Encryptor) allignAndEncrypt() error {
 	if err := e.cipher.EncryptInplace(e.writer.Bytes()[2:]); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -94,6 +97,7 @@ func (e *Encryptor) writePacketSize() error {
 	packetSize := int16(size) //nolint:gosec
 	packetSizeBytes[0] = byte(packetSize)
 	packetSizeBytes[1] = byte(packetSize >> 8)
+
 	return nil
 }
 

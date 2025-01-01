@@ -130,6 +130,7 @@ func TestBlowfishEncryptDecryptCycle(t *testing.T) {
 	for i := 0; i < len(originalData); i++ {
 		if originalData[i] != data[i] {
 			different = true
+
 			break
 		}
 	}

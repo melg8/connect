@@ -24,6 +24,7 @@ func dataForBenchmark() []byte {
 	for i := range data {
 		data[i] = byte(i % 256)
 	}
+
 	return data
 }
 

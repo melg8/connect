@@ -21,5 +21,6 @@ func Checksum(data []byte) (uint32, error) {
 	for i := 0; i < len(data); i += 4 {
 		checksum ^= binary.BigEndian.Uint32(data[i : i+4])
 	}
+
 	return checksum, nil
 }

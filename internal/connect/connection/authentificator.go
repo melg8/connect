@@ -41,6 +41,7 @@ func ExtractPacketFromRawData(data []byte) (int32, []byte, error) {
 	if packetID == 0x00 {
 		return packetID, data[3 : len(data)-4], nil
 	}
+
 	return 0, nil, fmt.Errorf("unexpected packet type")
 }
 
@@ -58,6 +59,7 @@ func ReadPacket(conn net.Conn) ([]byte, error) {
 	}
 
 	LogRecievedData(rawData[:n])
+
 	return rawData[:n], nil
 }
 
@@ -75,6 +77,7 @@ func WritePacket(conn net.Conn, data []byte) error {
 			break
 		}
 	}
+
 	return nil
 }
 
@@ -133,6 +136,7 @@ func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int,
 	if err != nil {
 		return 0, err
 	}
+
 	return GGAuth(rawResponse)
 }
 

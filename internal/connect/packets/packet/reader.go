@@ -29,6 +29,7 @@ func (r *Reader) ReadBytes(number int) ([]byte, error) {
 	if n < number {
 		return nil, errors.New("error: Reader.ReadBytes not enough bytes to read")
 	}
+
 	return buffer, nil
 }
 
@@ -49,6 +50,7 @@ func (r *Reader) ReadInt64() (int64, error) {
 		(int64(buf[2]) << 16) |
 		(int64(buf[1]) << 8) |
 		int64(buf[0])
+
 	return result, nil
 }
 
@@ -65,6 +67,7 @@ func (r *Reader) ReadInt32() (int32, error) {
 		(int32(buf[2]) << 16) |
 		(int32(buf[1]) << 8) |
 		int32(buf[0])
+
 	return result, nil
 }
 
@@ -74,6 +77,7 @@ func (r *Reader) ReadInt16() (int16, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return result, nil
 }
 
@@ -83,6 +87,7 @@ func (r *Reader) ReadInt8() (int8, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return result, nil
 }
 
@@ -109,5 +114,6 @@ func (r *Reader) ReadStringFromUtf16Format() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return decodedString, nil
 }

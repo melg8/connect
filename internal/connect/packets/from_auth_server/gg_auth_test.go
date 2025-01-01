@@ -51,6 +51,7 @@ func TestNewGGAuthPacketFromBytes(t *testing.T) {
 			got, err := NewGGAuthPacketFromBytes(tt.input)
 			if tt.wantErr {
 				assert.Error(t, err, tt.description)
+
 				return
 			}
 			assert.NoError(t, err, tt.description)
@@ -86,6 +87,7 @@ func TestGGAuthPacket_ToBytes(t *testing.T) {
 			err := tt.packet.ToBytes(packetWriter)
 			if tt.wantErr {
 				assert.Error(t, err, tt.description)
+
 				return
 			}
 			assert.NoError(t, err, tt.description)

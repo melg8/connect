@@ -21,6 +21,7 @@ func NewBlowfishCipher(key []byte) (*BlowfishCipher, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &BlowfishCipher{cipher: cipher}, nil
 }
 
@@ -39,6 +40,7 @@ func DefaultAuthKey() *BlowfishCipher {
 	if err != nil {
 		panic(err)
 	}
+
 	return cipher
 }
 
@@ -108,6 +110,7 @@ func (b *BlowfishCipher) Encrypt(dst, data []byte) error {
 	if &dst[0] != &data[0] {
 		flip4BytesEndianInplace(data)
 	}
+
 	return nil
 }
 

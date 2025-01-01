@@ -15,6 +15,7 @@ import (
 func textDiff(a, b string) string {
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(a, b, true)
+
 	return dmp.DiffPrettyText(diffs)
 }
 
@@ -25,10 +26,12 @@ func testDataString(withSplits bool) string {
 
 	if withSplits {
 		spacing := "    "
+
 		return spacing + line0 + "\n" +
 			spacing + line1 + "\n" +
 			spacing + line2 + "  \n"
 	}
+
 	return line0 + line1 + line2
 }
 
@@ -37,6 +40,7 @@ func testData() []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return data
 }
 

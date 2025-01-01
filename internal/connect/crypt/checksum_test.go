@@ -54,6 +54,7 @@ func TestChecksumConsistency(t *testing.T) {
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Checksum(%q) error = %v, wantErr %v", tt.data, err, tt.wantErr)
+
 				return
 			}
 

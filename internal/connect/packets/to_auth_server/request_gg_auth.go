@@ -96,6 +96,7 @@ func (p *RequestGGAuth) ToBytes(writer *packet.Writer) error {
 	if err := writer.WriteInt32(p.Data4); err != nil {
 		return err
 	}
+
 	return nil
 }
 

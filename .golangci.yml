@@ -16,7 +16,7 @@ linters:
     - inamedparam
     - ireturn
     - lll
-    - nlreturn
+
     - perfsprint
     - testifylint
     - testpackage
@@ -49,6 +49,7 @@ linters:
     - nakedret      # Finds naked returns in functions greater than a specified size
     - nilerr        # Finds redundant nil checks on errors
     - nilnil        # Checks that there is no simultaneous return of nil error and nil value
+    - nlreturn
     - noctx         # Finds sending HTTP requests without context.Context
     - nolintlint    # Reports ill-formed or insufficient nolint directives
     - prealloc      # Finds slice declarations that could potentially be preallocated

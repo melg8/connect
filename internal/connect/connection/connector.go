@@ -67,11 +67,13 @@ func (c *RateLimitedConnector) Connect() (net.Conn, error) {
 	conn, err := c.connector.Connect()
 	if err != nil {
 		log.Printf("Error connecting to server: %v", err)
+
 		return nil, err
 	}
 
 	c.lastConnTime = now
 	log.Printf("Connected to server: %s at %v", c.connector.Address(), now)
+
 	return conn, nil
 }
 
@@ -100,8 +102,10 @@ func (c *RetryConnector) Connect() (net.Conn, error) {
 
 			continue
 		}
+
 		return conn, nil
 	}
+
 	return nil, fmt.Errorf("failed to connect to server after %d attempts", c.retries)
 }
 
@@ -110,5 +114,6 @@ func ServerConnector(address string) (Connector, error) {
 	betweenAttemptsTimeout := time.Second + time.Millisecond*10
 	tcpConnector := NewTCPConnector(address, tcpConnectorTimeout)
 	connector := NewRateLimitedConnector(tcpConnector, betweenAttemptsTimeout)
+
 	return NewRetryConnector(connector, 5), nil
 }

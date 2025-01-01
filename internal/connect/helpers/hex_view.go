@@ -99,6 +99,7 @@ func HexViewFromWithLineSplit(data []byte, lineLength int, beforeLine string) st
 		}
 		sb.WriteByte('\n')
 	}
+
 	return sb.String()
 }
 
@@ -108,6 +109,7 @@ func HexViewFromWithoutLineSplit(data []byte) string {
 		sb.WriteByte("0123456789abcdef"[data[i]>>4])
 		sb.WriteByte("0123456789abcdef"[data[i]&0xF])
 	}
+
 	return sb.String()
 }
 
@@ -122,6 +124,7 @@ func HexStringFromInt32(i int32) string {
 		byte(i >> 8),
 		byte(i),
 	}
+
 	return HexViewFromWithoutLineSplit(bytes)
 }
 

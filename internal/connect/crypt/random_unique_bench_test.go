@@ -24,6 +24,7 @@ func randnBaseline(n int) []int {
 	for i := 0; i < n; i++ {
 		uniq[i] = rand.Int() //nolint:gosec
 	}
+
 	return uniq
 }
 
@@ -38,6 +39,7 @@ func UniqRandn1(n int) []int {
 		value := rand.Int() //nolint:gosec
 		unique[value] = struct{}{}
 	}
+
 	return slices.Collect(maps.Keys(unique))
 }
 
@@ -60,6 +62,7 @@ func UniqRandn11(n int) []int {
 		result[i] = key
 		i++
 	}
+
 	return result
 }
 
@@ -80,6 +83,7 @@ func UniqRandn2(n int) []int {
 		seen[val] = struct{}{}
 		uniq = append(uniq, val)
 	}
+
 	return uniq
 }
 
@@ -104,6 +108,7 @@ func UniqRandn21(n int) []int {
 		uniq[pos] = val
 		pos++
 	}
+
 	return uniq
 }
 
@@ -124,11 +129,13 @@ func Unique[T comparable](xs []T) []T {
 						xs[j] = xs[k]
 					}
 				}
+
 				break
 			}
 		}
 	}
 	xs = xs[0 : j+1]
+
 	return xs
 }
 
@@ -168,6 +175,7 @@ func permuteQPR(x uint32) uint32 {
 	if x <= prime/2 {
 		return residue
 	}
+
 	return prime - residue
 }
 
@@ -181,6 +189,7 @@ func NewRandomSequenceOfUnique(seedBase, seedOffset uint32) RandomSequenceOfUniq
 func (r *RandomSequenceOfUnique) Next() uint32 {
 	result := permuteQPR((permuteQPR(r.mIndex) + r.mIntermediateOffset) ^ 0x5bf03635)
 	r.mIndex++
+
 	return result
 }
 
@@ -204,6 +213,7 @@ func UniqRandn5(n int) []int {
 	for i := 0; i < n; i++ {
 		uniq[i] = int(rsu.Next())
 	}
+
 	return uniq
 }
 

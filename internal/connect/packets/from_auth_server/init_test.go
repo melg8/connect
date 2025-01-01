@@ -17,6 +17,7 @@ import (
 
 func OnlyPartialPacket(size int) []byte {
 	result := make([]byte, size)
+
 	return result
 }
 
@@ -26,6 +27,7 @@ func OnlySessionIDPacket() []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return data
 }
 
@@ -35,6 +37,7 @@ func InitPacketData() []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return data
 }
 
@@ -44,6 +47,7 @@ func ExpectedRsaPublicKey() []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return data
 }
 
