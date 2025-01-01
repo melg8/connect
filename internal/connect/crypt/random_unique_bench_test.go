@@ -187,7 +187,8 @@ func NewRandomSequenceOfUnique(seedBase, seedOffset uint32) RandomSequenceOfUniq
 }
 
 func (r *RandomSequenceOfUnique) Next() uint32 {
-	result := permuteQPR((permuteQPR(r.mIndex) + r.mIntermediateOffset) ^ 0x5bf03635)
+	permutation := (permuteQPR(r.mIndex) + r.mIntermediateOffset) ^ 0x5bf03635
+	result := permuteQPR(permutation)
 	r.mIndex++
 
 	return result

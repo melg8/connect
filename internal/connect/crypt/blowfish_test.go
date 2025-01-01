@@ -29,7 +29,7 @@ func TestBlowfishDataNotMultipleOf8(t *testing.T) {
 	if err == nil {
 		t.Fatal("Decryption should have failed on data not multiple of 8")
 	}
-	expectedPrefix := "encrypted data length must be a multiple of 8"
+	expectedPrefix := "encrypted data len must be multiple of 8"
 	if !strings.HasPrefix(err.Error(), expectedPrefix) {
 		t.Fatalf("Error message should start with '%s', got: %s", expectedPrefix, err.Error())
 	}

@@ -10,7 +10,6 @@ linters:
     - wrapcheck
     # planned to fix:
     - err113
-    - lll
     - testpackage
 
   enable:
@@ -44,6 +43,7 @@ linters:
     - inamedparam
     - intrange
     - ireturn
+    - lll
     - nilerr        # Finds redundant nil checks on errors
     - nilnil        # Checks that there is no simultaneous return of nil error and nil value
     - nlreturn
@@ -83,3 +83,5 @@ linters-settings:
   goconst:
     min-len: 3
 
+  lll:
+    line-length: 80

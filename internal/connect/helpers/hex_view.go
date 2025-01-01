@@ -85,7 +85,11 @@ func HexASCIIViewFrom(data []byte) string {
 	return sb.String()
 }
 
-func HexViewFromWithLineSplit(data []byte, lineLength int, beforeLine string) string {
+func HexViewFromWithLineSplit(
+	data []byte,
+	lineLength int,
+	beforeLine string,
+) string {
 	var sb strings.Builder
 	for i := 0; i < len(data); i += lineLength {
 		sb.WriteString(beforeLine)

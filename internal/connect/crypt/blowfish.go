@@ -51,7 +51,8 @@ func DefaultAuthKey() *BlowfishCipher {
 // decryption for results to match.
 func flip4BytesEndianInplace(data []byte) {
 	for i := 0; i < len(data); i += 4 {
-		data[i], data[i+1], data[i+2], data[i+3] = data[i+3], data[i+2], data[i+1], data[i]
+		data[i], data[i+3] = data[i+3], data[i]
+		data[i+1], data[i+2] = data[i+2], data[i+1]
 	}
 }
 
@@ -63,7 +64,8 @@ func (b *BlowfishCipher) Decrypt(dst, data []byte) error {
 
 	blockSize := b.cipher.BlockSize()
 	if lenData%blockSize != 0 {
-		return fmt.Errorf("encrypted data length must be a multiple of %d, got %d", blockSize, lenData)
+		return fmt.Errorf("encrypted data len must be multiple of %d, got %d",
+			blockSize, lenData)
 	}
 
 	count := lenData / blockSize
