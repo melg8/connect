@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/melg8/connect/internal/connect/packets/packet"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewRequestGGAuth(t *testing.T) {
@@ -23,27 +23,27 @@ func TestNewRequestGGAuth(t *testing.T) {
 		}
 
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.NoError(t, err)
-		assert.NotNil(t, req)
-		assert.Equal(t, int32(1), req.SessionID)
-		assert.Equal(t, int32(2), req.Data1)
-		assert.Equal(t, int32(3), req.Data2)
-		assert.Equal(t, int32(4), req.Data3)
-		assert.Equal(t, int32(5), req.Data4)
+		require.NoError(t, err)
+		require.NotNil(t, req)
+		require.Equal(t, int32(1), req.SessionID)
+		require.Equal(t, int32(2), req.Data1)
+		require.Equal(t, int32(3), req.Data2)
+		require.Equal(t, int32(4), req.Data3)
+		require.Equal(t, int32(5), req.Data4)
 	})
 
 	t.Run("empty data", func(t *testing.T) {
 		req, err := NewRequestGGAuthFrom([]byte{})
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 
 	t.Run("error reading SessionID", func(t *testing.T) {
 		testData := []byte{0x07, // PacketID
 			0x01, 0x00, 0x00} // Incomplete SessionID
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 
 	t.Run("error reading Data1", func(t *testing.T) {
@@ -53,8 +53,8 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x02, 0x00, 0x00, // Incomplete Data1
 		}
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 
 	t.Run("error reading Data2", func(t *testing.T) {
@@ -65,8 +65,8 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x03, 0x00, 0x00, // Incomplete Data2
 		}
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 
 	t.Run("error reading Data3", func(t *testing.T) {
@@ -78,8 +78,8 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x04, 0x00, 0x00, // Incomplete Data3
 		}
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 
 	t.Run("error reading Data4", func(t *testing.T) {
@@ -92,8 +92,8 @@ func TestNewRequestGGAuth(t *testing.T) {
 			0x05, 0x00, 0x00, // Incomplete Data4
 		}
 		req, err := NewRequestGGAuthFrom(testData)
-		assert.Error(t, err)
-		assert.Nil(t, req)
+		require.Error(t, err)
+		require.Nil(t, req)
 	})
 }
 
@@ -107,11 +107,11 @@ func TestRequestGGAuth_ToString(t *testing.T) {
 	}
 
 	str := req.ToString()
-	assert.Contains(t, str, "SessionID: 00000001")
-	assert.Contains(t, str, "Data1: 00000002")
-	assert.Contains(t, str, "Data2: 00000003")
-	assert.Contains(t, str, "Data3: 00000004")
-	assert.Contains(t, str, "Data4: 00000005")
+	require.Contains(t, str, "SessionID: 00000001")
+	require.Contains(t, str, "Data1: 00000002")
+	require.Contains(t, str, "Data2: 00000003")
+	require.Contains(t, str, "Data3: 00000004")
+	require.Contains(t, str, "Data4: 00000005")
 }
 
 func TestRequestGGAuth_ToBytes(t *testing.T) {
@@ -126,8 +126,8 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 		packetWriter := packet.NewWriter()
 		err := req.ToBytes(packetWriter)
 		data := packetWriter.Bytes()
-		assert.NoError(t, err)
-		assert.NotNil(t, data)
+		require.NoError(t, err)
+		require.NotNil(t, data)
 
 		// Expected byte sequence
 		expected := []byte{
@@ -138,16 +138,16 @@ func TestRequestGGAuth_ToBytes(t *testing.T) {
 			0x04, 0x00, 0x00, 0x00, // Data3: 4
 			0x05, 0x00, 0x00, 0x00, // Data4: 5
 		}
-		assert.Equal(t, expected, data)
+		require.Equal(t, expected, data)
 
 		// Verify that we can read it back
 		decoded, err := NewRequestGGAuthFrom(data)
-		assert.NoError(t, err)
-		assert.Equal(t, req.SessionID, decoded.SessionID)
-		assert.Equal(t, req.Data1, decoded.Data1)
-		assert.Equal(t, req.Data2, decoded.Data2)
-		assert.Equal(t, req.Data3, decoded.Data3)
-		assert.Equal(t, req.Data4, decoded.Data4)
+		require.NoError(t, err)
+		require.Equal(t, req.SessionID, decoded.SessionID)
+		require.Equal(t, req.Data1, decoded.Data1)
+		require.Equal(t, req.Data2, decoded.Data2)
+		require.Equal(t, req.Data3, decoded.Data3)
+		require.Equal(t, req.Data4, decoded.Data4)
 	})
 }
 
@@ -157,8 +157,8 @@ func TestNewDefaultRequestGGAuth_ToBytes(t *testing.T) {
 	packetWriter := packet.NewWriter()
 	err := req.ToBytes(packetWriter)
 	data := packetWriter.Bytes()
-	assert.NoError(t, err)
-	assert.NotNil(t, data)
+	require.NoError(t, err)
+	require.NotNil(t, data)
 
 	// Expected byte sequence
 	expected := []byte{
@@ -170,5 +170,5 @@ func TestNewDefaultRequestGGAuth_ToBytes(t *testing.T) {
 		0xAB, 0x89, 0x00, 0x00,
 		0xEF, 0xCD, 0x00, 0x00,
 	}
-	assert.Equal(t, expected, data)
+	require.Equal(t, expected, data)
 }

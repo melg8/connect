@@ -12,7 +12,6 @@ linters:
     - err113
     - funlen
     - lll
-    - testifylint
     - testpackage
     - cyclop
 
@@ -58,6 +57,7 @@ linters:
     - staticcheck   # State of the art linter for Go, providing advanced checks
     - stylecheck    # Replaces golint
     - tenv          # Detects using os.Setenv instead of t.Setenv in tests
+    - testifylint
     - thelper       # Detects Test helper functions that don't start with t.Helper()
     - tparallel     # Detects inappropriate usage of t.Parallel() method in tests
     - typecheck     # Checks that types are correct

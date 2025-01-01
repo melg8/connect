@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/melg8/connect/internal/connect/packets/packet"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewGGAuthPacketFromBytes(t *testing.T) {
@@ -50,12 +50,12 @@ func TestNewGGAuthPacketFromBytes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := NewGGAuthPacketFromBytes(tt.input)
 			if tt.wantErr {
-				assert.Error(t, err, tt.description)
+				require.Error(t, err, tt.description)
 
 				return
 			}
-			assert.NoError(t, err, tt.description)
-			assert.Equal(t, tt.want, got, tt.description)
+			require.NoError(t, err, tt.description)
+			require.Equal(t, tt.want, got, tt.description)
 		})
 	}
 }
@@ -86,12 +86,12 @@ func TestGGAuthPacket_ToBytes(t *testing.T) {
 
 			err := tt.packet.ToBytes(packetWriter)
 			if tt.wantErr {
-				assert.Error(t, err, tt.description)
+				require.Error(t, err, tt.description)
 
 				return
 			}
-			assert.NoError(t, err, tt.description)
-			assert.True(t, bytes.Equal(tt.want, packetWriter.Bytes()), tt.description)
+			require.NoError(t, err, tt.description)
+			require.True(t, bytes.Equal(tt.want, packetWriter.Bytes()), tt.description)
 		})
 	}
 }
@@ -102,9 +102,9 @@ func TestGGAuthPacket_ToString(t *testing.T) {
 		Unknown:   2,
 	}
 	result := packet.ToString()
-	assert.Contains(t, result, "GGAuthPacket")
-	assert.Contains(t, result, "SessionID: 00000001")
-	assert.Contains(t, result, "Unknown: 00000002")
+	require.Contains(t, result, "GGAuthPacket")
+	require.Contains(t, result, "SessionID: 00000001")
+	require.Contains(t, result, "Unknown: 00000002")
 }
 
 func TestGGAuthPacket_RoundTrip(t *testing.T) {
@@ -116,13 +116,13 @@ func TestGGAuthPacket_RoundTrip(t *testing.T) {
 	// Convert to bytes
 	packetWriter := packet.NewWriter()
 	err := original.ToBytes(packetWriter)
-	assert.NoError(t, err, "Failed to convert to bytes")
+	require.NoError(t, err, "Failed to convert to bytes")
 
 	// Convert back to packet
 	reconstructed, err := NewGGAuthPacketFromBytes(packetWriter.Bytes())
-	assert.NoError(t, err, "Failed to parse bytes")
+	require.NoError(t, err, "Failed to parse bytes")
 
 	// Compare
-	assert.Equal(t, original.SessionID, reconstructed.SessionID, "SessionID mismatch after round trip")
-	assert.Equal(t, original.Unknown, reconstructed.Unknown, "Unknown field mismatch after round trip")
+	require.Equal(t, original.SessionID, reconstructed.SessionID, "SessionID mismatch after round trip")
+	require.Equal(t, original.Unknown, reconstructed.Unknown, "Unknown field mismatch after round trip")
 }
