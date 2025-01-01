@@ -16,7 +16,7 @@ import (
 // EmptyPacket implements Serializable but writes no data.
 type EmptyPacket struct{}
 
-func (p *EmptyPacket) ToBytes(writer *packet.Writer) error {
+func (p *EmptyPacket) ToBytes(_ *packet.Writer) error {
 	return nil
 }
 
@@ -38,7 +38,7 @@ func TestEncryptor_Write_RequestGGAuth(t *testing.T) {
 
 	// Verify packet size (first 2 bytes)
 	packetSize := int16(encryptedBytes[0]) | int16(encryptedBytes[1])<<8
-	assert.Equal(t, int16(len(encryptedBytes)), packetSize)
+	assert.Equal(t, len(encryptedBytes), int(packetSize))
 
 	// Decrypt the data for verification
 	decryptedData := make([]byte, len(encryptedBytes)-2)

@@ -6,6 +6,7 @@ package crypt
 
 import (
 	"errors"
+	"math"
 
 	"github.com/melg8/connect/internal/connect/packets/packet"
 )
@@ -86,7 +87,11 @@ func (e *Encryptor) allignAndEncrypt() error {
 
 func (e *Encryptor) writePacketSize() error {
 	packetSizeBytes := e.writer.Bytes()[0:2]
-	packetSize := int16(e.writer.Len())
+	size := e.writer.Len()
+	if size > math.MaxUint16 {
+		panic("packet size too big")
+	}
+	packetSize := int16(size) //nolint:gosec
 	packetSizeBytes[0] = byte(packetSize)
 	packetSizeBytes[1] = byte(packetSize >> 8)
 	return nil
@@ -94,7 +99,9 @@ func (e *Encryptor) writePacketSize() error {
 
 func (e *Encryptor) Write(data Serializable) error {
 	// Reserve 2 bytes for future size value
-	e.writer.WriteInt16(0)
+	if err := e.writer.WriteInt16(0); err != nil {
+		return err
+	}
 
 	if err := data.ToBytes(&e.writer); err != nil {
 		return err

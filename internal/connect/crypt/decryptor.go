@@ -26,7 +26,7 @@ func NewDecryptor(reader *packet.Reader, cipher *BlowfishCipher) *Decryptor {
 	}
 }
 
-func (d *Decryptor) Read(data Deserializable) error {
+func (d *Decryptor) Read(_ Deserializable) error {
 	size, err := d.reader.ReadInt16()
 	if err != nil {
 		return fmt.Errorf("failed to read packet size: %w", err)

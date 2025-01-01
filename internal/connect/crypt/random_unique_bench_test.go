@@ -22,7 +22,7 @@ func randnBaseline(n int) []int {
 
 	uniq := make([]int, n)
 	for i := 0; i < n; i++ {
-		uniq[i] = rand.Int()
+		uniq[i] = rand.Int() //nolint:gosec
 	}
 	return uniq
 }
@@ -34,9 +34,8 @@ func UniqRandn1(n int) []int {
 		return []int{}
 	}
 	unique := make(map[int]struct{}, n)
-	value := 0
 	for len(unique) < n {
-		value = rand.Int()
+		value := rand.Int() //nolint:gosec
 		unique[value] = struct{}{}
 	}
 	return slices.Collect(maps.Keys(unique))
@@ -50,9 +49,8 @@ func UniqRandn11(n int) []int {
 		return []int{}
 	}
 	unique := make(map[int]struct{}, n)
-	value := 0
 	for len(unique) < n {
-		value = rand.Int()
+		value := rand.Int() //nolint:gosec
 		unique[value] = struct{}{}
 	}
 	keys := maps.Keys(unique)
@@ -75,7 +73,7 @@ func UniqRandn2(n int) []int {
 	uniq := make([]int, 0, n)
 	seen := make(map[int]struct{}, n)
 	for len(uniq) < n {
-		val := rand.Int()
+		val := rand.Int() //nolint:gosec
 		if _, exists := seen[val]; exists {
 			continue
 		}
@@ -98,7 +96,7 @@ func UniqRandn21(n int) []int {
 	var val int
 	seenValue := struct{}{}
 	for pos < n {
-		val = rand.Int()
+		val = rand.Int() //nolint:gosec
 		if _, exists := seen[val]; exists {
 			continue
 		}
@@ -135,7 +133,7 @@ func Unique[T comparable](xs []T) []T {
 }
 
 // UniqRandn4 generates n unique random values by aggregating them into slice,
-// sorting slice and deduplicating it untill slice has n unique elements in it.
+// sorting slice and deduplicating it until slice has n unique elements in it.
 func UniqRandn4(n int) []int {
 	if n <= 0 {
 		return nil
@@ -146,7 +144,7 @@ func UniqRandn4(n int) []int {
 
 	for generatedN < n {
 		for i := generatedN; i < n; i++ {
-			uniq[i] = rand.Int()
+			uniq[i] = rand.Int() //nolint:gosec
 		}
 		sort.Ints(uniq)
 		uniq = Unique(uniq)
@@ -166,7 +164,7 @@ func permuteQPR(x uint32) uint32 {
 	if x >= prime {
 		return x // The 5 integers out of range are mapped to themselves.
 	}
-	residue := uint32((uint64(x) * uint64(x)) % prime)
+	residue := uint32((uint64(x) * uint64(x)) % prime) //nolint:gosec
 	if x <= prime/2 {
 		return residue
 	}
@@ -200,7 +198,7 @@ func UniqRandn5(n int) []int {
 	}
 
 	uniq := make([]int, n)
-	unixTimeSeed := uint32(time.Now().Unix())
+	unixTimeSeed := uint32(time.Now().Unix()) //nolint:gosec
 	rsu := NewRandomSequenceOfUnique(unixTimeSeed, unixTimeSeed+1)
 
 	for i := 0; i < n; i++ {
@@ -216,6 +214,7 @@ func UniqRandn5(n int) []int {
 // The length of the resulting slice is checked to make sure it is equal to
 // 100_000.
 func benchmarkUniqRandn(b *testing.B, fn func(int) []int) {
+	b.Helper()
 	for n := 0; n < b.N; n++ {
 		nElements := 100_000
 		res := fn(nElements)
