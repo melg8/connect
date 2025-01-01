@@ -1,10 +1,25 @@
+# SPDX-FileCopyrightText: © 2025 Melg Eight <public.melg8@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
+---
 version: '3'
 
 tasks:
   default:
     cmds:
+      - task --list --sort=alphanumeric
+
+  check_all:
+    cmds:
       - task: lint
       - task: test
+
+  git:discard:
+    desc: Discards unstaged changes
+    aliases: [discard]
+    cmds:
+      - git checkout -- .
 
   lint:
     desc: Runs golangci-lint
@@ -26,21 +41,25 @@ tasks:
 
   packages:
     desc: Shows list of packages
+    aliases: [p]
     cmds:
       - go list ./...
 
   run:app:
     desc: Runs application
+    aliases: [r]
     cmds:
       - go run ./cmd/connect/main.go
 
   test:
     desc: Runs test suite
+    aliases: [t]
     cmds:
       - go test ./...
 
   test:cover:
     desc: Runs test suite with coverage
+    aliases: [tc]
     cmds:
       - go test ./... --cover --count=1
 
@@ -48,9 +67,3 @@ tasks:
     desc: Runs go mod tidy
     cmds:
       - go mod tidy
-    
-  git:discard:unstaged:
-    desc: Discards unstaged changes
-    aliases: [discard]
-    cmds:
-      - git checkout -- .
