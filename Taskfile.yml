@@ -13,9 +13,7 @@ tasks:
   check:all:
     desc: Lint and test
     aliases: [all]
-    cmds:
-      - task: lint
-      - task: test
+    deps: [lint, test]
 
   git:discard:
     desc: Discards unstaged changes
