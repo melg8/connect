@@ -22,7 +22,21 @@ func (m *mockConnector) Connect() (net.Conn, error) {
 		time.Sleep(m.connectTime)
 	}
 	if m.shouldFail {
-		return nil, &net.OpError{Op: "dial", Net: "tcp", Err: &net.DNSError{Err: "connection refused", Name: m.address}}
+		return nil, &net.OpError{
+			Op:  "dial",
+			Net: "tcp",
+			Err: &net.DNSError{
+				UnwrapErr:   nil,
+				Err:         "connection refused",
+				Name:        m.address,
+				Server:      "",
+				IsTimeout:   false,
+				IsTemporary: false,
+				IsNotFound:  false,
+			},
+			Source: nil,
+			Addr:   nil,
+		}
 	}
 	// Return a mock connection
 	return &net.TCPConn{}, nil
@@ -62,7 +76,11 @@ func TestTcpConnector(t *testing.T) {
 
 func TestRateLimitedConnector(t *testing.T) {
 	t.Run("respects rate limit", func(t *testing.T) {
-		mock := &mockConnector{address: "test:1234", shouldFail: false}
+		mock := &mockConnector{
+			address:     "test:1234",
+			shouldFail:  false,
+			connectTime: 0,
+		}
 		timeout := time.Millisecond * 100
 		connector := NewRateLimitedConnector(mock, timeout)
 
@@ -94,7 +112,11 @@ func TestRateLimitedConnector(t *testing.T) {
 
 func TestRetryConnector(t *testing.T) {
 	t.Run("successful on first try", func(t *testing.T) {
-		mock := &mockConnector{address: "test:1234", shouldFail: false}
+		mock := &mockConnector{
+			address:     "test:1234",
+			shouldFail:  false,
+			connectTime: 0,
+		}
 		connector := NewRetryConnector(mock, 3)
 
 		conn, err := connector.Connect()
@@ -107,7 +129,11 @@ func TestRetryConnector(t *testing.T) {
 	})
 
 	t.Run("retries on failure", func(t *testing.T) {
-		mock := &mockConnector{address: "test:1234", shouldFail: true}
+		mock := &mockConnector{
+			address:     "test:1234",
+			shouldFail:  true,
+			connectTime: 10,
+		}
 		connector := NewRetryConnector(mock, 3)
 
 		_, err := connector.Connect()

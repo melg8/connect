@@ -187,6 +187,7 @@ func TestInitPacketEncodingErrors(t *testing.T) {
 		GameGuard2:      0x77c39cfc,
 		GameGuard3:      ExpectedGameGuard3(),
 		GameGuard4:      0x07bde0f7,
+		BlowfishKey:     nil,
 	}
 
 	packetWriter := packet.NewWriter()
@@ -353,6 +354,7 @@ func TestNewInitPacketWriteErrors(t *testing.T) {
 				GameGuard2:      2,
 				GameGuard3:      3,
 				GameGuard4:      4,
+				BlowfishKey:     nil,
 			}
 
 			packetWriter := packet.NewWriter()
@@ -375,6 +377,7 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 		GameGuard2:      0,
 		GameGuard3:      0,
 		GameGuard4:      0,
+		BlowfishKey:     nil,
 	}
 
 	packetWriter := packet.NewWriter()
@@ -404,6 +407,7 @@ func TestNewInitPacketWithMaxValues(t *testing.T) {
 		GameGuard2:      math.MaxInt32,
 		GameGuard3:      math.MaxInt32,
 		GameGuard4:      math.MaxInt32,
+		BlowfishKey:     nil,
 	}
 
 	// Fill RSA key with max values
@@ -442,6 +446,7 @@ func TestNewInitPacketWithNegativeValues(t *testing.T) {
 		GameGuard2:      -1,
 		GameGuard3:      -1,
 		GameGuard4:      -1,
+		BlowfishKey:     nil,
 	}
 
 	packetWriter := packet.NewWriter()
