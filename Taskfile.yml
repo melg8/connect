@@ -3,21 +3,37 @@ version: '3'
 tasks:
   default:
     cmds:
-      - task: test
       - task: lint
+      - task: test
 
   lint:
+    desc: Runs golangci-lint
+    aliases: [l]
+    sources:
+      - './**/*.go'
+      - .golangci.yml
     cmds:
-      - golangci-lint run ./...
+      - golangci-lint run
 
-  run_app:
+  lint:fix:
+    desc: Runs golangci-lint and fixes any issues
+    sources:
+      - './**/*.go'
+      - .golangci.yml
+    cmds:
+      - golangci-lint run --fix
+
+  run:app:
+    desc: Runs application
     cmds:
       - go run ./cmd/connect/main.go
 
   test:
+    desc: Runs test suite
     cmds:
       - go test ./...
 
-  test_cover:
+  test:cover:
+    desc: Runs test suite with coverage
     cmds:
       - go test ./... --cover --count=1
