@@ -17,6 +17,7 @@ tasks:
 
   lint:fix:
     desc: Runs golangci-lint and fixes any issues
+    aliases: [lf]
     sources:
       - './**/*.go'
       - .golangci.yml
@@ -47,3 +48,9 @@ tasks:
     desc: Runs go mod tidy
     cmds:
       - go mod tidy
+    
+  git:discard:unstaged:
+    desc: Discards unstaged changes
+    aliases: [discard]
+    cmds:
+      - git checkout -- .
