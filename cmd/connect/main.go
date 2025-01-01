@@ -4,6 +4,8 @@
 
 package main
 
+import "log"
+
 // func connectAndAuthenticate() error {
 // 	connector, err := connect.ServerConnector("127.0.0.1:2106")
 // 	if err != nil {
@@ -35,6 +37,7 @@ func Test() error {
 }
 
 func main() {
+	log.Println("server started")
 	// log.Println("Starting connect bot...")
 	// if err := connectAndAuthenticate(); err != nil {
 	// 	log.Fatal(err)

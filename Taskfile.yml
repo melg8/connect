@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: test
+      - task: lint
+
+  lint:
+    cmds:
+      - golangci-lint run ./...
+
+  run_app:
+    cmds:
+      - go run ./cmd/connect/main.go
+
+  test:
+    cmds:
+      - go test ./...
+
+  test_cover:
+    cmds:
+      - go test ./... --cover --count=1
