@@ -60,7 +60,7 @@ func ExpectedGameGuard3() int32 {
 	return convertBytesToInt32BigEndian([]byte{0x97, 0xad, 0xb6, 0x20})
 }
 
-func TestInitPacketEncodingAndDecoding(t *testing.T) {
+func TestInitPacketEncodingAndDecoding(t *testing.T) { //nolint:cyclop
 	packetBin := InitPacketData()
 	initPacket, err := NewInitPacketFromBytes(packetBin)
 	if err != nil {
@@ -402,7 +402,7 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 	}
 }
 
-func TestNewInitPacketWithMaxValues(t *testing.T) {
+func TestNewInitPacketWithMaxValues(t *testing.T) { //nolint:cyclop
 	initPacket := &InitPacket{
 		SessionID:       math.MaxInt32, // More readable than int32(^uint32(0) >> 1)
 		ProtocolVersion: math.MaxInt32,

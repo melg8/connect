@@ -12,12 +12,12 @@ linters:
     - err113
     - lll
     - testpackage
-    - cyclop
 
   enable:
     - asasalint     # Checks for pass []any as any in variadic position
     - bodyclose     # Checks whether HTTP response body is properly closed
     - containedctx  # Detects struct contained context.Context field
+    - cyclop
     - dogsled       # Checks assignments with too many blank identifiers (e.g. x, _, _, _, := f())
     - dupl          # Tool for code clone detection
     - errcheck      # Checks for unchecked errors in go programs

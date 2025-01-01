@@ -66,7 +66,7 @@ func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
 	return &result, nil
 }
 
-func (p *InitPacket) ToBytes(writer *packet.Writer) error {
+func (p *InitPacket) ToBytes(writer *packet.Writer) error { //nolint:cyclop
 	if len(p.RsaPublicKey) != 128 {
 		return fmt.Errorf("invalid RSA public key length: expected 128 bytes, got %d bytes", len(p.RsaPublicKey))
 	}
