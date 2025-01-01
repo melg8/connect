@@ -24,7 +24,7 @@ func NewBlowfishCipher(key []byte) (*BlowfishCipher, error) {
 	return &BlowfishCipher{cipher: cipher}, nil
 }
 
-// 5F-3B-35-2E-5D-39-34-2D-33-31-3D-3D-2D-25-78-54-21-5E-5B-24-00
+// 5F-3B-35-2E-5D-39-34-2D-33-31-3D-3D-2D-25-78-54-21-5E-5B-24-00.
 func DefaultAuthKey() *BlowfishCipher {
 	key := []byte{
 		0x5F, 0x3B, 0x35, 0x2E,

@@ -13,7 +13,7 @@ import (
 	toauthserver "github.com/melg8/connect/internal/connect/packets/to_auth_server"
 )
 
-// EmptyPacket implements Serializable but writes no data
+// EmptyPacket implements Serializable but writes no data.
 type EmptyPacket struct{}
 
 func (p *EmptyPacket) ToBytes(writer *packet.Writer) error {
