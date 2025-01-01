@@ -23,7 +23,7 @@ func BenchmarkBlowfish(b *testing.B) {
 
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		err := authKey.DecryptInplace(data)
 		if err != nil {
 			b.Fatal(err)
@@ -37,7 +37,7 @@ func BenchmarkBlowfishEncrypt(b *testing.B) {
 
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		err := authKey.EncryptInplace(data)
 		if err != nil {
 			b.Fatal(err)

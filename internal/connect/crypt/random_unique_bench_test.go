@@ -21,7 +21,7 @@ func randnBaseline(n int) []int {
 	}
 
 	uniq := make([]int, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		uniq[i] = rand.Int() //nolint:gosec
 	}
 
@@ -210,7 +210,7 @@ func UniqRandn5(n int) []int {
 	unixTimeSeed := uint32(time.Now().Unix()) //nolint:gosec
 	rsu := NewRandomSequenceOfUnique(unixTimeSeed, unixTimeSeed+1)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		uniq[i] = int(rsu.Next())
 	}
 
@@ -225,7 +225,7 @@ func UniqRandn5(n int) []int {
 // 100_000.
 func benchmarkUniqRandn(b *testing.B, fn func(int) []int) {
 	b.Helper()
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		nElements := 100_000
 		res := fn(nElements)
 		if len(res) != nElements {

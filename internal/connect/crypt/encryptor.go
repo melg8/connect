@@ -35,7 +35,7 @@ func NewEncryptor(writer packet.Writer, cipher *BlowfishCipher) *Encryptor {
 }
 
 func (e *Encryptor) writePadding(size int) error {
-	for i := 0; i < size; i++ {
+	for range size {
 		if err := e.writer.WriteInt8(0); err != nil {
 			return err
 		}

@@ -20,7 +20,7 @@ func BenchmarkRequestGGAuth_ToBytes(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		packetWriter := packet.NewWriter()
 		err := req.ToBytes(packetWriter)
 		if err != nil {

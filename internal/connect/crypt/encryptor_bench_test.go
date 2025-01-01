@@ -20,7 +20,7 @@ func BenchmarkEncryptor_Write(b *testing.B) {
 
 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		writer.Reset()
 		err := encryptor.Write(packet)
 		if err != nil {

@@ -11,7 +11,7 @@ import (
 )
 
 func BenchmarkPlusPlus(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		value := 2 + 2
 		if value != 4 {
 			b.Fatal("value is not 4")
@@ -33,7 +33,7 @@ func BenchmarkInitPacketParsing(b *testing.B) {
 
 	b.ResetTimer()
 
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		packet, err := NewInitPacketFromBytes(data)
 		if err != nil {
 			panic(err)
@@ -66,7 +66,7 @@ func BenchmarkInitPacket_ToBytes(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		packetWriter := packet.NewWriter()
 		err := initPacket.ToBytes(packetWriter)
 		if err != nil {

@@ -127,7 +127,7 @@ func TestBlowfishEncryptDecryptCycle(t *testing.T) {
 
 	// Verify data was actually changed by encryption
 	different := false
-	for i := 0; i < len(originalData); i++ {
+	for i := range originalData {
 		if originalData[i] != data[i] {
 			different = true
 
@@ -148,7 +148,7 @@ func TestBlowfishEncryptDecryptCycle(t *testing.T) {
 	}
 
 	// Verify the decrypted data matches the original
-	for i := 0; i < len(originalData); i++ {
+	for i := range originalData {
 		if originalData[i] != data[i] {
 			t.Fatalf("Decrypted data differs from original at position %d: expected %d, got %d",
 				i, originalData[i], data[i])

@@ -69,7 +69,7 @@ func (b *BlowfishCipher) Decrypt(dst, data []byte) error {
 	count := lenData / blockSize
 
 	flip4BytesEndianInplace(data)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Decrypt(dst[start:end], data[start:end])
@@ -100,7 +100,7 @@ func (b *BlowfishCipher) Encrypt(dst, data []byte) error {
 
 	flip4BytesEndianInplace(data)
 	blocksCount := lenData / blockSize
-	for i := 0; i < blocksCount; i++ {
+	for i := range blocksCount {
 		start := i * blockSize
 		end := start + blockSize
 		b.cipher.Encrypt(dst[start:end], data[start:end])

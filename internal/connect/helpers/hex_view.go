@@ -54,7 +54,7 @@ func HexASCIIViewFrom(data []byte) string {
 	asciiPart := make([]byte, bytesPerRow)
 
 	for i := 0; i < length; i += bytesPerRow {
-		for j := 0; j < bytesPerRow; j++ {
+		for j := range bytesPerRow {
 			pos := j * 3
 			if i+j < length {
 				b := data[i+j]
@@ -89,7 +89,7 @@ func HexViewFromWithLineSplit(data []byte, lineLength int, beforeLine string) st
 	var sb strings.Builder
 	for i := 0; i < len(data); i += lineLength {
 		sb.WriteString(beforeLine)
-		for j := 0; j < lineLength; j++ {
+		for j := range lineLength {
 			if i+j < len(data) {
 				sb.WriteByte("0123456789abcdef"[data[i+j]>>4])
 				sb.WriteByte("0123456789abcdef"[data[i+j]&0xF])
@@ -105,7 +105,7 @@ func HexViewFromWithLineSplit(data []byte, lineLength int, beforeLine string) st
 
 func HexViewFromWithoutLineSplit(data []byte) string {
 	var sb strings.Builder
-	for i := 0; i < len(data); i++ {
+	for i := range data {
 		sb.WriteByte("0123456789abcdef"[data[i]>>4])
 		sb.WriteByte("0123456789abcdef"[data[i]&0xF])
 	}
