@@ -109,7 +109,7 @@ func (c *RetryConnector) Connect() (net.Conn, error) {
 	return nil, fmt.Errorf("failed to connect to server after %d attempts", c.retries)
 }
 
-func ServerConnector(address string) (Connector, error) {
+func ServerConnector(address string) (*RetryConnector, error) {
 	tcpConnectorTimeout := time.Second * 10
 	betweenAttemptsTimeout := time.Second + time.Millisecond*10
 	tcpConnector := NewTCPConnector(address, tcpConnectorTimeout)

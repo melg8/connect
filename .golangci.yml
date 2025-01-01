@@ -13,7 +13,6 @@ linters:
     - funlen
     - gci
     - intrange
-    - ireturn
     - lll
     - perfsprint
     - testifylint
@@ -46,6 +45,7 @@ linters:
     - misspell      # Finds commonly misspelled English words in comments
     - nakedret      # Finds naked returns in functions greater than a specified size
     - inamedparam
+    - ireturn
     - nilerr        # Finds redundant nil checks on errors
     - nilnil        # Checks that there is no simultaneous return of nil error and nil value
     - nlreturn
