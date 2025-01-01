@@ -98,7 +98,6 @@ func RequestInit(rawData []byte) (*fromauthserver.InitPacket, error) {
 
 func GGAuth(rawData []byte) (int, error) {
 	packetID, packetData, err := ExtractPacketFromRawData(rawData)
-
 	if err != nil {
 		return 0, err
 	}

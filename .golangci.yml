@@ -1,4 +1,7 @@
 linters:
+  disable:
+    - depguard      # Enable if need to vet dependencies
+    - paralleltest  # Enable for t.Parallel checks.
   enable:
     - asasalint     # Checks for pass []any as any in variadic position
     - bodyclose     # Checks whether HTTP response body is properly closed
@@ -14,6 +17,7 @@ linters:
     - gocyclo       # Checks function complexity to find overly complex functions
     - godot         # Checks if comments end in a period to ensure consistency
     - gofmt         # Formats Go source code according to the Go standard
+    - gofumpt       
     - gosec         # Inspects source code for security problems by scanning the Go AST
     - goimports     # Tool for automatically importing packages
     - gosimple      # Specializes in simplifying code
@@ -57,3 +61,4 @@ issues:
 linters-settings:
   goconst:
     min-len: 3
+
