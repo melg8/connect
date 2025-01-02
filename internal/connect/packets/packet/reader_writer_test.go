@@ -210,7 +210,7 @@ func TestPacketReaderReadStringFromUtf16FormatError(t *testing.T) {
 	}
 }
 
-func TestPacketReaderReadStringFromUtf16FormatNotEnoughBytesError(t *testing.T) {
+func TestPacketReaderReadStringFromUtf16FormatTooSmallError(t *testing.T) {
 	reader := NewReader([]byte{0x22, 0x00, 0x33})
 	_, err := reader.ReadStringFromUtf16Format()
 	if err == nil {
