@@ -34,7 +34,8 @@ func LogInitPacket(initPacket *fromauthserver.InitPacket) {
 	log.Println(initPacket.ToString())
 }
 
-// Extracts packet data from raw data. Decrypts if needed, returns packet id and packet data.
+// Extracts packet data from raw data.
+// Decrypts if needed, returns packet id and packet data.
 func ExtractPacketFromRawData(data []byte) (int32, []byte, error) {
 	if len(data) < 3 {
 		return 0, nil, errors.New("data is too small")
