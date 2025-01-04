@@ -90,7 +90,9 @@ func RequestInit(rawData []byte) (*fromauthserver.InitPacket, error) {
 		return nil, err
 	}
 	if packetID != 0x00 {
-		return nil, fmt.Errorf("unexpected packet type %v while waiting for init packet 0x00", packetID)
+		return nil,
+			fmt.Errorf("unexpected packet %v while waiting for init 0x00",
+				packetID)
 	}
 
 	initPacket, err := fromauthserver.NewInitPacketFromBytes(packetData)
