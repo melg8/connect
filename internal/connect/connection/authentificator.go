@@ -110,7 +110,9 @@ func GGAuth(rawData []byte) (int, error) {
 		return 0, err
 	}
 	if packetID != 0x11 {
-		return 0, fmt.Errorf("unexpected packet type %v while waiting for init packet 0x11", packetID)
+		return 0,
+			fmt.Errorf("unexpected packet %v while waiting for GGAuth 0x11",
+				packetID)
 	}
 
 	log.Printf("got GGAuth packet with data:")
