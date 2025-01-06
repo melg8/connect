@@ -21,7 +21,9 @@ type TCPConnector struct {
 	timeout       time.Duration
 }
 
-func NewTCPConnector(serverAddress string, timeout time.Duration) *TCPConnector {
+func NewTCPConnector(
+	serverAddress string,
+	timeout time.Duration) *TCPConnector {
 	return &TCPConnector{
 		serverAddress: serverAddress,
 		timeout:       timeout,
