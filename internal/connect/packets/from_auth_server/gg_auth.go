@@ -16,19 +16,26 @@ type GGAuthPacket struct {
 
 func NewGGAuthPacketFromBytes(data []byte) (*GGAuthPacket, error) {
 	reader := packet.NewReader(data)
+	packet := GGAuthPacket{}
+	if err := packet.FromBytes(reader); err != nil {
+		return nil, err
+	}
+	return &packet, nil
+}
+
+func (p *GGAuthPacket) FromBytes(reader *packet.Reader) error {
 	sessionID, err := reader.ReadInt32()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	unknown, err := reader.ReadInt32()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	p.SessionID = sessionID
+	p.Unknown = unknown
 
-	return &GGAuthPacket{
-		SessionID: sessionID,
-		Unknown:   unknown,
-	}, nil
+	return nil
 }
 
 func (p *GGAuthPacket) ToBytes(writer *packet.Writer) error {

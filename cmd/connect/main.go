@@ -4,27 +4,32 @@
 
 package main
 
-import "log"
+import (
+	"fmt"
+	"log"
 
-// func connectAndAuthenticate() error {
-// 	connector, err := connect.ServerConnector("127.0.0.1:2106")
-// 	if err != nil {
-// 		return fmt.Errorf("failed to create server connector: %w", err)
-// 	}
+	"github.com/melg8/connect/internal/connect/connection"
+)
 
-// 	conn, err := connector.Connect()
-// 	if err != nil {
-// 		return fmt.Errorf("failed to connect to server: %w", err)
-// 	}
-// 	defer conn.Close()
+func connectAndAuthenticate() error {
+	connector, err := connection.ServerConnector("127.0.0.1:2106")
+	if err != nil {
+		return fmt.Errorf("failed to create server connector: %w", err)
+	}
 
-// 	if err := connect.AuthentificateConn(conn); err != nil {
-// 		return fmt.Errorf("failed to authentificate connection: %w", err)
-// 	}
+	conn, err := connector.Connect()
+	if err != nil {
+		return fmt.Errorf("failed to connect to server: %w", err)
+	}
+	defer conn.Close()
 
-// 	log.Println("Connection authentificated")
-// 	return nil
-// }
+	if err := connection.AuthentificateConn(conn); err != nil {
+		return fmt.Errorf("failed to authentificate connection: %w", err)
+	}
+
+	log.Println("Connection authentificated")
+	return nil
+}
 
 type MyError string
 
@@ -37,9 +42,8 @@ func Test() error {
 }
 
 func main() {
-	log.Println("server started")
-	// log.Println("Starting connect bot...")
-	// if err := connectAndAuthenticate(); err != nil {
-	// 	log.Fatal(err)
-	// }
+	log.Println("Starting connect bot...")
+	if err := connectAndAuthenticate(); err != nil {
+		log.Fatal(err)
+	}
 }

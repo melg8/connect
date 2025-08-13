@@ -45,7 +45,7 @@ func ExtractPacketFromRawData(data []byte) (int32, []byte, error) {
 		return packetID, data[3 : len(data)-4], nil
 	}
 
-	return 0, nil, errors.New("unexpected packet type")
+	return 0, nil, errors.New("unexpected packet type " + strconv.Itoa(int(packetID)))
 }
 
 // Reads full packet from connection.
@@ -130,6 +130,10 @@ func GGAuth(rawData []byte) (int, error) {
 
 func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int, error) {
 	requestGGAuth := toauthserver.NewDefaultRequestGGAuth(initResponse.SessionID)
+	log.Printf("Sending GGAuth packet:")
+	writer := packet.NewWriter()
+	requestGGAuth.ToBytes(writer)
+	helpers.ShowAsHexAndASCII(writer.Bytes())
 	encryptor := crypt.NewEncryptor(*packet.NewWriter(), crypt.DefaultAuthKey())
 	err := encryptor.Write(requestGGAuth)
 	if err != nil {
@@ -143,6 +147,9 @@ func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int,
 	if err != nil {
 		return 0, err
 	}
+	decryptor := crypt.NewDecryptor(packet.NewReader(rawResponse), crypt.DefaultAuthKey())
+
+	err = decryptor.Read()
 
 	return GGAuth(rawResponse)
 }
