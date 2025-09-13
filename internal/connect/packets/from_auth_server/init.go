@@ -5,6 +5,8 @@
 package fromauthserver
 
 import (
+	"encoding/binary"
+	"errors"
 	"fmt"
 
 	"github.com/melg8/connect/internal/connect/helpers"
@@ -19,51 +21,50 @@ type InitPacket struct {
 	GameGuard2      int32
 	GameGuard3      int32
 	GameGuard4      int32
-	BlowfishKey     *[]byte
+	BlowfishKey     []byte
 }
 
-func NewInitPacketFromBytes(data []byte) (*InitPacket, error) {
-	var result InitPacket
+func ParseInitPacket(p *InitPacket, data []byte) error {
+	const minPacketSize = 4 + 4 + 128 + 4*4
 
-	var err error
-
-	reader := packet.NewReader(data)
-	result.SessionID, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
-	}
-	result.ProtocolVersion, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
-	}
-	result.RsaPublicKey, err = reader.ReadBytes(128)
-	if err != nil {
-		return nil, err
-	}
-	result.GameGuard1, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
-	}
-	result.GameGuard2, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
-	}
-	result.GameGuard3, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
-	}
-	result.GameGuard4, err = reader.ReadInt32()
-	if err != nil {
-		return nil, err
+	if len(data) < minPacketSize {
+		return errors.New("EOF")
 	}
 
-	var blowFishKey []byte
-	blowFishKey, err = reader.ReadBytes(21)
-	if err == nil {
-		result.BlowfishKey = &blowFishKey
+	offset := 0
+
+	// Читаем int32 напрямую из слайса
+	p.SessionID = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	p.ProtocolVersion = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	// Создаем саб-слайс, без аллокации
+	p.RsaPublicKey = data[offset : offset+128]
+	offset += 128
+
+	p.GameGuard1 = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	p.GameGuard2 = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	p.GameGuard3 = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	p.GameGuard4 = int32(binary.LittleEndian.Uint32(data[offset:]))
+	offset += 4
+
+	// Опционально читаем ключ
+	if len(data) > offset {
+		// Также саб-слайс, без аллокации
+		p.BlowfishKey = data[offset:]
+	} else {
+		p.BlowfishKey = nil // Устанавливаем в nil, если данных нет
 	}
 
-	return &result, nil
+	return nil
 }
 
 func (p *InitPacket) ToBytes(writer *packet.Writer) error { //nolint:cyclop
@@ -93,12 +94,52 @@ func (p *InitPacket) ToBytes(writer *packet.Writer) error { //nolint:cyclop
 		return err
 	}
 	if p.BlowfishKey != nil {
-		if err := writer.WriteBytes(*p.BlowfishKey); err != nil {
+		if err := writer.WriteBytes(p.BlowfishKey); err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func (p *InitPacket) WriteTo(dest []byte) (int, error) {
+	requiredSize := 4 + 4 + 128 + 4*4 // Размер без ключа Blowfish
+	if p.BlowfishKey != nil {
+		requiredSize += len(p.BlowfishKey)
+	}
+
+	if len(dest) < requiredSize {
+		return 0, fmt.Errorf("destination buffer is too small: got %d, want %d", len(dest), requiredSize)
+	}
+
+	offset := 0
+
+	// Записываем int32 напрямую в слайс
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.SessionID))
+	offset += 4
+
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.ProtocolVersion))
+	offset += 4
+
+	// Копируем данные ключа. Это не вызывает аллокаций.
+	copy(dest[offset:], p.RsaPublicKey)
+	offset += len(p.RsaPublicKey)
+
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.GameGuard1))
+	offset += 4
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.GameGuard2))
+	offset += 4
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.GameGuard3))
+	offset += 4
+	binary.LittleEndian.PutUint32(dest[offset:], uint32(p.GameGuard4))
+	offset += 4
+
+	if p.BlowfishKey != nil {
+		copy(dest[offset:], p.BlowfishKey)
+		offset += len(p.BlowfishKey)
+	}
+
+	return offset, nil
 }
 
 func (p *InitPacket) ToString() string {
@@ -112,7 +153,7 @@ func (p *InitPacket) ToString() string {
 		"\n  GameGuard4: " + helpers.HexStringFromInt32(p.GameGuard4)
 
 	if p.BlowfishKey != nil {
-		result += "\n  BlowfishKey: \n" + helpers.HexViewFromWithLineSplit(*p.BlowfishKey, 16, "    ")
+		result += "\n  BlowfishKey: \n" + helpers.HexViewFromWithLineSplit(p.BlowfishKey, 16, "    ")
 	} else {
 		result += "\n  BlowfishKey: " + "nil"
 	}

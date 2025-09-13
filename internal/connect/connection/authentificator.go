@@ -94,8 +94,8 @@ func RequestInit(rawData []byte) (*fromauthserver.InitPacket, error) {
 			fmt.Errorf("unexpected packet %v while waiting for init 0x00",
 				packetID)
 	}
-
-	initPacket, err := fromauthserver.NewInitPacketFromBytes(packetData)
+	initPacket := &fromauthserver.InitPacket{}
+	err = fromauthserver.ParseInitPacket(initPacket, packetData)
 	if err != nil {
 		return nil, err
 	}
@@ -147,9 +147,8 @@ func RequestGGAuth(conn net.Conn, initResponse *fromauthserver.InitPacket) (int,
 	if err != nil {
 		return 0, err
 	}
-	decryptor := crypt.NewDecryptor(packet.NewReader(rawResponse), crypt.DefaultAuthKey())
-
-	err = decryptor.Read()
+	_ = crypt.NewDecryptor(packet.NewReader(rawResponse), crypt.DefaultAuthKey())
+	// err = decryptor.Read()
 
 	return GGAuth(rawResponse)
 }

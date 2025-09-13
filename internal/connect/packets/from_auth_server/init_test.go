@@ -62,7 +62,8 @@ func ExpectedGameGuard3() int32 {
 
 func TestInitPacketEncodingAndDecoding(t *testing.T) { //nolint:cyclop
 	packetBin := InitPacketData()
-	initPacket, err := NewInitPacketFromBytes(packetBin)
+	initPacket := &InitPacket{}
+	err := ParseInitPacket(initPacket, packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +116,8 @@ func TestInitPacketEncodingAndDecoding(t *testing.T) { //nolint:cyclop
 
 func TestInitPacketDecodingErrorOnEmptyPacket(t *testing.T) {
 	emptyPacket := []byte{}
-	_, err := NewInitPacketFromBytes(emptyPacket)
+	initPacket := &InitPacket{}
+	err := ParseInitPacket(initPacket, emptyPacket)
 	if err == nil {
 		t.Error("expected error on empty packet")
 	}
@@ -123,7 +125,8 @@ func TestInitPacketDecodingErrorOnEmptyPacket(t *testing.T) {
 
 func TestInitPacketDecodingErrorOnOnlyPartialPacket(t *testing.T) {
 	partialPacket := OnlySessionIDPacket()
-	_, err := NewInitPacketFromBytes(partialPacket)
+	initPacket := &InitPacket{}
+	err := ParseInitPacket(initPacket, partialPacket)
 	if err == nil {
 		t.Error("expected error on partial packet")
 	}
@@ -131,12 +134,13 @@ func TestInitPacketDecodingErrorOnOnlyPartialPacket(t *testing.T) {
 
 func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 	packetBin := InitPacketData()
-	initPacket, err := NewInitPacketFromBytes(packetBin)
+	initPacket := &InitPacket{}
+	err := ParseInitPacket(initPacket, packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
 	blowFishKey := make([]byte, 21)
-	initPacket.BlowfishKey = &blowFishKey
+	initPacket.BlowfishKey = blowFishKey
 
 	packetWriter := packet.NewWriter()
 	err = initPacket.ToBytes(packetWriter)
@@ -155,7 +159,8 @@ func TestInitPacketDecodingOkayWithOptionalBlowfishKeyPresent(t *testing.T) {
 
 func TestInitPacketToString(t *testing.T) {
 	packetBin := InitPacketData()
-	initPacket, err := NewInitPacketFromBytes(packetBin)
+	initPacket := &InitPacket{}
+	err := ParseInitPacket(initPacket, packetBin)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -211,7 +216,7 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 		GameGuard2:      0x77c39cfc,
 		GameGuard3:      ExpectedGameGuard3(),
 		GameGuard4:      0x07bde0f7,
-		BlowfishKey:     &blowfishKey,
+		BlowfishKey:     blowfishKey,
 	}
 
 	packetWriter := packet.NewWriter()
@@ -219,7 +224,9 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
+
+	decoded := &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -228,7 +235,7 @@ func TestInitPacketWithBlowfishKeyEncoding(t *testing.T) {
 		t.Error("Expected BlowfishKey to be present in decoded packet")
 	}
 
-	if !bytes.Equal(*decoded.BlowfishKey, blowfishKey) {
+	if !bytes.Equal(decoded.BlowfishKey, blowfishKey) {
 		t.Error("Decoded BlowfishKey does not match original")
 	}
 }
@@ -276,7 +283,8 @@ func TestNewInitPacketFromBytesFieldErrors(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			partialData := fullPacket[:tc.size]
-			_, err := NewInitPacketFromBytes(partialData)
+			initPacket := &InitPacket{}
+			err := ParseInitPacket(initPacket, partialData)
 			if err == nil || err.Error() != tc.expected {
 				t.Errorf("Expected error %q, got %v", tc.expected, err)
 			}
@@ -299,7 +307,7 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 		GameGuard2:      2,
 		GameGuard3:      3,
 		GameGuard4:      4,
-		BlowfishKey:     &exactKey,
+		BlowfishKey:     exactKey,
 	}
 
 	packetWriter := packet.NewWriter()
@@ -307,13 +315,13 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
+	decoded := &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(*decoded.BlowfishKey, exactKey) {
+	if !bytes.Equal(decoded.BlowfishKey, exactKey) {
 		t.Error("BlowfishKey not correctly encoded/decoded with exact size")
 	}
 
@@ -325,11 +333,11 @@ func TestBlowfishKeyEdgeCases(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	decoded, err = NewInitPacketFromBytes(packetWriter.Bytes())
+	decoded = &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	if decoded.BlowfishKey != nil {
 		t.Error("Expected nil BlowfishKey in decoded packet")
 	}
@@ -389,8 +397,8 @@ func TestNewInitPacketWithZeroValues(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
+	decoded := &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -424,8 +432,8 @@ func TestNewInitPacketWithMaxValues(t *testing.T) { //nolint:cyclop
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
+	decoded := &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -459,7 +467,8 @@ func TestNewInitPacketWithNegativeValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	decoded, err := NewInitPacketFromBytes(packetWriter.Bytes())
+	decoded := &InitPacket{}
+	err = ParseInitPacket(decoded, packetWriter.Bytes())
 	if err != nil {
 		t.Fatal(err)
 	}

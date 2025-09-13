@@ -30,11 +30,12 @@ func dataForBenchmark() []byte {
 
 func BenchmarkInitPacketParsing(b *testing.B) {
 	data := dataForBenchmark()
+	packet := &InitPacket{}
 
 	b.ResetTimer()
 
 	for range b.N {
-		packet, err := NewInitPacketFromBytes(data)
+		err := ParseInitPacket(packet, data)
 		if err != nil {
 			panic(err)
 		}
@@ -62,13 +63,44 @@ func BenchmarkInitPacket_ToBytes(b *testing.B) {
 		GameGuard2:      2,
 		GameGuard3:      3,
 		GameGuard4:      4,
-		BlowfishKey:     &blowfishKey,
+		BlowfishKey:     blowfishKey,
 	}
 
 	b.ResetTimer()
 	for range b.N {
 		packetWriter := packet.NewWriter()
 		err := initPacket.ToBytes(packetWriter)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkInitPacket_WriteTo(b *testing.B) {
+	rsaKey := make([]byte, 128)
+	blowfishKey := make([]byte, 21)
+
+	initPacket := &InitPacket{
+		SessionID:       12345,
+		ProtocolVersion: 1,
+		RsaPublicKey:    rsaKey,
+		GameGuard1:      1,
+		GameGuard2:      2,
+		GameGuard3:      3,
+		GameGuard4:      4,
+		BlowfishKey:     blowfishKey,
+	}
+
+	// Создаем буфер для записи ОДИН РАЗ, вне цикла
+	packetSize := 4 + 4 + len(rsaKey) + 4*4 + len(blowfishKey)
+	packetData := make([]byte, packetSize)
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		// Переиспользуем тот же самый буфер на каждой итерации
+		_, err := initPacket.WriteTo(packetData)
 		if err != nil {
 			b.Fatal(err)
 		}
